@@ -1,0 +1,825 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>KRONEX IA — Sócio Founder · DOM INVESTITORE</title>
+  <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body { background: #080808; overflow-x: hidden; }
+    ::-webkit-scrollbar { width: 3px; }
+    ::-webkit-scrollbar-track { background: #080808; }
+    ::-webkit-scrollbar-thumb { background: #C9A84C; border-radius: 2px; }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+
+<script type="text/babel" data-presets="react">
+const { useState, useEffect, useRef } = React;
+
+/* ── TOKENS ── */
+const T = {
+  bg:'#080808', bgCard:'rgba(201,168,76,0.025)', bgCardHover:'rgba(201,168,76,0.055)',
+  border:'rgba(201,168,76,0.1)', borderHover:'rgba(201,168,76,0.35)',
+  accent:'#8B6914', accentMid:'#C9A84C', accentDim:'#A8873A',
+  accentGlow:'rgba(201,168,76,0.25)', accentGlow2:'rgba(201,168,76,0.07)',
+  text:'#E8E8E0', textSub:'#9a8a7a', textMuted:'#4a3d30',
+  red:'#dc2626', amber:'#f59e0b',
+  font:"'Inter','SF Pro Display',system-ui,-apple-system,sans-serif",
+};
+
+/* ── GLOBAL STYLES ── */
+const GlobalStyles = () => (
+  <style>{`
+    @import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
+    a{text-decoration:none;color:inherit;}
+    @keyframes pulse-glow{0%,100%{box-shadow:0 0 16px rgba(201,168,76,.25),0 0 40px rgba(201,168,76,.12),0 0 80px rgba(201,168,76,.06)}50%{box-shadow:0 0 32px rgba(201,168,76,.55),0 0 80px rgba(201,168,76,.25),0 0 140px rgba(201,168,76,.1)}}
+    @keyframes border-glow{0%,100%{border-color:rgba(201,168,76,.2)}50%{border-color:rgba(201,168,76,.6)}}
+    @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+    @keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
+    @keyframes slide-up{from{opacity:0;transform:translateY(40px)}to{opacity:1;transform:translateY(0)}}
+    @keyframes scanline{0%{transform:translateY(0%);opacity:0}5%{opacity:1}95%{opacity:1}100%{transform:translateY(100%);opacity:0}}
+    @keyframes flicker{0%,98%,100%{opacity:1}99%{opacity:.85}}
+    @keyframes fade-in{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+    @keyframes node-ping{0%{transform:scale(1);opacity:1}100%{transform:scale(2.5);opacity:0}}
+    .btn-primary{background:linear-gradient(135deg,#8B6914 0%,#C9A84C 100%);color:#080808;border:none;cursor:pointer;font-family:${T.font};font-weight:700;letter-spacing:.05em;animation:pulse-glow 3s infinite;transition:transform .2s,filter .2s;}
+    .btn-primary:hover{transform:translateY(-2px);filter:brightness(1.1);}
+    .btn-outline{background:transparent;border:1px solid #C9A84C;color:#C9A84C;cursor:pointer;font-family:${T.font};font-weight:500;letter-spacing:.05em;transition:all .25s;}
+    .btn-outline:hover{background:rgba(201,168,76,.1);box-shadow:0 0 20px rgba(201,168,76,.25);}
+    .glass{background:rgba(201,168,76,.025);border:1px solid rgba(201,168,76,.1);backdrop-filter:blur(28px);-webkit-backdrop-filter:blur(28px);transition:all .3s ease;}
+    .glass:hover{background:rgba(201,168,76,.055);border-color:rgba(201,168,76,.22);}
+    .holo-panel{background:linear-gradient(135deg,rgba(201,168,76,.04) 0%,rgba(50,40,10,.03) 100%);border:1px solid rgba(201,168,76,.15);box-shadow:0 0 40px rgba(201,168,76,.06),inset 0 0 40px rgba(201,168,76,.02);backdrop-filter:blur(32px);-webkit-backdrop-filter:blur(32px);}
+    .tag{display:inline-flex;align-items:center;gap:6px;padding:5px 14px;border-radius:100px;background:rgba(201,168,76,.06);border:1px solid rgba(201,168,76,.25);color:#C9A84C;font-size:11px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;animation:border-glow 3s infinite;}
+    .section-label{font-size:11px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:#C9A84C;}
+    .h1{font-size:clamp(2.4rem,6vw,4.8rem);font-weight:800;line-height:1.05;letter-spacing:-.03em;}
+    .h2{font-size:clamp(1.8rem,4vw,3rem);font-weight:700;line-height:1.1;letter-spacing:-.02em;}
+    .h3{font-size:clamp(1.1rem,2.5vw,1.55rem);font-weight:600;line-height:1.3;}
+    .lead{font-size:clamp(1rem,2vw,1.18rem);line-height:1.75;color:#9a8a7a;font-weight:400;}
+    input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:2px;background:rgba(201,168,76,.15);border-radius:2px;outline:none;cursor:pointer;}
+    input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:#C9A84C;box-shadow:0 0 16px rgba(201,168,76,.4),0 0 32px rgba(201,168,76,.2);cursor:pointer;}
+    input[type=text],input[type=email],input[type=tel],textarea{background:transparent;border:none;border-bottom:1px solid rgba(201,168,76,.15);color:#E8E8E0;font-family:${T.font};font-size:15px;padding:12px 0;width:100%;outline:none;transition:border-color .3s;}
+    input[type=text]:focus,input[type=email]:focus,input[type=tel]:focus,textarea:focus{border-bottom-color:#C9A84C;}
+    input::placeholder,textarea::placeholder{color:#4a3d30;font-size:13px;}
+    textarea{resize:none;min-height:80px;}
+  `}</style>
+);
+
+/* ── HOOKS ── */
+const useIntersection = (threshold=0.15) => {
+  const ref = useRef(null);
+  const [visible,setVisible] = useState(false);
+  useEffect(()=>{
+    const el=ref.current; if(!el) return;
+    const obs=new IntersectionObserver(([e])=>{if(e.isIntersecting)setVisible(true);},{threshold});
+    obs.observe(el); return()=>obs.disconnect();
+  },[threshold]);
+  return [ref,visible];
+};
+
+const useCounter = (target,duration=2200,active=false,decimals=0) => {
+  const [val,setVal] = useState(0);
+  useEffect(()=>{
+    if(!active) return;
+    let start=null;
+    const step=(ts)=>{
+      if(!start) start=ts;
+      const p=Math.min((ts-start)/duration,1);
+      const ease=1-Math.pow(1-p,4);
+      setVal(parseFloat((ease*target).toFixed(decimals)));
+      if(p<1) requestAnimationFrame(step);
+    };
+    requestAnimationFrame(step);
+  },[active,target,duration,decimals]);
+  return val;
+};
+
+/* ── NEURAL CANVAS ── */
+const NeuralCanvas = () => {
+  const canvasRef = useRef(null);
+  useEffect(()=>{
+    const canvas=canvasRef.current; if(!canvas) return;
+    const ctx=canvas.getContext('2d');
+    const resize=()=>{canvas.width=canvas.offsetWidth;canvas.height=canvas.offsetHeight;};
+    resize();
+    const ro=new ResizeObserver(resize); ro.observe(canvas);
+    const N=80,MAX_D=140;
+    const pts=Array.from({length:N},()=>({
+      x:Math.random()*canvas.width,y:Math.random()*canvas.height,
+      vx:(Math.random()-.5)*.3,vy:(Math.random()-.5)*.3,
+      r:Math.random()*1.2+.4,a:Math.random()*.6+.15,pulse:Math.random()*Math.PI*2,
+    }));
+    let id,t=0;
+    const draw=()=>{
+      t+=.008; ctx.clearRect(0,0,canvas.width,canvas.height);
+      for(let i=0;i<N;i++){
+        for(let j=i+1;j<N;j++){
+          const dx=pts[i].x-pts[j].x,dy=pts[i].y-pts[j].y;
+          const d=Math.sqrt(dx*dx+dy*dy);
+          if(d<MAX_D){
+            ctx.beginPath();ctx.moveTo(pts[i].x,pts[i].y);ctx.lineTo(pts[j].x,pts[j].y);
+            ctx.strokeStyle=`rgba(201,168,76,${(1-d/MAX_D)*.18})`;ctx.lineWidth=.6;ctx.stroke();
+          }
+        }
+      }
+      pts.forEach(p=>{
+        p.x+=p.vx;p.y+=p.vy;
+        if(p.x<0||p.x>canvas.width)p.vx*=-1;
+        if(p.y<0||p.y>canvas.height)p.vy*=-1;
+        const f=.7+.3*Math.sin(p.pulse+t);
+        ctx.beginPath();ctx.arc(p.x,p.y,p.r*f,0,Math.PI*2);
+        ctx.fillStyle=`rgba(201,168,76,${p.a*f})`;ctx.fill();
+        if(p.r>1.2){ctx.beginPath();ctx.arc(p.x,p.y,p.r*3,0,Math.PI*2);ctx.fillStyle='rgba(201,168,76,0.03)';ctx.fill();}
+      });
+      id=requestAnimationFrame(draw);
+    };
+    draw();
+    return()=>{cancelAnimationFrame(id);ro.disconnect();};
+  },[]);
+  return <canvas ref={canvasRef} style={{position:'absolute',inset:0,width:'100%',height:'100%'}} />;
+};
+
+/* ── TRADE CHART ── */
+const TradeChart = ({active}) => {
+  const steps=[
+    {label:'Entrada',x:60,y:175,color:'#C9A84C'},
+    {label:'Alvo 1',x:155,y:138,color:'#C9A84C'},
+    {label:'Alvo 2 — Breakeven',x:240,y:105,color:'#f59e0b'},
+    {label:'Alvo 3 — Trailing',x:330,y:72,color:'#f59e0b'},
+    {label:'Alvo 4 — Topo',x:420,y:42,color:'#E8E8E0'},
+  ];
+  const pathD=steps.map((p,i)=>`${i===0?'M':'L'} ${p.x} ${p.y}`).join(' ');
+  return(
+    <svg viewBox="0 0 500 215" style={{width:'100%',maxWidth:540,overflow:'visible'}}>
+      <defs>
+        <linearGradient id="lineGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%" stopColor="#C9A84C"/><stop offset="60%" stopColor="#f59e0b"/><stop offset="100%" stopColor="#E8E8E0"/>
+        </linearGradient>
+        <linearGradient id="areaGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" stopColor="#C9A84C" stopOpacity="0.3"/><stop offset="100%" stopColor="#C9A84C" stopOpacity="0"/>
+        </linearGradient>
+        <filter id="glow"><feGaussianBlur stdDeviation="4" result="cb"/><feMerge><feMergeNode in="cb"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+        <filter id="glow2"><feGaussianBlur stdDeviation="6" result="cb"/><feMerge><feMergeNode in="cb"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+      </defs>
+      {[55,85,115,145,175].map(y=><line key={y} x1="40" y1={y} x2="460" y2={y} stroke="rgba(201,168,76,0.06)" strokeWidth="1" strokeDasharray="4 8"/>)}
+      <path d={`${pathD} L 420 205 L 60 205 Z`} fill="url(#areaGrad)" style={{opacity:active?1:0,transition:'opacity 0.8s ease 1.8s'}}/>
+      <path d={pathD} fill="none" stroke="#C9A84C" strokeWidth="6" strokeOpacity="0.12" filter="url(#glow2)" strokeLinecap="round" strokeLinejoin="round" style={{strokeDasharray:700,strokeDashoffset:active?0:700,transition:'stroke-dashoffset 2.8s ease 0.3s'}}/>
+      <path d={pathD} fill="none" stroke="url(#lineGrad)" strokeWidth="2" filter="url(#glow)" strokeLinecap="round" strokeLinejoin="round" style={{strokeDasharray:700,strokeDashoffset:active?0:700,transition:'stroke-dashoffset 2.8s ease 0.3s'}}/>
+      {steps.map((p,i)=>(
+        <g key={i} style={{opacity:active?1:0,transition:`opacity 0.4s ease ${0.6+i*.38}s`}}>
+          <circle cx={p.x} cy={p.y} r="12" fill={p.color} fillOpacity="0.06"/>
+          <circle cx={p.x} cy={p.y} r="5" fill={p.color} filter="url(#glow)"/>
+          <circle cx={p.x} cy={p.y} r="8" fill="none" stroke={p.color} strokeWidth="1" strokeOpacity="0.45"/>
+          <text x={p.x} y={p.y-16} textAnchor="middle" fontSize="9" fill={p.color} fontWeight="600" letterSpacing="0.04em" fontFamily="Inter,sans-serif">{p.label}</text>
+        </g>
+      ))}
+      <line x1="40" y1="205" x2="460" y2="205" stroke="rgba(201,168,76,0.12)" strokeWidth="1"/>
+      <line x1="40" y1="30" x2="40" y2="205" stroke="rgba(201,168,76,0.12)" strokeWidth="1"/>
+    </svg>
+  );
+};
+
+/* ── METRIC CARD ── */
+const MetricCard = ({label,value,suffix='',prefix='',sub,active,highlight}) => {
+  const n=useCounter(parseFloat(value),2200,active,String(value).includes('.')?1:0);
+  return(
+    <div className={highlight?'holo-panel':'glass'} style={{borderRadius:16,padding:'28px 24px',boxShadow:highlight?'0 0 40px rgba(201,168,76,0.1),inset 0 0 20px rgba(201,168,76,0.03)':'none',transition:'all .4s ease'}}>
+      <div style={{fontSize:10,fontWeight:700,letterSpacing:'.14em',textTransform:'uppercase',color:'#C9A84C',marginBottom:12}}>{label}</div>
+      <div style={{fontSize:'clamp(2rem,5vw,3.2rem)',fontWeight:800,letterSpacing:'-.03em',lineHeight:1,color:highlight?'#C9A84C':T.text,textShadow:highlight?'0 0 30px rgba(201,168,76,0.5)':'none'}}>
+        {prefix}{n}{suffix}
+      </div>
+      {sub&&<div style={{marginTop:10,fontSize:12,color:T.textSub,lineHeight:1.5}}>{sub}</div>}
+    </div>
+  );
+};
+
+/* ── SIMULATOR ── */
+const Simulator = () => {
+  const [capital,setCapital]=useState(500);
+  const [ops,setOps]=useState(30);
+  const [months,setMonths]=useState(6);
+
+  const WIN_RATIO=7/8;
+  const WIN_PCT=0.04;
+  const LOSS_PCT=0.01;
+  const tradesPerMonth=ops*4;
+  const winsPerMonth=Math.round(tradesPerMonth*WIN_RATIO);
+  const lossesPerMonth=tradesPerMonth-winsPerMonth;
+  const monthlyMultiplier=1+(winsPerMonth*WIN_PCT)-(lossesPerMonth*LOSS_PCT);
+  const monthlyReturnPct=((monthlyMultiplier-1)*100).toFixed(0);
+
+  const getCapitalAt=(m)=>{let bal=capital;for(let i=0;i<m;i++)bal*=monthlyMultiplier;return bal;};
+
+  const months_arr=Array.from({length:months},(_,i)=>({label:`M${i+1}`,val:getCapitalAt(i+1)}));
+  const finalCapital=getCapitalAt(months);
+  const profit=finalCapital-capital;
+  const growthX=Math.round(finalCapital/capital);
+  const maxVal=Math.max(...months_arr.map(m=>m.val));
+
+  const fmtCurrency=(n)=>{
+    if(n>=1000000000)return`€${(n/1000000000).toFixed(2)}B`;
+    if(n>=1000000)return`€${(n/1000000).toFixed(2)}M`;
+    if(n>=1000)return`€${Math.round(n).toLocaleString('pt-PT')}`;
+    return`€${n.toFixed(0)}`;
+  };
+  const fmtMultiplier=(x)=>{
+    if(x>=1000000)return`${(x/1000000).toFixed(1)}M×`;
+    if(x>=1000)return`${(x/1000).toFixed(1)}k×`;
+    return`${x}×`;
+  };
+
+  const controls=[
+    {label:'Capital Alocado',display:`€${capital.toLocaleString('pt-PT')}`,min:100,max:50000,step:100,state:capital,set:setCapital,minLabel:'€100',maxLabel:'€50k'},
+    {label:'Operações / Semana',display:ops,min:10,max:50,step:1,state:ops,set:setOps,minLabel:'10',maxLabel:'50'},
+    {label:'Horizonte (meses)',display:`${months} meses`,min:1,max:24,step:1,state:months,set:setMonths,minLabel:'1',maxLabel:'24'},
+  ];
+
+  return(
+    <div style={{borderRadius:20,padding:'clamp(24px,4vw,40px)',background:'linear-gradient(135deg,rgba(201,168,76,.04) 0%,rgba(50,40,10,.05) 100%)',border:'1px solid rgba(201,168,76,.18)',boxShadow:'0 0 60px rgba(201,168,76,.07),inset 0 0 60px rgba(201,168,76,.02)',position:'relative',overflow:'hidden'}}>
+      <div style={{position:'absolute',left:0,right:0,height:1,background:'linear-gradient(90deg,transparent,rgba(201,168,76,.4),transparent)',animation:'scanline 4s linear infinite',pointerEvents:'none'}}/>
+      {[{top:0,left:0,borderTop:'2px solid rgba(201,168,76,.4)',borderLeft:'2px solid rgba(201,168,76,.4)',borderRadius:'20px 0 0 0'},{top:0,right:0,borderTop:'2px solid rgba(201,168,76,.4)',borderRight:'2px solid rgba(201,168,76,.4)',borderRadius:'0 20px 0 0'},{bottom:0,left:0,borderBottom:'2px solid rgba(201,168,76,.4)',borderLeft:'2px solid rgba(201,168,76,.4)',borderRadius:'0 0 0 20px'},{bottom:0,right:0,borderBottom:'2px solid rgba(201,168,76,.4)',borderRight:'2px solid rgba(201,168,76,.4)',borderRadius:'0 0 20px 0'}].map((s,i)=><div key={i} style={{position:'absolute',width:24,height:24,...s}}/>)}
+      <div style={{display:'flex',alignItems:'center',gap:10,marginBottom:32}}>
+        <div style={{width:8,height:8,borderRadius:'50%',background:'#C9A84C',boxShadow:'0 0 12px rgba(201,168,76,.4)',animation:'blink 2s infinite'}}/>
+        <span style={{fontSize:11,fontWeight:700,color:'#C9A84C',letterSpacing:'.14em',textTransform:'uppercase'}}>Simulador de Projeção · Motor Ativo</span>
+      </div>
+      <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(200px,1fr))',gap:28,marginBottom:36}}>
+        {controls.map(ctrl=>(
+          <div key={ctrl.label}>
+            <div style={{display:'flex',justifyContent:'space-between',marginBottom:10}}>
+              <span style={{fontSize:11,color:T.textSub,letterSpacing:'.06em',textTransform:'uppercase'}}>{ctrl.label}</span>
+              <span style={{fontSize:13,fontWeight:700,color:'#C9A84C'}}>{ctrl.display}</span>
+            </div>
+            <input type="range" min={ctrl.min} max={ctrl.max} step={ctrl.step} value={ctrl.state} onChange={e=>ctrl.set(Number(e.target.value))}/>
+            <div style={{display:'flex',justifyContent:'space-between',marginTop:5}}>
+              <span style={{fontSize:10,color:T.textMuted}}>{ctrl.minLabel}</span>
+              <span style={{fontSize:10,color:T.textMuted}}>{ctrl.maxLabel}</span>
+            </div>
+          </div>
+        ))}
+      </div>
+      <div style={{marginBottom:28}}>
+        <div style={{display:'flex',alignItems:'flex-end',gap:months>12?3:8,height:110}}>
+          {months_arr.map((m,i)=>{
+            const hPct=(m.val/maxVal)*96;
+            return(
+              <div key={i} style={{flex:1,display:'flex',flexDirection:'column',alignItems:'center',gap:4}}>
+                <div style={{width:'100%',height:`${hPct}px`,minHeight:3,borderRadius:'4px 4px 0 0',background:'linear-gradient(180deg,#C9A84C,#8B6914)',boxShadow:'0 -4px 24px rgba(201,168,76,.45),0 0 12px rgba(201,168,76,.25)',transition:'height .5s cubic-bezier(.34,1.56,.64,1)',position:'relative',overflow:'hidden'}}>
+                  <div style={{position:'absolute',top:0,left:0,right:0,height:'100%',background:'linear-gradient(180deg,rgba(255,255,255,.15) 0%,transparent 50%)',borderRadius:'4px 4px 0 0'}}/>
+                </div>
+                {months<=12&&<span style={{fontSize:9,color:T.textMuted,letterSpacing:'.04em'}}>{m.label}</span>}
+              </div>
+            );
+          })}
+        </div>
+        <div style={{height:1,background:'linear-gradient(90deg,transparent,rgba(201,168,76,.3),transparent)'}}/>
+      </div>
+      <div style={{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:12,marginBottom:20}}>
+        {[
+          {label:'Capital Final',val:fmtCurrency(finalCapital)},
+          {label:'Lucro Acumulado',val:fmtCurrency(profit)},
+          {label:'Multiplicador',val:fmtMultiplier(growthX)},
+          {label:'Retorno / Mês',val:`+${monthlyReturnPct}%`},
+        ].map(r=>(
+          <div key={r.label} style={{textAlign:'center',padding:'14px 8px',background:'rgba(201,168,76,.04)',border:'1px solid rgba(201,168,76,.1)',borderRadius:10}}>
+            <div style={{fontSize:10,color:T.textSub,letterSpacing:'.06em',marginBottom:6,textTransform:'uppercase'}}>{r.label}</div>
+            <div style={{fontSize:'clamp(.9rem,2vw,1.15rem)',fontWeight:800,color:'#C9A84C',textShadow:'0 0 20px rgba(201,168,76,.4)'}}>{r.val}</div>
+          </div>
+        ))}
+      </div>
+      <div style={{padding:'12px 16px',background:'rgba(220,38,38,.05)',borderRadius:8,border:'1px solid rgba(220,38,38,.12)'}}>
+        <p style={{fontSize:11,color:'rgba(220,38,38,.65)',lineHeight:1.65,letterSpacing:'.02em'}}>
+          * Projeção Day Trade Institucional: ratio 1 Loss : 7 Gains | +4% por win | −1% por loss | ~120 operações/mês.
+          O crescimento exponencial reflete juros compostos em alta frequência. Desempenho passado não garante resultados futuros.
+        </p>
+      </div>
+    </div>
+  );
+};
+
+/* ── NAVBAR ── */
+const Navbar = ({scrolled}) => {
+  const links=[{label:'O Problema',href:'#inimigo'},{label:'A Solução',href:'#solucao'},{label:'Simulador',href:'#simulador'},{label:'Oferta Founder',href:'#oferta'},{label:'Acesso',href:'#contato'}];
+  return(
+    <nav style={{position:'fixed',top:0,left:0,right:0,zIndex:999,height:64,padding:'0 clamp(16px,4vw,48px)',display:'flex',alignItems:'center',justifyContent:'space-between',background:scrolled?'rgba(8,8,8,.95)':'transparent',borderBottom:scrolled?'1px solid rgba(201,168,76,.1)':'1px solid transparent',backdropFilter:scrolled?'blur(24px)':'none',transition:'all .4s ease',fontFamily:T.font}}>
+      <div style={{display:'flex',alignItems:'center',gap:10}}>
+        <div style={{width:30,height:30,background:'linear-gradient(135deg,#8B6914,#C9A84C)',borderRadius:7,display:'flex',alignItems:'center',justifyContent:'center',boxShadow:'0 0 20px rgba(201,168,76,.35)'}}>
+          <span style={{color:'#080808',fontSize:13,fontWeight:900}}>K</span>
+        </div>
+        <span style={{fontWeight:700,fontSize:15,letterSpacing:'.06em',color:T.text}}>KRONEX <span style={{color:'#C9A84C',textShadow:'0 0 16px rgba(201,168,76,.5)'}}>IA</span></span>
+      </div>
+      <div style={{display:'flex',gap:28}}>
+        {links.map(l=>(
+          <a key={l.label} href={l.href} style={{fontSize:12,fontWeight:500,letterSpacing:'.06em',color:T.textSub,transition:'color .2s',textTransform:'uppercase'}}
+            onMouseEnter={e=>{e.target.style.color='#C9A84C';e.target.style.textShadow='0 0 12px rgba(201,168,76,.5)';}}
+            onMouseLeave={e=>{e.target.style.color=T.textSub;e.target.style.textShadow='none';}}
+          >{l.label}</a>
+        ))}
+      </div>
+      <a href="#contato"><button className="btn-outline" style={{padding:'8px 22px',borderRadius:9,fontSize:12,letterSpacing:'.06em'}}>Acesso Founder</button></a>
+    </nav>
+  );
+};
+
+/* ── HERO ── */
+const Hero = () => (
+  <section style={{position:'relative',minHeight:'100vh',display:'flex',alignItems:'center',overflow:'hidden',fontFamily:T.font}}>
+    <NeuralCanvas/>
+    <div style={{position:'absolute',top:'38%',left:'50%',transform:'translate(-50%,-50%)',width:700,height:700,borderRadius:'50%',background:'radial-gradient(circle,rgba(201,168,76,.1) 0%,rgba(100,80,20,.06) 40%,transparent 70%)',pointerEvents:'none'}}/>
+    {[500,340].map((s,i)=><div key={i} style={{position:'absolute',top:'38%',left:'50%',transform:'translate(-50%,-50%)',width:s,height:s,borderRadius:'50%',border:`1px solid rgba(201,168,76,${0.06+i*.03})`,pointerEvents:'none'}}/>)}
+    <div style={{position:'relative',zIndex:2,maxWidth:1100,margin:'0 auto',padding:'120px clamp(20px,5vw,60px) 80px',textAlign:'center',fontFamily:T.font}}>
+      <div className="tag" style={{marginBottom:30,animation:'slide-up .8s ease'}}>
+        <span style={{width:6,height:6,borderRadius:'50%',background:'#C9A84C',display:'inline-block',boxShadow:'0 0 8px rgba(201,168,76,.8)',animation:'blink 1.5s infinite'}}/>
+        DOM INVESTITORE — Acesso Exclusivo Founder
+      </div>
+      <h1 className="h1" style={{marginBottom:28,animation:'slide-up .8s ease .15s both'}}>
+        <span style={{background:'linear-gradient(135deg,#E8E8E0 0%,#9a8a7a 55%,#C9A84C 100%)',WebkitBackgroundClip:'text',WebkitTextFillColor:'transparent',backgroundClip:'text'}}>Quando a máquina trabalha,<br/>a mente descansa.</span><br/>
+        <span style={{color:'#C9A84C',fontSize:'.72em',textShadow:'0 0 40px rgba(201,168,76,.3)',WebkitTextFillColor:'#C9A84C'}}>E um trader com a mente descansada é imbatível.</span>
+      </h1>
+      <p className="lead" style={{maxWidth:680,margin:'0 auto 44px',animation:'slide-up .8s ease .3s both'}}>
+        O KRONEX IA não substitui o seu estudo de M1. Ele financia-o.<br/>
+        A máquina extrai capital de forma fria e ininterrupta — criando a base financeira que separa o trader que opera com excelência do trader que opera com medo.
+      </p>
+      <div style={{display:'flex',gap:16,justifyContent:'center',flexWrap:'wrap',animation:'slide-up .8s ease .45s both'}}>
+        <a href="#oferta"><button className="btn-primary" style={{padding:'16px 38px',borderRadius:12,fontSize:14}}>Garantir Acesso Founder — €250/ano &nbsp;→</button></a>
+        <a href="#simulador"><button className="btn-outline" style={{padding:'16px 28px',borderRadius:12,fontSize:14}}>Ver a Matemática</button></a>
+      </div>
+      <div style={{display:'flex',gap:0,justifyContent:'center',marginTop:72,flexWrap:'wrap',animation:'slide-up .8s ease .6s both'}}>
+        {[{n:'87.5%',label:'Assertividade Histórica'},{n:'1:7',label:'Ratio Loss / Gain'},{n:'+405%',label:'Retorno / Mês'},{n:'24/7',label:'Automação Contínua'}].map((s,i)=>(
+          <div key={i} style={{padding:'20px 32px',borderRight:i<3?'1px solid rgba(201,168,76,.1)':'none',textAlign:'center'}}>
+            <div style={{fontSize:'clamp(1.4rem,3vw,2rem)',fontWeight:800,color:'#C9A84C',letterSpacing:'-.02em',textShadow:'0 0 20px rgba(201,168,76,.4)'}}>{s.n}</div>
+            <div style={{fontSize:10,color:T.textMuted,marginTop:4,letterSpacing:'.08em',textTransform:'uppercase'}}>{s.label}</div>
+          </div>
+        ))}
+      </div>
+    </div>
+    <div style={{position:'absolute',bottom:32,left:'50%',transform:'translateX(-50%)',animation:'float 2s infinite',opacity:.4}}>
+      <div style={{width:24,height:38,border:'1px solid rgba(201,168,76,.3)',borderRadius:12,display:'flex',justifyContent:'center',paddingTop:6}}>
+        <div style={{width:3,height:8,background:'#C9A84C',borderRadius:2,animation:'blink 1.5s infinite',boxShadow:'0 0 8px rgba(201,168,76,.6)'}}/>
+      </div>
+    </div>
+  </section>
+);
+
+/* ── O INIMIGO ── */
+const Inimigo = () => {
+  const [ref,visible]=useIntersection(.2);
+  const [active,setActive]=useState(null);
+  const pains=[
+    {icon:'🔪',title:'A Faca no Pescoço',desc:'Operar com despesas por cobrir transforma cada boleta numa decisão emocional. O trader já não executa a estratégia — executa o medo de não pagar a renda.',stat:'Causa nº1 de ruína'},
+    {icon:'🧠',title:'Colapso da Disciplina',desc:'O cérebro sob pressão financeira entra em modo de sobrevivência. O stop move. O alvo fecha cedo. A mesma estratégia que funciona em demo destrói a conta real.',stat:'78% das perdas evitáveis'},
+    {icon:'📉',title:'Consistência Impossível',desc:'Nenhum trader consegue manter frieza algorítmica operação após operação quando o resultado afeta diretamente a sua qualidade de vida. É biologia, não fraqueza.',stat:'0% de traders sustentam'},
+    {icon:'⚡',title:'O Ciclo Vicioso',desc:'Perda → pressão → overtrading → mais perda. Sem uma fonte de rendimento base, o trader está permanentemente dentro deste ciclo. A saída não é mais estudo. É estrutura.',stat:'95% ficam presos aqui'},
+  ];
+  return(
+    <section id="inimigo" style={{padding:'100px clamp(20px,5vw,60px)',maxWidth:1200,margin:'0 auto',fontFamily:T.font}}>
+      <div ref={ref} style={{opacity:visible?1:0,transform:visible?'none':'translateY(40px)',transition:'all .8s ease'}}>
+        <div style={{textAlign:'center',marginBottom:64}}>
+          <div className="section-label" style={{marginBottom:16}}>O Inimigo Real</div>
+          <h2 className="h2" style={{marginBottom:20}}>O mercado não destrói traders.<br/><span style={{color:'#ef4444',textShadow:'0 0 20px rgba(239,68,68,.3)'}}>A pressão financeira destrói traders.</span></h2>
+          <p className="lead" style={{maxWidth:620,margin:'0 auto'}}>Você já tem o conhecimento técnico. Você estuda The Strategy. O problema não é a estratégia — é a condição mental em que você a executa.</p>
+        </div>
+        <div style={{textAlign:'center',marginBottom:64}}>
+          <div className="glass" style={{display:'inline-block',padding:'32px 56px',borderRadius:20,border:'1px solid rgba(239,68,68,.2)',boxShadow:'0 0 40px rgba(239,68,68,.06)'}}>
+            <div style={{fontSize:'clamp(3rem,10vw,6rem)',fontWeight:900,color:'#ef4444',lineHeight:1,letterSpacing:'-.04em',textShadow:'0 0 40px rgba(239,68,68,.3)'}}>95<span style={{fontSize:'.5em'}}>%</span></div>
+            <div style={{fontSize:13,color:T.textSub,marginTop:10,letterSpacing:'.1em'}}>DOS TRADERS DE VAREJO ENCERRAM O ANO NO NEGATIVO</div>
+            <div style={{fontSize:11,color:T.textMuted,marginTop:6}}>A maioria não falha por falta de estratégia. Falha por operar sob pressão.</div>
+          </div>
+        </div>
+        <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(240px,1fr))',gap:16}}>
+          {pains.map((p,i)=>(
+            <div key={i} className="glass" style={{borderRadius:16,padding:'28px 24px',cursor:'pointer',borderColor:active===i?'rgba(239,68,68,.3)':T.border,transform:active===i?'translateY(-4px)':'none',boxShadow:active===i?'0 16px 40px rgba(239,68,68,.08)':'none',opacity:visible?1:0,transition:`all .35s ease ${i*.08}s`}}
+              onMouseEnter={()=>setActive(i)} onMouseLeave={()=>setActive(null)}>
+              <div style={{fontSize:28,marginBottom:14}}>{p.icon}</div>
+              <div style={{fontSize:13,fontWeight:700,color:T.text,marginBottom:8}}>{p.title}</div>
+              <div style={{fontSize:13,color:T.textSub,lineHeight:1.65,marginBottom:16}}>{p.desc}</div>
+              <div style={{fontSize:12,fontWeight:700,color:'#ef4444',letterSpacing:'.04em'}}>{p.stat}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+};
+
+/* ── A SOLUÇÃO ── */
+const Solution = () => {
+  const [ref,visible]=useIntersection(.15);
+  const [chartRef,chartVisible]=useIntersection(.3);
+  return(
+    <section id="solucao" style={{padding:'100px clamp(20px,5vw,60px)',maxWidth:1200,margin:'0 auto',fontFamily:T.font}}>
+      <div ref={ref} style={{opacity:visible?1:0,transform:visible?'none':'translateY(40px)',transition:'all .8s ease'}}>
+        <div style={{textAlign:'center',marginBottom:64}}>
+          <div className="section-label" style={{marginBottom:16}}>O Primeiro Funcionário de Elite</div>
+          <h2 className="h2" style={{marginBottom:20}}>O KRONEX não opera por você.<br/><span style={{color:'#C9A84C',textShadow:'0 0 24px rgba(201,168,76,.4)'}}>Opera para você.</span></h2>
+          <p className="lead" style={{maxWidth:660,margin:'0 auto'}}>Enquanto você aperfeiçoa a sua leitura do M1, o sistema extrai capital de forma fria e ininterrupta. Quando você senta à frente do gráfico, não está a tentar sobreviver. Está a tentar vencer. São estados mentais completamente diferentes — com resultados completamente diferentes.</p>
+        </div>
+        <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(200px,1fr))',gap:16,marginBottom:56}}>
+          <MetricCard label="Assertividade Histórica" value={87.5} suffix="%" active={visible} highlight/>
+          <MetricCard label="Alvos por Operação" value={4} prefix="Média " active={visible} sub="Gestão assimétrica de R/R por alvo"/>
+          <MetricCard label="Ratio Gain / Loss" value={7} suffix=":1" active={visible} sub="7 operações vencedoras por cada stop"/>
+          <MetricCard label="Risco Máx. por Trade" value={1} suffix="%" active={visible} sub="Trava hard-coded. Inviolável."/>
+        </div>
+        <div className="holo-panel" style={{borderRadius:20,padding:'clamp(24px,4vw,48px)'}}>
+          <div style={{marginBottom:32}}>
+            <div className="section-label" style={{marginBottom:10}}>Execução Autónoma — Condução Barra a Barra</div>
+            <h3 className="h3">Da entrada ao Alvo 4: <span style={{color:'#C9A84C'}}>zero intervenção humana.</span></h3>
+          </div>
+          <div ref={chartRef}><TradeChart active={chartVisible}/></div>
+          <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(180px,1fr))',gap:16,marginTop:32}}>
+            {[
+              {step:'01',title:'Entrada Precisa',desc:'Algoritmo identifica zona de liquidez e aciona entrada com confirmação multi-timeframe.'},
+              {step:'02',title:'Alvo 1 → Parcial',desc:'Realização parcial confirma a tese. Lucro imediato assegurado.'},
+              {step:'03',title:'Breakeven Auto',desc:'Stop movido para a entrada. Operação passa a risco zero automaticamente.'},
+              {step:'04',title:'Trailing Stop',desc:'IA conduz a posição rastreando liquidez até o Alvo 4, maximizando o R.'}
+            ].map((s,i)=>(
+              <div key={i} style={{padding:'20px',borderRadius:12,background:'rgba(201,168,76,.03)',border:'1px solid rgba(201,168,76,.08)',opacity:chartVisible?1:0,transform:chartVisible?'none':'translateY(20px)',transition:`all .5s ease ${i*.15+.5}s`}}>
+                <div style={{fontSize:10,fontWeight:800,color:'#C9A84C',letterSpacing:'.14em',marginBottom:8}}>PASSO {s.step}</div>
+                <div style={{fontSize:13,fontWeight:700,color:T.text,marginBottom:6}}>{s.title}</div>
+                <div style={{fontSize:12,color:T.textSub,lineHeight:1.65}}>{s.desc}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+        <div style={{marginTop:24,padding:'14px 20px',borderRadius:10,border:`1px solid ${T.border}`,background:'rgba(255,255,255,.01)'}}>
+          <p style={{fontSize:11,color:T.textMuted,letterSpacing:'.02em',lineHeight:1.7}}><strong style={{color:T.textSub}}>Aviso Legal:</strong> Desempenho histórico não garante resultados futuros. Mercados financeiros envolvem risco. Toda decisão de investimento é de responsabilidade exclusiva do investidor.</p>
+        </div>
+      </div>
+    </section>
+  );
+};
+
+/* ── TECHNOLOGY ── */
+const Technology = () => {
+  const [ref,visible]=useIntersection(.15);
+  const pillars=[
+    {icon:'🔬',title:'Análise de Performance',desc:'O sistema audita cada operação — drawdown, win rate por sessão, eficiência de entrada — e identifica padrões de degradação antes de afetar resultados.'},
+    {icon:'♻️',title:'Refatoração Autónoma',desc:'Quando um padrão de mercado muda, o motor refatora a sua própria lógica, testa em backtesting acelerado e faz deploy da versão otimizada.'},
+    {icon:'📡',title:'Integração Claude Code',desc:'O Claude Code atua como arquiteto de IA — interpretando dados brutos de performance, gerando código de otimização e supervisionando a evolução.'},
+    {icon:'🌐',title:'Aprendizado Contínuo',desc:'O sistema absorve dados de múltiplos mercados e condições macro, construindo uma biblioteca proprietária de padrões que se expande 24/7.'},
+  ];
+  return(
+    <section id="tecnologia" style={{padding:'100px clamp(20px,5vw,60px)',maxWidth:1200,margin:'0 auto',fontFamily:T.font}}>
+      <div ref={ref} style={{opacity:visible?1:0,transform:visible?'none':'translateY(40px)',transition:'all .8s ease'}}>
+        <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(320px,1fr))',gap:60,alignItems:'center'}}>
+          <div>
+            <div className="section-label" style={{marginBottom:16}}>Inteligência Evolutiva</div>
+            <h2 className="h2" style={{marginBottom:24}}>A primeira geração do KRONEX<br/>não é um produto.<br/><span style={{color:'#C9A84C',textShadow:'0 0 24px rgba(201,168,76,.4)'}}>É um organismo tecnológico.</span></h2>
+            <p className="lead" style={{marginBottom:32}}>Enquanto o mercado dorme, o KRONEX IA analisa a sua própria performance, refatora o código e otimiza estratégias autonomamente — sem nenhum engenheiro humano no loop.</p>
+            <div style={{display:'flex',flexDirection:'column',gap:14}}>
+              {['Análise de padrões históricos em milissegundos','Backtesting em tempo real com dados tick-by-tick','Deploy automático de versões otimizadas','Circuit breakers de IA para controle de drawdown'].map((f,i)=>(
+                <div key={i} style={{display:'flex',alignItems:'center',gap:12,opacity:visible?1:0,transition:`opacity .5s ease ${i*.1+.3}s`}}>
+                  <div style={{width:20,height:20,borderRadius:'50%',background:'rgba(201,168,76,.08)',border:'1px solid rgba(201,168,76,.4)',display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0,boxShadow:'0 0 8px rgba(201,168,76,.2)'}}>
+                    <span style={{color:'#C9A84C',fontSize:10,fontWeight:700}}>✓</span>
+                  </div>
+                  <span style={{fontSize:14,color:T.textSub}}>{f}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+          <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:14}}>
+            {pillars.map((p,i)=>(
+              <div key={i} className="glass" style={{borderRadius:16,padding:'22px 18px',opacity:visible?1:0,transform:visible?'none':'scale(.95)',transition:`all .5s ease ${i*.1+.2}s`}}>
+                <div style={{fontSize:22,marginBottom:12}}>{p.icon}</div>
+                <div style={{fontSize:13,fontWeight:700,color:T.text,marginBottom:7}}>{p.title}</div>
+                <div style={{fontSize:12,color:T.textSub,lineHeight:1.65}}>{p.desc}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+        <div style={{marginTop:56,padding:'36px',borderRadius:20,background:'linear-gradient(135deg,rgba(201,168,76,.06) 0%,rgba(8,8,8,.8) 100%)',border:'1px solid rgba(201,168,76,.2)',boxShadow:'0 0 60px rgba(201,168,76,.06)',display:'flex',gap:36,alignItems:'flex-start',flexWrap:'wrap'}}>
+          <div style={{flex:'1 1 300px'}}>
+            <div style={{display:'flex',alignItems:'center',gap:10,marginBottom:18}}>
+              <div style={{padding:'6px 14px',borderRadius:8,background:'rgba(201,168,76,.08)',border:'1px solid rgba(201,168,76,.25)',fontSize:10,fontWeight:700,color:'#C9A84C',letterSpacing:'.1em'}}>◈ POWERED BY CLAUDE CODE</div>
+            </div>
+            <h3 className="h3" style={{marginBottom:14}}>IA que escreve, testa e melhora<br/>o seu próprio código algorítmico.</h3>
+            <p style={{fontSize:14,color:T.textSub,lineHeight:1.75}}>A arquitetura do KRONEX integra o Claude Code como motor de meta-aprendizado: lê os logs de operações reais, gera hipóteses de melhoria, escreve e valida otimizações — tudo de forma autónoma e completamente auditável.</p>
+          </div>
+          <div style={{flex:'1 1 280px'}}>
+            <div style={{background:'rgba(0,0,0,.8)',borderRadius:12,border:'1px solid rgba(201,168,76,.12)',overflow:'hidden',animation:'flicker 8s infinite'}}>
+              <div style={{padding:'10px 16px',borderBottom:'1px solid rgba(201,168,76,.1)',display:'flex',gap:6,alignItems:'center'}}>
+                {['#ff5f57','#ffbd2e','#28c840'].map(c=><div key={c} style={{width:9,height:9,borderRadius:'50%',background:c}}/>)}
+                <span style={{fontSize:10,color:T.textMuted,marginLeft:8,fontFamily:'monospace'}}>kronex-optimizer v1.0 · live</span>
+                <div style={{marginLeft:'auto',width:6,height:6,borderRadius:'50%',background:'#C9A84C',boxShadow:'0 0 8px rgba(201,168,76,.8)',animation:'blink 1.5s infinite'}}/>
+              </div>
+              <div style={{padding:'18px',fontFamily:"'Fira Code','Courier New',monospace",fontSize:11,lineHeight:2.1,color:T.textSub}}>
+                <div><span style={{color:'#C9A84C'}}>$</span> kronex analyze --last 500 trades</div>
+                <div style={{color:T.textMuted}}>→ Win rate: 87.5% | Ratio: 7:1</div>
+                <div style={{color:T.textMuted}}>→ Risco máx: 1% | +405%/mês</div>
+                <div><span style={{color:'#C9A84C'}}>$</span> kronex optimize --auto-refactor</div>
+                <div style={{color:'#f59e0b'}}>→ Analisando padrões de exit...</div>
+                <div style={{color:'#C9A84C'}}>✓ Refactor aplicado. Motor v1.1</div>
+                <div><span style={{color:'rgba(201,168,76,.5)',animation:'blink 1s infinite'}}>█</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+};
+
+/* ── SIMULATOR SECTION ── */
+const SimulatorSection = () => {
+  const [ref,visible]=useIntersection(.1);
+  return(
+    <section id="simulador" style={{padding:'100px clamp(20px,5vw,60px)',maxWidth:1200,margin:'0 auto',fontFamily:T.font}}>
+      <div ref={ref} style={{opacity:visible?1:0,transform:visible?'none':'translateY(40px)',transition:'all .8s ease'}}>
+        <div style={{textAlign:'center',marginBottom:48}}>
+          <div className="section-label" style={{marginBottom:16}}>A Matemática do Hedge Emocional</div>
+          <h2 className="h2" style={{marginBottom:20}}>Simule quanto tempo leva<br/><span style={{color:'#C9A84C',textShadow:'0 0 24px rgba(201,168,76,.4)'}}>para a máquina criar a sua base.</span></h2>
+          <p className="lead" style={{maxWidth:580,margin:'0 auto'}}>Defina o capital que pretende alocar no KRONEX e veja quando ele começa a gerar o rendimento base que elimina a pressão das suas operações manuais. Este é o momento em que o trader deixa de sobreviver e começa a construir.</p>
+        </div>
+        <Simulator/>
+        <div style={{marginTop:40,padding:'24px 32px',borderRadius:16,background:'rgba(201,168,76,.04)',border:'1px solid rgba(201,168,76,.12)',display:'flex',gap:20,alignItems:'center',flexWrap:'wrap'}}>
+          <div style={{fontSize:24,opacity:.8}}>💡</div>
+          <p style={{fontSize:13,color:T.textSub,lineHeight:1.75,flex:1}}>
+            <strong style={{color:T.text}}>O objetivo do KRONEX não é enriquecer ao primeiro mês.</strong> É criar uma renda base consistente que elimine a pressão financeira sobre as suas operações manuais. Quando a máquina cobre os seus custos fixos, você opera com uma mente diferente.
+          </p>
+        </div>
+      </div>
+    </section>
+  );
+};
+
+/* ── OFERTA FOUNDER ── */
+const OfertaFounder = () => {
+  const [ref,visible]=useIntersection(.15);
+  return(
+    <section id="oferta" style={{padding:'100px clamp(20px,5vw,60px)',maxWidth:1200,margin:'0 auto',fontFamily:T.font}}>
+      <div ref={ref} style={{opacity:visible?1:0,transform:visible?'none':'translateY(40px)',transition:'all .8s ease'}}>
+        <div style={{textAlign:'center',marginBottom:56}}>
+          <div className="section-label" style={{marginBottom:16}}>Acesso Exclusivo — DOM INVESTITORE</div>
+          <h2 className="h2" style={{marginBottom:20}}>Não é desconto.<br/><span style={{color:'#C9A84C',textShadow:'0 0 24px rgba(201,168,76,.4)'}}>É subsídio para sócios.</span></h2>
+          <p className="lead" style={{maxWidth:640,margin:'0 auto'}}>Quando o KRONEX for disponibilizado ao mercado público — previsto para Q1 2027 — a licença comercial será entre <strong style={{color:T.text}}>€1.500 e €2.000 por ano</strong>. Os alunos ativos do DOM INVESTITORE entram agora como Sócios Founder. Este preço não será reoferecido após o encerramento desta fase.</p>
+        </div>
+        <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(300px,1fr))',gap:24,marginBottom:48}}>
+          {/* Mercado Público – âncora de preço */}
+          <div className="glass" style={{borderRadius:20,padding:'36px 32px',position:'relative',overflow:'hidden',opacity:.55,filter:'grayscale(30%)'}}>
+            <div style={{position:'absolute',top:16,right:16,padding:'4px 12px',borderRadius:100,background:'rgba(255,255,255,.06)',border:'1px solid rgba(255,255,255,.1)',fontSize:9,fontWeight:700,color:'rgba(255,255,255,.3)',letterSpacing:'.1em'}}>MERCADO PÚBLICO · Q1 2027</div>
+            <div style={{fontSize:11,fontWeight:700,color:'rgba(255,255,255,.3)',letterSpacing:'.12em',textTransform:'uppercase',marginBottom:20}}>Licença Comercial Pública</div>
+            <div style={{display:'flex',alignItems:'baseline',gap:8,marginBottom:8}}>
+              <span style={{fontSize:'clamp(2.2rem,5vw,3.2rem)',fontWeight:900,color:'rgba(255,255,255,.2)',letterSpacing:'-.04em',textDecoration:'line-through',textDecorationColor:'rgba(255,255,255,.15)'}}>€1.500</span>
+              <span style={{fontSize:14,color:'rgba(255,255,255,.2)'}}>— €2.000 / ano</span>
+            </div>
+            <div style={{fontSize:11,color:'rgba(255,255,255,.18)',marginBottom:28}}>Preço de tabela para o mercado aberto</div>
+            {['Licença de uso comercial','Suporte técnico','Painel de performance','Relatórios mensais automatizados'].map((f,i)=>(
+              <div key={i} style={{display:'flex',gap:10,alignItems:'center',marginBottom:10}}>
+                <span style={{color:'rgba(255,255,255,.2)',fontSize:12}}>—</span>
+                <span style={{fontSize:13,color:'rgba(255,255,255,.2)'}}>{f}</span>
+              </div>
+            ))}
+            <div style={{marginTop:28,padding:'14px',borderRadius:10,background:'rgba(255,255,255,.04)',textAlign:'center',fontSize:12,color:'rgba(255,255,255,.2)',letterSpacing:'.06em'}}>Não disponível ao público até 2027</div>
+          </div>
+          {/* Sócio Founder */}
+          <div className="holo-panel" style={{borderRadius:20,padding:'36px 32px',position:'relative',overflow:'hidden',border:'1px solid rgba(201,168,76,.45)',boxShadow:'0 20px 80px rgba(201,168,76,.15)',transform:'translateY(-8px)'}}>
+            <div style={{position:'absolute',top:0,right:0,background:'linear-gradient(135deg,#8B6914,#C9A84C)',padding:'8px 18px',fontSize:9,fontWeight:800,letterSpacing:'.12em',borderRadius:'0 0 0 14px',color:'#080808'}}>EXCLUSIVO DOM INVESTITORE</div>
+            <div style={{fontSize:11,fontWeight:700,color:'#C9A84C',letterSpacing:'.12em',textTransform:'uppercase',marginBottom:20}}>Sócio Founder</div>
+            <div style={{display:'flex',alignItems:'baseline',gap:6,marginBottom:4}}>
+              <span style={{fontSize:'clamp(2.5rem,6vw,3.8rem)',fontWeight:900,color:T.text,letterSpacing:'-.04em',textShadow:'0 0 30px rgba(201,168,76,.15)'}}>€250</span>
+              <span style={{fontSize:14,color:T.textSub}}>/ ano</span>
+            </div>
+            <div style={{fontSize:12,color:'rgba(201,168,76,.7)',marginBottom:32,letterSpacing:'.04em'}}>Menos de €21 por mês. Uma despesa de almoço.</div>
+            <div style={{display:'flex',flexDirection:'column',gap:12,marginBottom:36}}>
+              {[
+                'Acesso irrestrito do titular ao motor KRONEX',
+                '3 acessos anuais para distribuição na sua rede',
+                'Retenção de 60% nas vendas que realizar',
+                'Apenas 40% de royalties ao ecossistema KRONEX',
+                'Participação societária crescente com o ecossistema',
+                'Convites para eventos exclusivos de LP',
+              ].map((f,i)=>(
+                <div key={i} style={{display:'flex',gap:10,alignItems:'flex-start'}}>
+                  <span style={{color:'#C9A84C',fontSize:13,marginTop:1,flexShrink:0}}>→</span>
+                  <span style={{fontSize:13,color:T.textSub,lineHeight:1.5}}>{f}</span>
+                </div>
+              ))}
+            </div>
+            <a href="#contato" style={{display:'block'}}><button className="btn-primary" style={{width:'100%',padding:'16px',borderRadius:10,fontSize:14,letterSpacing:'.04em'}}>Garantir Acesso Founder — €250/ano →</button></a>
+          </div>
+        </div>
+        <div className="glass" style={{padding:'32px',borderRadius:16}}>
+          <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(220px,1fr))',gap:32,alignItems:'center'}}>
+            <div>
+              <div style={{fontSize:10,fontWeight:700,color:'#C9A84C',letterSpacing:'.12em',marginBottom:10}}>ESTRUTURA SOCIETÁRIA</div>
+              <h3 className="h3" style={{marginBottom:10}}>O caixa flui para os sócios.</h3>
+              <p style={{fontSize:13,color:T.textSub,lineHeight:1.75}}>O Sócio Founder retém a maior parte das vendas que realizar dentro da sua rede. O repasse ao ecossistema KRONEX é mínimo, fixo e previsível. Você constrói o seu negócio — nós fornecemos a infraestrutura.</p>
+            </div>
+            <div style={{display:'flex',gap:20,justifyContent:'center',flexWrap:'wrap'}}>
+              <div style={{textAlign:'center',padding:'24px 36px',borderRadius:16,background:'rgba(201,168,76,.06)',border:'1px solid rgba(201,168,76,.2)',boxShadow:'0 0 30px rgba(201,168,76,.06)'}}>
+                <div style={{fontSize:'3rem',fontWeight:900,color:'#C9A84C',lineHeight:1,textShadow:'0 0 30px rgba(201,168,76,.4)'}}>60%</div>
+                <div style={{fontSize:10,color:T.textSub,marginTop:8,letterSpacing:'.08em'}}>SÓCIO RETÉM</div>
+              </div>
+              <div style={{textAlign:'center',padding:'24px 36px',borderRadius:16,background:'rgba(255,255,255,.02)',border:`1px solid ${T.border}`}}>
+                <div style={{fontSize:'3rem',fontWeight:900,color:T.textSub,lineHeight:1}}>40%</div>
+                <div style={{fontSize:10,color:T.textMuted,marginTop:8,letterSpacing:'.08em'}}>ROYALTIES KRONEX</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+};
+
+/* ── GARANTIA ── */
+const Garantia = () => {
+  const [ref,visible]=useIntersection(.15);
+  return(
+    <section style={{padding:'80px clamp(20px,5vw,60px)',maxWidth:900,margin:'0 auto',fontFamily:T.font}}>
+      <div ref={ref} style={{opacity:visible?1:0,transform:visible?'none':'translateY(40px)',transition:'all .8s ease'}}>
+        <div className="holo-panel" style={{borderRadius:24,padding:'clamp(32px,5vw,64px)',textAlign:'center',position:'relative',overflow:'hidden',border:'1px solid rgba(201,168,76,.25)',boxShadow:'0 0 80px rgba(201,168,76,.08)'}}>
+          <div style={{position:'absolute',inset:0,backgroundImage:'radial-gradient(rgba(201,168,76,.04) 1px,transparent 1px)',backgroundSize:'32px 32px',pointerEvents:'none'}}/>
+          <div style={{position:'relative'}}>
+            <div style={{width:72,height:72,borderRadius:'50%',background:'linear-gradient(135deg,rgba(201,168,76,.12),rgba(201,168,76,.04))',border:'1px solid rgba(201,168,76,.3)',display:'flex',alignItems:'center',justifyContent:'center',margin:'0 auto 28px',boxShadow:'0 0 40px rgba(201,168,76,.15)',fontSize:32}}>🛡</div>
+            <div className="section-label" style={{marginBottom:16}}>Garantia Arquitetural</div>
+            <h2 className="h2" style={{marginBottom:28}}>O Escudo de <span style={{color:'#C9A84C',textShadow:'0 0 24px rgba(201,168,76,.4)'}}>1%</span></h2>
+            <p style={{fontSize:'clamp(.95rem,2vw,1.1rem)',color:T.textSub,lineHeight:1.9,maxWidth:640,margin:'0 auto 40px'}}>
+              Não fazemos promessas de retorno. Quem faz isso está a vender ilusão.<br/><br/>
+              O que garantimos é arquitetural: o código do KRONEX IA tem uma trava inviolável de{' '}
+              <strong style={{color:T.text}}>máximo 1% de risco por operação</strong> sobre o capital alocado.
+              Não é uma configuração. Não é uma preferência do utilizador. É uma limitação hard-coded que não pode ser removida, alterada ou contornada — nem por nós.
+            </p>
+            <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(200px,1fr))',gap:16,marginBottom:40,textAlign:'left'}}>
+              {[
+                {icon:'🔒',title:'Hard-Coded',desc:'Limitação inscrita diretamente no código fonte. Não existe painel, botão ou opção para remover.'},
+                {icon:'⚡',title:'Por Operação',desc:'O risco é calculado e aplicado individualmente em cada boleta executada pelo sistema.'},
+                {icon:'🧮',title:'Sobre o Capital Real',desc:'Calculado sobre o capital que você decidiu alocar — não sobre lucros, não sobre margem livre.'},
+              ].map((item,i)=>(
+                <div key={i} style={{padding:'22px',borderRadius:12,background:'rgba(201,168,76,.04)',border:'1px solid rgba(201,168,76,.1)'}}>
+                  <div style={{fontSize:24,marginBottom:10}}>{item.icon}</div>
+                  <div style={{fontSize:13,fontWeight:700,color:T.text,marginBottom:6}}>{item.title}</div>
+                  <div style={{fontSize:12,color:T.textSub,lineHeight:1.65}}>{item.desc}</div>
+                </div>
+              ))}
+            </div>
+            <p style={{fontSize:13,color:T.textMuted,lineHeight:1.8,maxWidth:560,margin:'0 auto',fontStyle:'italic'}}>
+              Isto não é uma garantia de lucro. É uma garantia de disciplina — que é, na prática, o que destrói 95% das contas de traders que <em>sabem</em> o que estão a fazer.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+};
+
+/* ── ROADMAP ── */
+const Roadmap = () => {
+  const [ref,visible]=useIntersection(.1);
+  const [activeNode,setActiveNode]=useState(0);
+  const milestones=[
+    {date:'AGO 2026',title:'Lançamento Oficial',desc:'Motor algorítmico em produção. Primeiros 50 Sócios Founder ativados. Painel de performance ao vivo. Início do tracking de assertividade em tempo real.',status:'live',metrics:['50 Sócios Founder','100% automático','Motor v1.0']},
+    {date:'SET 2026',title:'Integração IA Avançada',desc:'Refinamento preditivo barra a barra com modelos de segunda geração. Claude Code integrado ao loop de otimização. Win rate target: 90%+.',status:'next',metrics:['Claude Code live','Auto-refactor ativo','Target 90%']},
+    {date:'OUT 2026',title:'Expansão de Ativos',desc:'Multi-asset screening otimizado: Forex, Índices, Cripto e Commodities. Novos pares analisados em paralelo com latência unificada.',status:'future',metrics:['Forex + Cripto','+6 ativos','Multi-screen']},
+    {date:'NOV 2026',title:'Escalabilidade de Parceiros',desc:'Painel avançado de royalties automatizados. Dashboard de sócios com rastreamento de receita em tempo real. Meta: 200 Sócios Founder ativos.',status:'future',metrics:['200 sócios','Dashboard 2.0','Royalties auto']},
+  ];
+  const statusColor={live:'#C9A84C',next:'#f59e0b',future:T.textMuted};
+  const statusLabel={live:'AO VIVO',next:'PRÓXIMO',future:'PLANEJADO'};
+  return(
+    <section style={{padding:'100px clamp(20px,5vw,60px)',maxWidth:1200,margin:'0 auto',fontFamily:T.font}}>
+      <div ref={ref} style={{opacity:visible?1:0,transform:visible?'none':'translateY(40px)',transition:'all .8s ease'}}>
+        <div style={{textAlign:'center',marginBottom:64}}>
+          <div className="section-label" style={{marginBottom:16}}>Roadmap de Execução</div>
+          <h2 className="h2" style={{marginBottom:20}}>Velocidade de Day Trade.<br/><span style={{color:'#C9A84C',textShadow:'0 0 24px rgba(201,168,76,.4)'}}>Lançamentos mensais.</span></h2>
+          <p className="lead" style={{maxWidth:480,margin:'0 auto'}}>No mercado de Day Trade, velocidade é vantagem competitiva. Cada mês entregamos uma evolução concreta e mensurável.</p>
+        </div>
+        <div style={{position:'relative',marginBottom:48,padding:'0 20px'}}>
+          <div style={{height:2,background:'rgba(201,168,76,.1)',borderRadius:2,position:'relative'}}>
+            <div style={{height:'100%',width:`${(activeNode/(milestones.length-1))*100}%`,background:'linear-gradient(90deg,#C9A84C,rgba(201,168,76,.4))',borderRadius:2,transition:'width .6s ease',boxShadow:'0 0 12px rgba(201,168,76,.5)'}}/>
+          </div>
+          <div style={{position:'absolute',top:-5,left:0,right:0,display:'flex',justifyContent:'space-between',padding:'0 20px'}}>
+            {milestones.map((_,i)=>(
+              <div key={i} onClick={()=>setActiveNode(i)} style={{width:12,height:12,borderRadius:'50%',cursor:'pointer',background:i<=activeNode?'#C9A84C':T.bg,border:`2px solid ${i<=activeNode?'#C9A84C':'rgba(201,168,76,.2)'}`,boxShadow:i===activeNode?'0 0 20px rgba(201,168,76,.7)':i<activeNode?'0 0 8px rgba(201,168,76,.3)':'none',transition:'all .4s ease',position:'relative'}}>
+                {i===activeNode&&<div style={{position:'absolute',top:-2,left:-2,width:16,height:16,borderRadius:'50%',border:'1px solid rgba(201,168,76,.4)',animation:'node-ping 1.5s infinite'}}/>}
+              </div>
+            ))}
+          </div>
+        </div>
+        <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(240px,1fr))',gap:16}}>
+          {milestones.map((m,i)=>(
+            <div key={i} onClick={()=>setActiveNode(i)} style={{borderRadius:18,padding:'28px 24px',cursor:'pointer',background:activeNode===i?'linear-gradient(135deg,rgba(201,168,76,.08) 0%,rgba(50,40,10,.06) 100%)':T.bgCard,border:`1px solid ${activeNode===i?'rgba(201,168,76,.35)':T.border}`,boxShadow:activeNode===i?'0 0 40px rgba(201,168,76,.1),inset 0 0 20px rgba(201,168,76,.03)':'none',backdropFilter:'blur(24px)',transition:'all .4s ease',opacity:visible?1:0,transitionDelay:`${i*.1}s`,position:'relative',overflow:'hidden'}}>
+              <div style={{position:'absolute',top:0,left:0,width:40,height:40,borderTop:`2px solid ${statusColor[m.status]}`,borderLeft:`2px solid ${statusColor[m.status]}`,borderRadius:'18px 0 0 0',opacity:activeNode===i?.7:.3,transition:'opacity .4s'}}/>
+              <div style={{display:'flex',justifyContent:'space-between',alignItems:'flex-start',marginBottom:16}}>
+                <div>
+                  <div style={{fontSize:11,fontWeight:800,color:statusColor[m.status],letterSpacing:'.12em',marginBottom:4}}>{m.date}</div>
+                  <span style={{fontSize:9,padding:'2px 8px',borderRadius:100,background:`rgba(${m.status==='live'?'201,168,76':m.status==='next'?'245,158,11':'100,116,139'},.12)`,border:`1px solid ${statusColor[m.status]}30`,color:statusColor[m.status],fontWeight:700,letterSpacing:'.1em'}}>{statusLabel[m.status]}</span>
+                </div>
+                <div style={{fontSize:18,opacity:.6}}>{m.status==='live'?'⬛':m.status==='next'?'◧':'◻'}</div>
+              </div>
+              <div style={{fontSize:15,fontWeight:700,color:T.text,marginBottom:10,lineHeight:1.3}}>{m.title}</div>
+              <div style={{fontSize:12,color:T.textSub,lineHeight:1.7,marginBottom:18}}>{m.desc}</div>
+              <div style={{display:'flex',gap:6,flexWrap:'wrap'}}>
+                {m.metrics.map((met,j)=>(
+                  <span key={j} style={{fontSize:10,padding:'3px 8px',borderRadius:6,background:'rgba(201,168,76,.05)',border:'1px solid rgba(201,168,76,.12)',color:T.textSub,fontWeight:600,letterSpacing:'.04em'}}>{met}</span>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+        <div style={{textAlign:'center',marginTop:64,padding:'56px clamp(20px,6vw,80px)',borderRadius:24,background:'linear-gradient(135deg,rgba(201,168,76,.07) 0%,rgba(8,8,8,.6) 100%)',border:'1px solid rgba(201,168,76,.18)',boxShadow:'0 0 80px rgba(201,168,76,.05)',position:'relative',overflow:'hidden'}}>
+          <div style={{position:'absolute',inset:0,backgroundImage:'radial-gradient(rgba(201,168,76,.04) 1px,transparent 1px)',backgroundSize:'32px 32px',pointerEvents:'none'}}/>
+          <div style={{position:'relative',fontSize:'clamp(1.2rem,3vw,1.9rem)',fontWeight:700,lineHeight:1.5,color:T.text,maxWidth:700,margin:'0 auto'}}>
+            "Não estamos construindo apenas um robô. Estamos construindo{' '}
+            <span style={{color:'#C9A84C',textShadow:'0 0 24px rgba(201,168,76,.5)'}}>a infraestrutura de capital</span>{' '}
+            que permite ao trader operar com excelência."
+          </div>
+          <div style={{marginTop:22,fontSize:11,color:T.textMuted,letterSpacing:'.12em'}}>— KRONEX IA TEAM · 2026</div>
+        </div>
+      </div>
+    </section>
+  );
+};
+
+/* ── CONTACT ── */
+const Contact = () => {
+  const [ref,visible]=useIntersection(.15);
+  const [form,setForm]=useState({name:'',email:'',phone:'',message:''});
+  const [sent,setSent]=useState(false);
+  const update=k=>e=>setForm(f=>({...f,[k]:e.target.value}));
+  const submit=e=>{e.preventDefault();setSent(true);};
+  return(
+    <section id="contato" style={{padding:'100px clamp(20px,5vw,60px)',maxWidth:800,margin:'0 auto',fontFamily:T.font}}>
+      <div ref={ref} style={{opacity:visible?1:0,transform:visible?'none':'translateY(40px)',transition:'all .8s ease'}}>
+        <div style={{textAlign:'center',marginBottom:56}}>
+          <div className="section-label" style={{marginBottom:16}}>Ativar Acesso Founder</div>
+          <h2 className="h2" style={{marginBottom:20}}>Solicite o seu acesso.<br/><span style={{color:'#C9A84C',textShadow:'0 0 24px rgba(201,168,76,.4)'}}>Vagas limitadas ao núcleo atual.</span></h2>
+          <p className="lead" style={{maxWidth:500,margin:'0 auto'}}>Acesso restrito aos alunos verificados do DOM INVESTITORE. As vagas Founder são limitadas por design para preservar a exclusividade e a coesão do ecossistema.</p>
+        </div>
+        {sent?(
+          <div style={{textAlign:'center',padding:'56px',borderRadius:20,background:'rgba(201,168,76,.05)',border:'1px solid rgba(201,168,76,.2)',boxShadow:'0 0 40px rgba(201,168,76,.06)'}}>
+            <div style={{fontSize:42,color:'#C9A84C',textShadow:'0 0 30px rgba(201,168,76,.6)',marginBottom:20}}>◈</div>
+            <h3 className="h3" style={{marginBottom:12}}>Solicitação Recebida</h3>
+            <p style={{color:T.textSub,fontSize:14,lineHeight:1.75}}>A nossa equipa entrará em contacto em até 48h para confirmar o seu acesso Founder e enviar as instruções de ativação.</p>
+          </div>
+        ):(
+          <form onSubmit={submit}>
+            <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:32,marginBottom:32}}>
+              <div><label style={{fontSize:10,color:T.textMuted,letterSpacing:'.1em',display:'block',marginBottom:4}}>NOME COMPLETO</label><input type="text" placeholder="Seu nome" value={form.name} onChange={update('name')} required/></div>
+              <div><label style={{fontSize:10,color:T.textMuted,letterSpacing:'.1em',display:'block',marginBottom:4}}>EMAIL</label><input type="email" placeholder="seu@email.com" value={form.email} onChange={update('email')} required/></div>
+            </div>
+            <div style={{marginBottom:32}}><label style={{fontSize:10,color:T.textMuted,letterSpacing:'.1em',display:'block',marginBottom:4}}>WHATSAPP / TELEFONE</label><input type="tel" placeholder="+351 000 000 000" value={form.phone} onChange={update('phone')}/></div>
+            <div style={{marginBottom:48}}><label style={{fontSize:10,color:T.textMuted,letterSpacing:'.1em',display:'block',marginBottom:4}}>CONTEXTO (OPCIONAL)</label><textarea placeholder="Descreva o seu perfil como trader e o capital que pretende alocar inicialmente..." value={form.message} onChange={update('message')}/></div>
+            <div style={{textAlign:'center'}}>
+              <button type="submit" className="btn-primary" style={{padding:'18px 52px',borderRadius:12,fontSize:14,letterSpacing:'.05em'}}>Ativar Acesso Founder — €250/ano &nbsp;→</button>
+              <p style={{marginTop:16,fontSize:11,color:T.textMuted}}>Dados tratados com total confidencialidade. Exclusivo para alunos DOM INVESTITORE.</p>
+            </div>
+          </form>
+        )}
+      </div>
+    </section>
+  );
+};
+
+/* ── FOOTER ── */
+const Footer = () => (
+  <footer style={{borderTop:'1px solid rgba(201,168,76,.08)',padding:'40px clamp(20px,5vw,60px)',maxWidth:1200,margin:'0 auto',fontFamily:T.font}}>
+    <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',flexWrap:'wrap',gap:20}}>
+      <div style={{display:'flex',alignItems:'center',gap:10}}>
+        <div style={{width:26,height:26,background:'linear-gradient(135deg,#8B6914,#C9A84C)',borderRadius:6,display:'flex',alignItems:'center',justifyContent:'center',boxShadow:'0 0 12px rgba(201,168,76,.3)'}}>
+          <span style={{color:'#080808',fontSize:11,fontWeight:900}}>K</span>
+        </div>
+        <span style={{fontWeight:700,fontSize:14,letterSpacing:'.06em',color:T.text}}>KRONEX <span style={{color:'#C9A84C'}}>IA</span></span>
+      </div>
+      <div style={{fontSize:11,color:T.textMuted,textAlign:'center',lineHeight:1.9}}>
+        © 2026 Kronex IA. Todos os direitos reservados.<br/>
+        Aviso: instrumentos financeiros envolvem riscos. Desempenho passado não garante resultados futuros.
+      </div>
+      <div style={{fontSize:11,color:T.textMuted}}>Página Restrita · DOM INVESTITORE</div>
+    </div>
+  </footer>
+);
+
+/* ── ROOT ── */
+function KronexPresentation() {
+  const [scrolled,setScrolled]=useState(false);
+  useEffect(()=>{
+    const fn=()=>setScrolled(window.scrollY>60);
+    window.addEventListener('scroll',fn,{passive:true});
+    return()=>window.removeEventListener('scroll',fn);
+  },[]);
+  return(
+    <div style={{background:T.bg,minHeight:'100vh',fontFamily:T.font}}>
+      <GlobalStyles/>
+      <Navbar scrolled={scrolled}/>
+      <Hero/>
+      <Inimigo/>
+      <Solution/>
+      <Technology/>
+      <SimulatorSection/>
+      <OfertaFounder/>
+      <Garantia/>
+      <Roadmap/>
+      <Contact/>
+      <Footer/>
+    </div>
+  );
+}
+
+const root = ReactDOM.createRoot(document.getElementById('root'));
+root.render(<KronexPresentation/>);
+</script>
+</body>
+</html>
