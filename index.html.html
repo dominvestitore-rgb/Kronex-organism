@@ -3,14 +3,14 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>KRONEX IA — Terminal Privado · DOM INVESTITORE</title>
+  <title>KRONEX COGNITIVE — Terminal Privado · DOM INVESTITORE</title>
   <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
   <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
   <style>
     *{box-sizing:border-box;margin:0;padding:0;}
     html{scroll-behavior:smooth;--mx:0;--my:0;}
-    body{background:#040404;overflow-x:hidden;cursor:none;}
+    body{background:#040404;overflow-x:hidden;cursor:none;color:#E8E8E0;}
     ::-webkit-scrollbar{width:2px;}
     ::-webkit-scrollbar-track{background:#040404;}
     ::-webkit-scrollbar-thumb{background:linear-gradient(180deg,#8B6914,#C9A84C,#FFD060);border-radius:2px;}
@@ -24,7 +24,7 @@
 <div id="root"></div>
 
 <script type="text/babel" data-presets="react">
-const { useState, useEffect, useRef, useMemo } = React;
+const { useState, useEffect, useRef } = React;
 
 /* ─────────────────────────────────────────
    CURSOR
@@ -37,7 +37,7 @@ const initCursor = () => {
   const onMove = e => {
     cx = e.clientX; cy = e.clientY;
     dot.style.left = cx + 'px'; dot.style.top = cy + 'px';
-    document.documentElement.style.setProperty('--mx', ((cx / window.innerWidth)  - .5) * 2);
+    document.documentElement.style.setProperty('--mx', ((cx / window.innerWidth) - .5) * 2);
     document.documentElement.style.setProperty('--my', ((cy / window.innerHeight) - .5) * 2);
   };
   const tick = () => {
@@ -50,25 +50,30 @@ const initCursor = () => {
 };
 
 /* ─────────────────────────────────────────
-   DESIGN TOKENS
+   DESIGN TOKENS — HIGH CONTRAST CORRECTED
+   text    #E8E8E0  White Premium     — títulos, corpo principal
+   sub     #B8B8B2  Prata Acetinado   — texto secundário, leads, descrições
+   muted   #9A9A95  Prata Cinza       — labels mono, metadados HUD
+   gold    #C9A84C  Ouro Champagne    — destaque principal
+   bright  #FFD060  Ouro Vibrante     — métricas, números, CTAs
 ───────────────────────────────────────── */
 const T = {
-  bg       : '#040404',
-  bgCard   : 'rgba(201,168,76,0.03)',
-  border   : 'rgba(201,168,76,0.1)',
-  borderHi : 'rgba(201,168,76,0.4)',
-  accent   : '#8B6914',
-  gold     : '#C9A84C',
-  bright   : '#FFD060',
-  dim      : '#A8873A',
-  glow     : 'rgba(201,168,76,0.28)',
-  text     : '#E8E8E0',
-  sub      : '#9a8a7a',
-  muted    : '#4a3d30',
-  red      : '#dc2626',
-  amber    : '#f59e0b',
-  font     : "'Inter','SF Pro Display',system-ui,-apple-system,sans-serif",
-  mono     : "'Fira Code','Courier New',monospace",
+  bg      : '#040404',
+  bgCard  : 'rgba(201,168,76,0.03)',
+  border  : 'rgba(201,168,76,0.12)',
+  borderHi: 'rgba(201,168,76,0.45)',
+  accent  : '#8B6914',
+  gold    : '#C9A84C',
+  bright  : '#FFD060',
+  dim     : '#A8873A',
+  glow    : 'rgba(201,168,76,0.28)',
+  text    : '#E8E8E0',   /* Branco Premium — máximo contraste */
+  sub     : '#B8B8B2',   /* Prata Acetinado — secundário legível */
+  muted   : '#9A9A95',   /* Prata Cinza — metadados/labels HUD */
+  red     : '#dc2626',
+  amber   : '#f59e0b',
+  font    : "'Inter','SF Pro Display',system-ui,-apple-system,sans-serif",
+  mono    : "'Fira Code','Courier New',monospace",
 };
 
 /* ─────────────────────────────────────────
@@ -84,19 +89,17 @@ const GlobalStyles = () => (
     @keyframes pulse-glow   { 0%,100%{box-shadow:0 0 20px rgba(201,168,76,.3),0 0 50px rgba(201,168,76,.12)} 50%{box-shadow:0 0 40px rgba(201,168,76,.65),0 0 100px rgba(201,168,76,.25)} }
     @keyframes border-cycle { 0%,100%{border-color:rgba(201,168,76,.18)} 50%{border-color:rgba(201,168,76,.65)} }
     @keyframes scan-sweep   { 0%{top:0;opacity:1} 88%{opacity:.9} 100%{top:100%;opacity:0} }
-    @keyframes scanline-h   { 0%{background-position:0 0} 100%{background-position:0 100%} }
     @keyframes rot-cw       { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
     @keyframes rot-ccw      { from{transform:rotate(0deg)} to{transform:rotate(-360deg)} }
     @keyframes quantum-float{ 0%,100%{transform:translateY(0) rotate(0deg)} 30%{transform:translateY(-9px) rotate(.3deg)} 65%{transform:translateY(-13px) rotate(-.2deg)} }
     @keyframes node-ping    { 0%{transform:scale(1);opacity:1} 100%{transform:scale(2.8);opacity:0} }
     @keyframes flicker      { 0%,97%,100%{opacity:1} 98%{opacity:.7} 99%{opacity:1} }
-    @keyframes grid-pulse   { 0%,100%{opacity:.07} 50%{opacity:.16} }
+    @keyframes grid-pulse   { 0%,100%{opacity:.08} 50%{opacity:.18} }
     @keyframes shimmer      { 0%{background-position:-400% 0} 100%{background-position:400% 0} }
     @keyframes number-flash { 0%,100%{color:#C9A84C;text-shadow:0 0 20px rgba(201,168,76,.4)} 50%{color:#FFD060;text-shadow:0 0 50px rgba(255,208,96,.85),0 0 90px rgba(255,208,96,.35)} }
     @keyframes glitch       { 0%,91%,100%{transform:translate(0);filter:none} 93%{transform:translate(-3px,1px);filter:hue-rotate(70deg) brightness(1.4)} 95%{transform:translate(3px,-1px);filter:hue-rotate(-70deg)} 97%{transform:translate(0)} }
-    @keyframes bar-grow     { from{transform:scaleY(0)} to{transform:scaleY(1)} }
-    @keyframes energy-ring  { 0%{transform:scale(.5);opacity:.9} 100%{transform:scale(3);opacity:0} }
     @keyframes type-cursor  { 0%,100%{opacity:1} 50%{opacity:0} }
+    @keyframes energy-ring  { 0%{transform:scale(.5);opacity:.9} 100%{transform:scale(3);opacity:0} }
 
     .btn-primary {
       background: linear-gradient(135deg,#6B4F0A 0%,#C9A84C 45%,#FFD060 100%);
@@ -121,47 +124,49 @@ const GlobalStyles = () => (
     .btn-outline:hover { border-color:#C9A84C; color:#FFD060; box-shadow:0 0 24px rgba(201,168,76,.3),inset 0 0 20px rgba(201,168,76,.06); }
 
     .glass {
-      background: rgba(201,168,76,.025); border: 1px solid rgba(201,168,76,.1);
+      background: rgba(201,168,76,.028); border: 1px solid rgba(201,168,76,.12);
       backdrop-filter: blur(28px); -webkit-backdrop-filter: blur(28px);
       transition: all .4s ease; position: relative;
     }
     .glass::before {
       content:''; position:absolute; inset:0; border-radius:inherit;
-      background: linear-gradient(135deg,rgba(201,168,76,.04) 0%,transparent 55%,rgba(201,168,76,.02) 100%);
+      background: linear-gradient(135deg,rgba(201,168,76,.05) 0%,transparent 55%,rgba(201,168,76,.02) 100%);
       pointer-events: none;
     }
-    .glass:hover { background: rgba(201,168,76,.05); border-color: rgba(201,168,76,.22); box-shadow: 0 0 30px rgba(201,168,76,.07); }
+    .glass:hover { background: rgba(201,168,76,.055); border-color: rgba(201,168,76,.25); box-shadow: 0 0 30px rgba(201,168,76,.08); }
 
     .holo-panel {
-      background: linear-gradient(135deg,rgba(201,168,76,.055) 0%,rgba(14,10,2,.97) 55%,rgba(201,168,76,.03) 100%);
-      border: 1px solid rgba(201,168,76,.2);
-      box-shadow: 0 0 60px rgba(201,168,76,.09),0 0 120px rgba(201,168,76,.04),inset 0 0 60px rgba(201,168,76,.03),inset 0 1px 0 rgba(201,168,76,.15);
+      background: linear-gradient(135deg,rgba(201,168,76,.06) 0%,rgba(14,10,2,.97) 55%,rgba(201,168,76,.035) 100%);
+      border: 1px solid rgba(201,168,76,.22);
+      box-shadow: 0 0 60px rgba(201,168,76,.1),0 0 120px rgba(201,168,76,.05),inset 0 0 60px rgba(201,168,76,.04),inset 0 1px 0 rgba(201,168,76,.18);
       backdrop-filter: blur(40px); -webkit-backdrop-filter: blur(40px);
     }
 
     .tag {
       display:inline-flex; align-items:center; gap:7px; padding:6px 18px;
-      border-radius:100px; background:rgba(201,168,76,.06); border:1px solid rgba(201,168,76,.3);
+      border-radius:100px; background:rgba(201,168,76,.07); border:1px solid rgba(201,168,76,.35);
       color:#C9A84C; font-size:10px; font-weight:700; letter-spacing:.14em; text-transform:uppercase;
-      animation: border-cycle 3s infinite; box-shadow: 0 0 22px rgba(201,168,76,.1);
+      animation: border-cycle 3s infinite; box-shadow: 0 0 22px rgba(201,168,76,.12);
     }
-    .section-label { font-size:10px; font-weight:800; letter-spacing:.22em; text-transform:uppercase; color:#C9A84C; text-shadow:0 0 22px rgba(201,168,76,.5); }
-    .h1 { font-size:clamp(2.3rem,6vw,4.6rem); font-weight:800; line-height:1.05; letter-spacing:-.03em; }
-    .h2 { font-size:clamp(1.7rem,4vw,2.9rem); font-weight:700; line-height:1.1; letter-spacing:-.02em; }
-    .h3 { font-size:clamp(1.05rem,2.5vw,1.5rem); font-weight:600; line-height:1.3; }
-    .lead{ font-size:clamp(.95rem,2vw,1.15rem); line-height:1.85; color:#9a8a7a; font-weight:400; }
+    .section-label {
+      font-size:10px; font-weight:800; letter-spacing:.22em; text-transform:uppercase;
+      color:#C9A84C; text-shadow:0 0 22px rgba(201,168,76,.5);
+    }
+    .h1  { font-size:clamp(2.3rem,6vw,4.6rem); font-weight:800; line-height:1.05; letter-spacing:-.03em; }
+    .h2  { font-size:clamp(1.7rem,4vw,2.9rem); font-weight:700; line-height:1.1;  letter-spacing:-.02em; }
+    .h3  { font-size:clamp(1.05rem,2.5vw,1.5rem); font-weight:600; line-height:1.3; }
+    .lead{ font-size:clamp(.95rem,2vw,1.15rem); line-height:1.88; color:#B8B8B2; font-weight:400; }
 
-    input[type=range] { -webkit-appearance:none; appearance:none; width:100%; height:1px; background:rgba(201,168,76,.12); border-radius:1px; outline:none; cursor:none; }
+    input[type=range] { -webkit-appearance:none; appearance:none; width:100%; height:1px; background:rgba(201,168,76,.15); border-radius:1px; outline:none; cursor:none; }
     input[type=range]::-webkit-slider-thumb { -webkit-appearance:none; width:14px; height:14px; border-radius:50%; background:radial-gradient(circle,#FFD060,#C9A84C); box-shadow:0 0 16px rgba(201,168,76,.65),0 0 32px rgba(201,168,76,.3); cursor:none; }
 
     .parallax-slow { transform:translate(calc(var(--mx)*-8px),calc(var(--my)*-8px)); }
     .parallax-mid  { transform:translate(calc(var(--mx)*-22px),calc(var(--my)*-22px)); }
-    .parallax-fast { transform:translate(calc(var(--mx)*-40px),calc(var(--my)*-40px)); }
 
-    .corner-tl { position:absolute; top:-1px; left:-1px;  width:18px; height:18px; border-top:2px solid rgba(201,168,76,.55); border-left:2px solid rgba(201,168,76,.55); }
-    .corner-tr { position:absolute; top:-1px; right:-1px; width:18px; height:18px; border-top:2px solid rgba(201,168,76,.55); border-right:2px solid rgba(201,168,76,.55); }
-    .corner-bl { position:absolute; bottom:-1px; left:-1px;  width:18px; height:18px; border-bottom:2px solid rgba(201,168,76,.55); border-left:2px solid rgba(201,168,76,.55); }
-    .corner-br { position:absolute; bottom:-1px; right:-1px; width:18px; height:18px; border-bottom:2px solid rgba(201,168,76,.55); border-right:2px solid rgba(201,168,76,.55); }
+    .corner-tl { position:absolute; top:-1px; left:-1px;  width:18px; height:18px; border-top:2px solid rgba(201,168,76,.6); border-left:2px solid rgba(201,168,76,.6); }
+    .corner-tr { position:absolute; top:-1px; right:-1px; width:18px; height:18px; border-top:2px solid rgba(201,168,76,.6); border-right:2px solid rgba(201,168,76,.6); }
+    .corner-bl { position:absolute; bottom:-1px; left:-1px;  width:18px; height:18px; border-bottom:2px solid rgba(201,168,76,.6); border-left:2px solid rgba(201,168,76,.6); }
+    .corner-br { position:absolute; bottom:-1px; right:-1px; width:18px; height:18px; border-bottom:2px solid rgba(201,168,76,.6); border-right:2px solid rgba(201,168,76,.6); }
 
     .holo-scan-line {
       position:absolute; left:0; right:0; height:1px; pointer-events:none; z-index:100;
@@ -173,12 +178,11 @@ const GlobalStyles = () => (
     .metric-flash { animation: number-flash 2.8s ease-in-out infinite; }
     .glitch-id    { animation: glitch 9s infinite; }
 
-    /* HUD fine grid */
     .hud-grid {
       position:absolute; inset:0; pointer-events:none;
       background-image:
-        linear-gradient(rgba(201,168,76,.04) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(201,168,76,.04) 1px, transparent 1px);
+        linear-gradient(rgba(201,168,76,.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(201,168,76,.05) 1px, transparent 1px);
       background-size: 40px 40px;
       animation: grid-pulse 5s infinite;
     }
@@ -200,12 +204,12 @@ const useIntersection = (threshold = 0.07) => {
 };
 
 /* ─────────────────────────────────────────
-   HOLO REVEAL — scan-line materialize
+   HOLO REVEAL
 ───────────────────────────────────────── */
 const HoloReveal = ({ children, delay = 0, threshold = 0.06 }) => {
   const ref = useRef(null);
   const [revealed, setRevealed] = useState(false);
-  const [scanning, setScanning]  = useState(false);
+  const [scanning, setScanning] = useState(false);
   useEffect(() => {
     const el = ref.current; if (!el) return;
     const obs = new IntersectionObserver(([e]) => {
@@ -234,34 +238,27 @@ const HoloReveal = ({ children, delay = 0, threshold = 0.06 }) => {
    DECRYPT TEXT — matrix character reveal
 ───────────────────────────────────────── */
 const DECODE_CHARS = '█▓▒░│┤╡╢╖╕╣║╗╝╜╛┐└┴┬├─┼╞╟╚╔╩╦╠═╬╧╤╥╙╘╒╓╫╪┘┌αβγδΩΨΦΣΠΔ01';
-
 const DecryptText = ({ text, delay = 0, style = {}, className = '' }) => {
-  const ref    = useRef(null);
-  const [phase, setPhase]     = useState('idle');  // idle → scramble → done
+  const ref   = useRef(null);
+  const [phase,   setPhase]   = useState('idle');
   const [display, setDisplay] = useState('');
-
   useEffect(() => {
     const el = ref.current; if (!el) return;
     const obs = new IntersectionObserver(([e]) => {
-      if (e.isIntersecting && phase === 'idle') {
-        setTimeout(() => setPhase('scramble'), delay);
-      }
+      if (e.isIntersecting && phase === 'idle') setTimeout(() => setPhase('scramble'), delay);
     }, { threshold: 0.1 });
     obs.observe(el); return () => obs.disconnect();
   }, [phase, delay]);
-
   useEffect(() => {
     if (phase === 'idle') {
       setDisplay(text.split('').map(c => /\s/.test(c) ? c : DECODE_CHARS[0]).join(''));
       return;
     }
     if (phase !== 'scramble') return;
-    let frame = 0;
-    const total = 85;
+    let frame = 0; const total = 85;
     const id = setInterval(() => {
       frame++;
-      const p  = frame / total;
-      const rc = Math.floor(Math.pow(p, .65) * text.length);
+      const rc = Math.floor(Math.pow(frame / total, .65) * text.length);
       setDisplay(text.split('').map((c, i) => {
         if (/\s/.test(c)) return c;
         return i <= rc ? c : DECODE_CHARS[Math.floor(Math.random() * DECODE_CHARS.length)];
@@ -270,14 +267,13 @@ const DecryptText = ({ text, delay = 0, style = {}, className = '' }) => {
     }, 16);
     return () => clearInterval(id);
   }, [phase, text]);
-
   return <span ref={ref} className={className} style={{ ...style, fontVariantLigatures: 'none' }}>{display}</span>;
 };
 
 /* ─────────────────────────────────────────
    NEURAL CANVAS
 ───────────────────────────────────────── */
-const NeuralCanvas = ({ opacity = 0.3 }) => {
+const NeuralCanvas = ({ opacity = 0.28 }) => {
   const cvs = useRef(null);
   useEffect(() => {
     const canvas = cvs.current; if (!canvas) return;
@@ -337,7 +333,7 @@ const NeuralCanvas = ({ opacity = 0.3 }) => {
 };
 
 /* ─────────────────────────────────────────
-   ENERGY CORE CANVAS — hero centrepiece
+   ENERGY CORE CANVAS
 ───────────────────────────────────────── */
 const EnergyCoreCanvas = () => {
   const cvs = useRef(null);
@@ -352,26 +348,19 @@ const EnergyCoreCanvas = () => {
       t += .009;
       const W = canvas.width, H = canvas.height, cx = W/2, cy = H*.41;
       ctx.clearRect(0,0,W,H);
-      // dot grid
       for (let x=0; x<W; x+=44) for (let y=0; y<H; y+=44) {
         const d = Math.sqrt((x-cx)**2+(y-cy)**2);
         const a = Math.max(0,.12-(d/Math.max(W,H))*.15);
         ctx.beginPath(); ctx.arc(x,y,.8,0,Math.PI*2);
         ctx.fillStyle=`rgba(201,168,76,${a})`; ctx.fill();
       }
-      // pulse rings
       for (let i=0; i<5; i++) {
         const phase = ((t*.22+i/5)%1);
         ctx.beginPath(); ctx.arc(cx,cy,40+phase*(W*.38),0,Math.PI*2);
         ctx.strokeStyle=`rgba(201,168,76,${(1-phase)*.3})`;
         ctx.lineWidth=1; ctx.stroke();
       }
-      // orbital ellipses
-      const rings=[
-        {a:W*.25,b:H*.105,tilt:-.22,spd:.007},
-        {a:W*.19,b:H*.155,tilt:.52,spd:-.005},
-        {a:W*.32,b:H*.08,tilt:.1,spd:.004},
-      ];
+      const rings=[{a:W*.25,b:H*.105,tilt:-.22,spd:.007},{a:W*.19,b:H*.155,tilt:.52,spd:-.005},{a:W*.32,b:H*.08,tilt:.1,spd:.004}];
       rings.forEach(r => {
         ctx.save(); ctx.translate(cx,cy); ctx.rotate(r.tilt);
         ctx.beginPath(); ctx.ellipse(0,0,r.a,r.b,0,0,Math.PI*2);
@@ -385,25 +374,22 @@ const EnergyCoreCanvas = () => {
         ctx.beginPath(); ctx.arc(px,py,10,0,Math.PI*2); ctx.fillStyle=g; ctx.fill();
         ctx.beginPath(); ctx.arc(px,py,2.5,0,Math.PI*2); ctx.fillStyle='#FFD060'; ctx.fill();
       });
-      // core aura
       const aura = ctx.createRadialGradient(cx,cy,0,cx,cy,90+15*Math.sin(t));
       aura.addColorStop(0,'rgba(255,240,190,.48)'); aura.addColorStop(.4,'rgba(201,168,76,.25)');
       aura.addColorStop(.75,'rgba(201,168,76,.07)'); aura.addColorStop(1,'transparent');
       ctx.beginPath(); ctx.arc(cx,cy,90+15*Math.sin(t),0,Math.PI*2); ctx.fillStyle=aura; ctx.fill();
-      // nucleus
       const core = ctx.createRadialGradient(cx,cy,0,cx,cy,28+4*Math.sin(t*1.8));
       core.addColorStop(0,'rgba(255,255,240,.98)'); core.addColorStop(.4,'rgba(255,225,130,.9)');
       core.addColorStop(.8,'rgba(201,168,76,.5)'); core.addColorStop(1,'transparent');
       ctx.beginPath(); ctx.arc(cx,cy,28+4*Math.sin(t*1.8),0,Math.PI*2); ctx.fillStyle=core; ctx.fill();
       ctx.beginPath(); ctx.arc(cx,cy,7,0,Math.PI*2); ctx.fillStyle='rgba(255,255,255,.96)'; ctx.fill();
-      // HUD bracket
       const bs=210, bo=13;
       ctx.strokeStyle='rgba(201,168,76,.32)'; ctx.lineWidth=1.2;
       [[cx-bs/2,cy-bs/2,1,1],[cx+bs/2,cy-bs/2,-1,1],[cx-bs/2,cy+bs/2,1,-1],[cx+bs/2,cy+bs/2,-1,-1]].forEach(([bx,by,sx,sy])=>{
         ctx.beginPath(); ctx.moveTo(bx,by+sy*bo); ctx.lineTo(bx,by); ctx.lineTo(bx+sx*bo,by); ctx.stroke();
       });
-      ctx.font=`700 8.5px ${T.mono}`; ctx.fillStyle='rgba(201,168,76,.55)';
-      ctx.fillText('NEURAL · ACTIVE',cx-bs/2+4,cy-bs/2-6);
+      ctx.font=`700 8.5px ${T.mono}`; ctx.fillStyle='rgba(201,168,76,.6)';
+      ctx.fillText('COGNITIVE · ACTIVE',cx-bs/2+4,cy-bs/2-6);
       ctx.textAlign='right'; ctx.fillText('87.5% ASSERTIVIDADE',cx+bs/2-4,cy-bs/2-6);
       ctx.textAlign='left';  ctx.fillText(`Δ${(Math.sin(t)*.01+.042).toFixed(4)}%`,cx-bs/2+4,cy+bs/2+14);
       ctx.textAlign='right'; ctx.fillText('M1 · LIVE',cx+bs/2-4,cy+bs/2+14);
@@ -417,15 +403,14 @@ const EnergyCoreCanvas = () => {
 };
 
 /* ─────────────────────────────────────────
-   TYPEWRITER TERMINAL — tech section
+   TYPEWRITER TERMINAL
 ───────────────────────────────────────── */
 const TypeLine = ({ text, color, onDone }) => {
   const [out, setOut] = useState('');
   useEffect(() => {
     let i = 0;
     const id = setInterval(() => {
-      i++;
-      setOut(text.slice(0, i));
+      i++; setOut(text.slice(0, i));
       if (i >= text.length) { clearInterval(id); if (onDone) onDone(); }
     }, 18);
     return () => clearInterval(id);
@@ -440,56 +425,44 @@ const TypeLine = ({ text, color, onDone }) => {
 
 const QuantumTerminal = () => {
   const LINES = [
-    { text: '$ kronex connect --market XAUUSD --timeframe M1', color: T.gold },
-    { text: '→ Loading 4,293 bars · Tick data: LIVE', color: T.sub },
-    { text: '✓ Price structure mapped · FVG zones: 7 detected', color: '#FFD060' },
-    { text: '$ kronex risk --shield 1pct --capital auto', color: T.gold },
-    { text: '→ Max exposure per trade: 1.00% · HARD-LOCKED', color: T.sub },
-    { text: '✓ Risk shield ACTIVE · Cannot override', color: '#FFD060' },
-    { text: '$ kronex execute --targets 4 --trail T4', color: T.gold },
-    { text: '→ Entry logic: FVG + Mitigation + Confirmation', color: T.sub },
-    { text: '→ T1:1R · T2:2R · T3:3R · T4:trail avg 4R', color: T.sub },
-    { text: '✓ Win: 87.5% · Avg R/win: 1.8R · Motor v2.0 ●', color: '#FFD060' },
+    { text: '$ kronex-cognitive connect --market XAUUSD --tf M1', color: T.gold },
+    { text: '→ Loading 4,293 bars · Tick data: LIVE · Reason Engine: ON', color: T.sub },
+    { text: '✓ Price structure mapped · FVG zones: 7 · BOS confirmed', color: '#FFD060' },
+    { text: '$ kronex-cognitive risk --armor 1pct --circuit-breaker ON', color: T.gold },
+    { text: '→ Armadura Matemática: 1.00% max/trade · HARD-LOCKED', color: T.sub },
+    { text: '✓ Circuit Breaker ACTIVE · Drawdown shield: INVIOLÁVEL', color: '#FFD060' },
+    { text: '$ kronex-cognitive execute --targets 4 --trail T4 --logic STRICT', color: T.gold },
+    { text: '→ FVG + Mitigation + Confirmation · The Strategy Protocol', color: T.sub },
+    { text: '→ T1:1R · T2:2R · T3:3R · T4:trailing avg 4R', color: T.sub },
+    { text: '✓ Frieza Algorítmica v2 · Win: 87.5% · Avg 1.8R · COGNITIVE ●', color: '#FFD060' },
   ];
   const [shown, setShown] = useState([]);
   const [active, setActive] = useState(false);
   const ref = useRef(null);
-  const queueRef = useRef(0);
-
   useEffect(() => {
     const obs = new IntersectionObserver(([e]) => { if (e.isIntersecting && !active) setActive(true); }, { threshold: .3 });
     if (ref.current) obs.observe(ref.current);
     return () => obs.disconnect();
   }, [active]);
-
   useEffect(() => {
     if (!active) return;
-    const push = (i) => {
+    const push = i => {
       if (i >= LINES.length) return;
-      setTimeout(() => {
-        setShown(p => [...p, i]);
-        push(i + 1);
-      }, i === 0 ? 0 : 480);
+      setTimeout(() => { setShown(p => [...p, i]); push(i + 1); }, i === 0 ? 0 : 500);
     };
     push(0);
   }, [active]);
-
   return (
-    <div ref={ref} style={{
-      background: 'rgba(0,0,0,.96)', borderRadius: 14,
-      border: '1px solid rgba(201,168,76,.18)',
-      overflow: 'hidden', animation: 'flicker 10s infinite',
-      boxShadow: '0 0 50px rgba(201,168,76,.07)',
-    }}>
-      <div style={{ padding: '10px 16px', borderBottom: '1px solid rgba(201,168,76,.1)', display: 'flex', gap: 6, alignItems: 'center', background: 'rgba(201,168,76,.03)' }}>
-        {['#ff5f57','#ffbd2e','#28c840'].map(c => <div key={c} style={{ width: 9, height: 9, borderRadius: '50%', background: c }} />)}
-        <span style={{ fontSize: 9, color: T.muted, marginLeft: 8, fontFamily: T.mono, letterSpacing: '.06em' }}>kronex-terminal · v2.0.26 · DOM INVESTITORE</span>
-        <div style={{ marginLeft: 'auto', width: 6, height: 6, borderRadius: '50%', background: '#C9A84C', boxShadow: '0 0 10px rgba(201,168,76,.9)', animation: 'blink 1.5s infinite' }} />
+    <div ref={ref} style={{ background:'rgba(0,0,0,.97)', borderRadius:14, border:'1px solid rgba(201,168,76,.2)', overflow:'hidden', animation:'flicker 10s infinite', boxShadow:'0 0 50px rgba(201,168,76,.08)' }}>
+      <div style={{ padding:'10px 16px', borderBottom:'1px solid rgba(201,168,76,.12)', display:'flex', gap:6, alignItems:'center', background:'rgba(201,168,76,.04)' }}>
+        {['#ff5f57','#ffbd2e','#28c840'].map(c => <div key={c} style={{ width:9, height:9, borderRadius:'50%', background:c }} />)}
+        <span style={{ fontSize:9, color:T.muted, marginLeft:8, fontFamily:T.mono, letterSpacing:'.06em' }}>kronex-cognitive · v2.0.26 · DOM INVESTITORE</span>
+        <div style={{ marginLeft:'auto', width:6, height:6, borderRadius:'50%', background:'#C9A84C', boxShadow:'0 0 10px rgba(201,168,76,.9)', animation:'blink 1.5s infinite' }} />
       </div>
-      <div style={{ padding: '18px 20px', fontFamily: T.mono, fontSize: 11.5 }}>
+      <div style={{ padding:'18px 20px', fontFamily:T.mono, fontSize:11.5 }}>
         {shown.map(i => <TypeLine key={i} text={LINES[i].text} color={LINES[i].color} />)}
         {shown.length < LINES.length && shown.length > 0 && (
-          <div style={{ color: 'rgba(201,168,76,.3)', animation: 'blink 1s infinite' }}>█</div>
+          <div style={{ color:'rgba(201,168,76,.3)', animation:'blink 1s infinite' }}>█</div>
         )}
       </div>
     </div>
@@ -501,15 +474,15 @@ const QuantumTerminal = () => {
 ───────────────────────────────────────── */
 const TradeChart = ({ active }) => {
   const pts = [
-    { label: 'Entrada', x: 60,  y: 175, c: T.gold  },
-    { label: 'T1 — 1R', x: 155, y: 138, c: T.gold  },
-    { label: 'T2 — 2R', x: 240, y: 105, c: T.amber },
-    { label: 'T3 — 3R', x: 330, y: 72,  c: T.amber },
-    { label: 'T4 — 4R', x: 420, y: 42,  c: T.text  },
+    { label:'Entrada', x:60,  y:175, c:T.gold  },
+    { label:'T1 — 1R', x:155, y:138, c:T.gold  },
+    { label:'T2 — 2R', x:240, y:105, c:T.amber },
+    { label:'T3 — 3R', x:330, y:72,  c:T.amber },
+    { label:'T4 — 4R', x:420, y:42,  c:T.text  },
   ];
   const pathD = pts.map((p,i) => `${i===0?'M':'L'} ${p.x} ${p.y}`).join(' ');
   return (
-    <svg viewBox="0 0 500 215" style={{ width: '100%', maxWidth: 540, overflow: 'visible' }}>
+    <svg viewBox="0 0 500 215" style={{ width:'100%', maxWidth:540, overflow:'visible' }}>
       <defs>
         <linearGradient id="lG" x1="0%" y1="0%" x2="100%" y2="0%">
           <stop offset="0%" stopColor="#C9A84C"/>
@@ -523,8 +496,8 @@ const TradeChart = ({ active }) => {
         <filter id="glow1"><feGaussianBlur stdDeviation="4" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
         <filter id="glow2"><feGaussianBlur stdDeviation="8" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
       </defs>
-      {[55,85,115,145,175].map(y => <line key={y} x1="40" y1={y} x2="460" y2={y} stroke="rgba(201,168,76,0.06)" strokeWidth="1" strokeDasharray="4 8"/>)}
-      <path d={`${pathD} L 420 205 L 60 205 Z`} fill="url(#aG)" style={{ opacity: active ? 1 : 0, transition: 'opacity 1s ease 2s' }}/>
+      {[55,85,115,145,175].map(y => <line key={y} x1="40" y1={y} x2="460" y2={y} stroke="rgba(201,168,76,0.07)" strokeWidth="1" strokeDasharray="4 8"/>)}
+      <path d={`${pathD} L 420 205 L 60 205 Z`} fill="url(#aG)" style={{ opacity:active?1:0, transition:'opacity 1s ease 2s' }}/>
       <path d={pathD} fill="none" stroke="#C9A84C" strokeWidth="8" strokeOpacity=".09" filter="url(#glow2)" strokeLinecap="round" strokeLinejoin="round" style={{ strokeDasharray:700,strokeDashoffset:active?0:700,transition:'stroke-dashoffset 2.8s ease .3s' }}/>
       <path d={pathD} fill="none" stroke="url(#lG)" strokeWidth="2" filter="url(#glow1)" strokeLinecap="round" strokeLinejoin="round" style={{ strokeDasharray:700,strokeDashoffset:active?0:700,transition:'stroke-dashoffset 2.8s ease .3s' }}/>
       {pts.map((p,i) => (
@@ -535,7 +508,7 @@ const TradeChart = ({ active }) => {
           <text x={p.x} y={p.y-18} textAnchor="middle" fontSize="9" fill={p.c} fontWeight="700" letterSpacing=".06em" fontFamily="Inter,sans-serif">{p.label}</text>
         </g>
       ))}
-      <line x1="40" y1="205" x2="460" y2="205" stroke="rgba(201,168,76,0.14)" strokeWidth="1"/>
+      <line x1="40" y1="205" x2="460" y2="205" stroke="rgba(201,168,76,0.15)" strokeWidth="1"/>
     </svg>
   );
 };
@@ -543,7 +516,7 @@ const TradeChart = ({ active }) => {
 /* ─────────────────────────────────────────
    METRIC CARD
 ───────────────────────────────────────── */
-const MetricCard = ({ label, value, suffix = '', prefix = '', sub, highlight }) => {
+const MetricCard = ({ label, value, suffix='', prefix='', sub, highlight }) => {
   const [ref, active] = useIntersection(.3);
   const [n, setN] = useState(0);
   const target = parseFloat(value);
@@ -553,39 +526,39 @@ const MetricCard = ({ label, value, suffix = '', prefix = '', sub, highlight }) 
     let start = null;
     const step = ts => {
       if (!start) start = ts;
-      const p = Math.min((ts - start) / 2200, 1);
-      const e = 1 - Math.pow(1 - p, 4);
-      setN(parseFloat((e * target).toFixed(dec)));
+      const p = Math.min((ts-start)/2200, 1);
+      setN(parseFloat(((1-Math.pow(1-p,4))*target).toFixed(dec)));
       if (p < 1) requestAnimationFrame(step);
     };
     requestAnimationFrame(step);
   }, [active, target, dec]);
   return (
-    <div ref={ref} className={highlight ? 'holo-panel' : 'glass'} style={{ borderRadius: 16, padding: '28px 24px', position: 'relative', overflow: 'visible',
-      boxShadow: highlight ? '0 0 60px rgba(201,168,76,.12),0 0 120px rgba(201,168,76,.06),inset 0 0 30px rgba(201,168,76,.04)' : 'none',
-    }}>
+    <div ref={ref} className={highlight ? 'holo-panel' : 'glass'} style={{ borderRadius:16, padding:'28px 24px', position:'relative', overflow:'visible',
+      boxShadow:highlight?'0 0 60px rgba(201,168,76,.14),0 0 120px rgba(201,168,76,.07),inset 0 0 30px rgba(201,168,76,.05)':'none' }}>
       <div className="corner-tl"/><div className="corner-tr"/><div className="corner-bl"/><div className="corner-br"/>
       <div style={{ position:'absolute',inset:-14,pointerEvents:'none' }}>
-        <div style={{ position:'absolute',inset:0,border:'1px dashed rgba(201,168,76,.07)',borderRadius:30,animation:'rot-cw 22s linear infinite' }}/>
-        {highlight && <div style={{ position:'absolute',inset:4,border:'1px solid transparent',borderTopColor:'rgba(201,168,76,.42)',borderRadius:26,animation:'rot-cw 4s linear infinite',boxShadow:'0 0 8px rgba(201,168,76,.3)' }}/>}
+        <div style={{ position:'absolute',inset:0,border:'1px dashed rgba(201,168,76,.08)',borderRadius:30,animation:'rot-cw 22s linear infinite' }}/>
+        {highlight && <div style={{ position:'absolute',inset:4,border:'1px solid transparent',borderTopColor:'rgba(201,168,76,.45)',borderRadius:26,animation:'rot-cw 4s linear infinite',boxShadow:'0 0 8px rgba(201,168,76,.3)' }}/>}
       </div>
-      <div style={{ fontSize: 9, fontWeight: 800, letterSpacing: '.18em', textTransform: 'uppercase', color: T.gold, marginBottom: 14, opacity: .85 }}>{label}</div>
-      <div className={highlight ? 'metric-flash' : ''} style={{ fontSize:'clamp(1.9rem,5vw,3rem)', fontWeight:900, letterSpacing:'-.03em', lineHeight:1, color: highlight ? '#FFD060' : T.text, textShadow: highlight ? '0 0 40px rgba(255,208,96,.6),0 0 80px rgba(201,168,76,.3)' : 'none', fontVariantNumeric:'tabular-nums' }}>
+      <div style={{ fontSize:9,fontWeight:800,letterSpacing:'.18em',textTransform:'uppercase',color:T.gold,marginBottom:14,opacity:.9 }}>{label}</div>
+      <div className={highlight ? 'metric-flash' : ''} style={{ fontSize:'clamp(1.9rem,5vw,3rem)', fontWeight:900, letterSpacing:'-.03em', lineHeight:1,
+        color:highlight?T.bright:T.text, fontVariantNumeric:'tabular-nums',
+        textShadow:highlight?'0 0 40px rgba(255,208,96,.6),0 0 80px rgba(201,168,76,.3)':'none' }}>
         {prefix}{n}{suffix}
       </div>
-      {sub && <div style={{ marginTop: 10, fontSize: 11, color: T.muted, lineHeight: 1.5, letterSpacing: '.02em' }}>{sub}</div>}
+      {sub && <div style={{ marginTop:10, fontSize:11, color:T.muted, lineHeight:1.6, letterSpacing:'.02em' }}>{sub}</div>}
     </div>
   );
 };
 
 /* ─────────────────────────────────────────
    SIMULATOR — corrected math
-   1% risk per trade · avg 1.8R win (4 targets)
-   per-trade compound
+   1% risco/trade · avg 1.8R win (4 targets)
+   per-trade exponential compound
 ───────────────────────────────────────── */
-const WIN_RATIO = 7 / 8;   // 87.5% win rate
-const WIN_PCT   = 0.018;   // 1% risk × 1.8R average across 4 targets
-const LOSS_PCT  = 0.010;   // 1% risk stop
+const WIN_RATIO = 7 / 8;
+const WIN_PCT   = 0.018;  /* 1% risco × 1.8R avg (4 alvos The Strategy) */
+const LOSS_PCT  = 0.010;  /* 1% risco stop */
 
 const fmtEuro = n => {
   if (n >= 1e9) return `€${(n/1e9).toFixed(2)}B`;
@@ -601,79 +574,74 @@ const fmtMult = x => {
 
 const Simulator = () => {
   const [capital, setCapital] = useState(1000);
-  const [ops,     setOps]     = useState(10);     // ops/week
+  const [ops,     setOps]     = useState(10);
   const [months,  setMonths]  = useState(6);
   const [burst,   setBurst]   = useState(false);
 
-  // Per-trade compound: each win ×1.018, each loss ×0.990
-  const tradesPerMonth  = ops * 4;
-  const winsPerMonth    = Math.round(tradesPerMonth * WIN_RATIO);
-  const lossesPerMonth  = tradesPerMonth - winsPerMonth;
-  const monthlyMult     = Math.pow(1 + WIN_PCT, winsPerMonth) * Math.pow(1 - LOSS_PCT, lossesPerMonth);
-  const monthlyRetPct   = ((monthlyMult - 1) * 100).toFixed(1);
+  const tradesPerMonth = ops * 4;
+  const winsPerMonth   = Math.round(tradesPerMonth * WIN_RATIO);
+  const lossesPerMonth = tradesPerMonth - winsPerMonth;
+  /* Juros compostos por operação individual — matematicamente correto */
+  const monthlyMult  = Math.pow(1+WIN_PCT, winsPerMonth) * Math.pow(1-LOSS_PCT, lossesPerMonth);
+  const monthlyRetPct = ((monthlyMult-1)*100).toFixed(1);
 
-  const capitalAt = m => { let b = capital; for (let i = 0; i < m; i++) b *= monthlyMult; return b; };
-  const arr        = Array.from({ length: months }, (_, i) => ({ label: `M${i+1}`, v: capitalAt(i+1) }));
-  const final      = capitalAt(months);
-  const profit     = final - capital;
-  const growthX    = final / capital;
-  const maxV       = Math.max(...arr.map(m => m.v));
+  const capitalAt = m => { let b = capital; for (let i=0; i<m; i++) b *= monthlyMult; return b; };
+  const arr     = Array.from({ length:months }, (_,i) => ({ label:`M${i+1}`, v:capitalAt(i+1) }));
+  const final   = capitalAt(months);
+  const profit  = final - capital;
+  const growthX = final / capital;
+  const maxV    = Math.max(...arr.map(m => m.v));
 
   const fire = setter => val => { setter(val); setBurst(true); setTimeout(() => setBurst(false), 500); };
 
   const controls = [
-    { label: 'Capital Alocado', disp: fmtEuro(capital), min: 500, max: 50000, step: 500, val: capital, set: fire(setCapital), lo: '€500', hi: '€50k' },
-    { label: 'Operações / Semana', disp: ops, min: 5, max: 25, step: 1, val: ops, set: fire(setOps), lo: '5', hi: '25' },
-    { label: 'Horizonte (meses)', disp: `${months} meses`, min: 1, max: 24, step: 1, val: months, set: fire(setMonths), lo: '1m', hi: '24m' },
+    { label:'Capital Alocado',       disp:fmtEuro(capital), min:500,  max:50000, step:500, val:capital, set:fire(setCapital), lo:'€500',  hi:'€50k'  },
+    { label:'Operações / Semana',    disp:ops,               min:5,    max:25,    step:1,   val:ops,     set:fire(setOps),     lo:'5',     hi:'25'    },
+    { label:'Horizonte (meses)',     disp:`${months} meses`, min:1,    max:24,    step:1,   val:months,  set:fire(setMonths),  lo:'1m',    hi:'24m'   },
   ];
 
   return (
-    <div style={{
-      borderRadius: 20, padding: 'clamp(24px,4vw,44px)',
-      background: 'linear-gradient(135deg,rgba(201,168,76,.05) 0%,rgba(8,5,1,.98) 60%,rgba(201,168,76,.03) 100%)',
-      border: '1px solid rgba(201,168,76,.22)',
-      boxShadow: burst
-        ? '0 0 120px rgba(201,168,76,.22),0 0 240px rgba(201,168,76,.1),inset 0 0 80px rgba(201,168,76,.04)'
-        : '0 0 80px rgba(201,168,76,.09),0 0 160px rgba(201,168,76,.04),inset 0 0 80px rgba(201,168,76,.03)',
-      position: 'relative', overflow: 'hidden',
-      transition: 'box-shadow .35s ease',
+    <div style={{ borderRadius:20, padding:'clamp(24px,4vw,44px)',
+      background:'linear-gradient(135deg,rgba(201,168,76,.055) 0%,rgba(8,5,1,.98) 60%,rgba(201,168,76,.03) 100%)',
+      border:'1px solid rgba(201,168,76,.24)',
+      boxShadow:burst
+        ? '0 0 120px rgba(201,168,76,.24),0 0 240px rgba(201,168,76,.12),inset 0 0 80px rgba(201,168,76,.05)'
+        : '0 0 80px rgba(201,168,76,.1),0 0 160px rgba(201,168,76,.05),inset 0 0 80px rgba(201,168,76,.035)',
+      position:'relative', overflow:'hidden', transition:'box-shadow .35s ease',
     }}>
-      {burst && <div style={{ position:'absolute',inset:0,background:'radial-gradient(ellipse at 50% 40%,rgba(201,168,76,.1),transparent)',pointerEvents:'none',borderRadius:20,zIndex:1,animation:'blink .2s ease' }}/>}
-      <div className="hud-grid" style={{ borderRadius: 20 }}/>
-      {[{t:0,l:0,bt:'2px solid rgba(201,168,76,.5)',bl:'2px solid rgba(201,168,76,.5)',br:'20px 0 0 0'},
-        {t:0,r:0,bt:'2px solid rgba(201,168,76,.5)',br_r:'2px solid rgba(201,168,76,.5)',br:'0 20px 0 0'},
-        {b:0,l:0,bb:'2px solid rgba(201,168,76,.5)',bl:'2px solid rgba(201,168,76,.5)',br:'0 0 0 20px'},
-        {b:0,r:0,bb:'2px solid rgba(201,168,76,.5)',br_r:'2px solid rgba(201,168,76,.5)',br:'0 0 20px 0'}
-      ].map((s,i)=><div key={i} style={{position:'absolute',width:28,height:28,...s}}/>)}
+      {burst && <div style={{ position:'absolute',inset:0,background:'radial-gradient(ellipse at 50% 40%,rgba(201,168,76,.1),transparent)',pointerEvents:'none',borderRadius:20,zIndex:1 }}/>}
+      <div className="hud-grid" style={{ borderRadius:20 }}/>
 
       {/* Header */}
-      <div style={{ display:'flex', alignItems:'center', gap:10, marginBottom:30, position:'relative', zIndex:2 }}>
+      <div style={{ display:'flex',alignItems:'center',gap:10,marginBottom:28,position:'relative',zIndex:2 }}>
         <div style={{ width:8,height:8,borderRadius:'50%',background:'#C9A84C',boxShadow:'0 0 16px rgba(201,168,76,.7)',animation:'blink 2s infinite' }}/>
-        <span style={{ fontSize:9,fontWeight:800,color:'#C9A84C',letterSpacing:'.18em',textTransform:'uppercase',fontFamily:T.mono }}>SIMULADOR · COMPOSTO POR OPERAÇÃO · ATIVO</span>
+        <span style={{ fontSize:9,fontWeight:800,color:'#C9A84C',letterSpacing:'.17em',textTransform:'uppercase',fontFamily:T.mono }}>SIMULADOR · COMPOSTO / OPERAÇÃO · MODELO THE STRATEGY</span>
         <div style={{ marginLeft:'auto',display:'flex',gap:4 }}>
           {[.4,.65,.4].map((o,i)=><div key={i} style={{width:3,height:3,borderRadius:'50%',background:`rgba(201,168,76,${o})`,animation:`blink ${1+i*.28}s infinite`}}/>)}
         </div>
       </div>
 
-      {/* Math basis note */}
-      <div style={{ marginBottom:28,padding:'10px 14px',borderRadius:8,background:'rgba(201,168,76,.04)',border:'1px solid rgba(201,168,76,.1)',position:'relative',zIndex:2 }}>
-        <div style={{ fontSize:9,fontFamily:T.mono,color:T.sub,letterSpacing:'.05em',lineHeight:1.9 }}>
-          <span style={{color:T.gold}}>BASE MATEMÁTICA</span> &nbsp;·&nbsp;
-          1% risco/operação &nbsp;·&nbsp; avg 1.8R nos wins (4 alvos: T1:1R · T2:2R · T3:3R · T4:4R) &nbsp;·&nbsp;
-          87.5% assertividade (7W:1L) &nbsp;·&nbsp; <span style={{color:'#FFD060'}}>juros compostos por operação individual</span>
+      {/* Math basis */}
+      <div style={{ marginBottom:28,padding:'12px 15px',borderRadius:8,background:'rgba(201,168,76,.05)',border:'1px solid rgba(201,168,76,.14)',position:'relative',zIndex:2 }}>
+        <div style={{ fontSize:9.5,fontFamily:T.mono,color:T.sub,letterSpacing:'.05em',lineHeight:2 }}>
+          <span style={{color:T.bright,fontWeight:800}}>ARMADURA MATEMÁTICA</span> &nbsp;·&nbsp;
+          1% risco/operação &nbsp;·&nbsp; avg 1.8R (4 alvos: T1:1R · T2:2R · T3:3R · T4:4R) &nbsp;·&nbsp;
+          87.5% assertividade (7W:1L) &nbsp;·&nbsp;
+          <span style={{color:T.gold}}>modelos probabilísticos R-multiples estritos · The Strategy</span> &nbsp;·&nbsp;
+          circuit breakers de drawdown ativos
         </div>
       </div>
 
       {/* Controls */}
-      <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fit,minmax(200px,1fr))', gap:28, marginBottom:34, position:'relative', zIndex:2 }}>
+      <div style={{ display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(200px,1fr))',gap:28,marginBottom:32,position:'relative',zIndex:2 }}>
         {controls.map(c => (
           <div key={c.label}>
-            <div style={{ display:'flex', justifyContent:'space-between', marginBottom:10 }}>
-              <span style={{ fontSize:9,color:T.sub,letterSpacing:'.08em',textTransform:'uppercase',fontFamily:T.mono }}>{c.label}</span>
-              <span style={{ fontSize:13,fontWeight:800,color:'#FFD060',textShadow:'0 0 16px rgba(255,208,96,.55)',fontVariantNumeric:'tabular-nums',transition:'all .2s' }}>{c.disp}</span>
+            <div style={{ display:'flex',justifyContent:'space-between',marginBottom:10 }}>
+              <span style={{ fontSize:9,color:T.muted,letterSpacing:'.08em',textTransform:'uppercase',fontFamily:T.mono }}>{c.label}</span>
+              <span style={{ fontSize:13,fontWeight:800,color:T.bright,textShadow:'0 0 16px rgba(255,208,96,.55)',fontVariantNumeric:'tabular-nums',transition:'all .2s' }}>{c.disp}</span>
             </div>
             <input type="range" min={c.min} max={c.max} step={c.step} value={c.val} onChange={e=>c.set(Number(e.target.value))}/>
-            <div style={{ display:'flex', justifyContent:'space-between', marginTop:5 }}>
+            <div style={{ display:'flex',justifyContent:'space-between',marginTop:5 }}>
               <span style={{fontSize:9,color:T.muted,fontFamily:T.mono}}>{c.lo}</span>
               <span style={{fontSize:9,color:T.muted,fontFamily:T.mono}}>{c.hi}</span>
             </div>
@@ -682,22 +650,20 @@ const Simulator = () => {
       </div>
 
       {/* Bar chart */}
-      <div style={{ marginBottom:26, position:'relative', zIndex:2 }}>
-        <div style={{ display:'flex', alignItems:'flex-end', gap: months > 14 ? 2 : months > 8 ? 4 : 7, height:112 }}>
-          {arr.map((m, i) => {
-            const hPct = (m.v / maxV) * 96;
+      <div style={{ marginBottom:24,position:'relative',zIndex:2 }}>
+        <div style={{ display:'flex',alignItems:'flex-end',gap:months>14?2:months>8?4:7,height:112 }}>
+          {arr.map((m,i) => {
+            const hPct = (m.v/maxV)*96;
             return (
-              <div key={i} style={{ flex:1, display:'flex', flexDirection:'column', alignItems:'center', gap:3 }}>
-                <div style={{
-                  width:'100%', height:`${hPct}px`, minHeight:3, borderRadius:'3px 3px 0 0',
+              <div key={i} style={{ flex:1,display:'flex',flexDirection:'column',alignItems:'center',gap:3 }}>
+                <div style={{ width:'100%',height:`${hPct}px`,minHeight:3,borderRadius:'3px 3px 0 0',
                   background:'linear-gradient(180deg,#FFD060,#C9A84C 55%,#8B6914)',
                   boxShadow:'0 -6px 22px rgba(201,168,76,.55)',
                   transition:'height .55s cubic-bezier(.34,1.56,.64,1)',
-                  position:'relative', overflow:'hidden',
-                }}>
+                  position:'relative',overflow:'hidden' }}>
                   <div style={{position:'absolute',top:0,left:0,right:0,height:'100%',background:'linear-gradient(180deg,rgba(255,255,255,.22) 0%,transparent 55%)',borderRadius:'3px 3px 0 0'}}/>
                 </div>
-                {months <= 12 && <span style={{fontSize:7.5,color:T.muted,letterSpacing:'.04em',fontFamily:T.mono}}>{m.label}</span>}
+                {months<=12&&<span style={{fontSize:7.5,color:T.muted,letterSpacing:'.04em',fontFamily:T.mono}}>{m.label}</span>}
               </div>
             );
           })}
@@ -706,32 +672,29 @@ const Simulator = () => {
       </div>
 
       {/* Result tiles */}
-      <div style={{ display:'grid', gridTemplateColumns:'repeat(4,1fr)', gap:10, marginBottom:18, position:'relative', zIndex:2 }}>
+      <div style={{ display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:10,marginBottom:18,position:'relative',zIndex:2 }}>
         {[
-          { label:'Capital Final',  val: fmtEuro(final)  },
-          { label:'Lucro Total',    val: fmtEuro(profit) },
-          { label:'Multiplicador',  val: fmtMult(growthX) },
-          { label:'Retorno / Mês',  val: `+${monthlyRetPct}%` },
+          { label:'Capital Final',  val:fmtEuro(final)    },
+          { label:'Lucro Total',    val:fmtEuro(profit)   },
+          { label:'Multiplicador',  val:fmtMult(growthX)  },
+          { label:'Retorno / Mês',  val:`+${monthlyRetPct}%` },
         ].map(r => (
-          <div key={r.label} style={{
-            textAlign:'center', padding:'14px 8px',
-            background: burst ? 'rgba(201,168,76,.08)' : 'rgba(201,168,76,.04)',
-            border: `1px solid ${burst ? 'rgba(201,168,76,.35)' : 'rgba(201,168,76,.12)'}`,
-            borderRadius:10, position:'relative', overflow:'hidden',
-            transition:'all .3s',
-          }}>
+          <div key={r.label} style={{ textAlign:'center',padding:'14px 8px',
+            background:burst?'rgba(201,168,76,.09)':'rgba(201,168,76,.045)',
+            border:`1px solid ${burst?'rgba(201,168,76,.38)':'rgba(201,168,76,.14)'}`,
+            borderRadius:10,position:'relative',overflow:'hidden',transition:'all .3s' }}>
             <div style={{position:'absolute',top:0,left:0,right:0,height:'1px',background:'linear-gradient(90deg,transparent,rgba(201,168,76,.4),transparent)'}}/>
             <div style={{fontSize:8.5,color:T.muted,letterSpacing:'.09em',marginBottom:7,textTransform:'uppercase',fontFamily:T.mono}}>{r.label}</div>
-            <div style={{fontSize:'clamp(.82rem,2vw,1.05rem)',fontWeight:900,color:'#C9A84C',textShadow:'0 0 20px rgba(201,168,76,.5)',fontVariantNumeric:'tabular-nums'}}>{r.val}</div>
+            <div style={{fontSize:'clamp(.82rem,2vw,1.05rem)',fontWeight:900,color:T.gold,textShadow:'0 0 20px rgba(201,168,76,.5)',fontVariantNumeric:'tabular-nums'}}>{r.val}</div>
           </div>
         ))}
       </div>
 
       {/* Disclaimer */}
-      <div style={{padding:'11px 15px',background:'rgba(220,38,38,.04)',borderRadius:8,border:'1px solid rgba(220,38,38,.1)',position:'relative',zIndex:2}}>
-        <p style={{fontSize:9.5,color:'rgba(220,38,38,.5)',lineHeight:1.75,letterSpacing:'.02em',fontFamily:T.mono}}>
-          * Projeção baseada em 1% de risco por operação, ratio 7W:1L, retorno médio de 1.8R por operação vencedora (4 alvos parciais).
-          Desempenho histórico não garante resultados futuros. Mercados financeiros envolvem risco de perda total do capital.
+      <div style={{padding:'11px 15px',background:'rgba(220,38,38,.04)',borderRadius:8,border:'1px solid rgba(220,38,38,.12)',position:'relative',zIndex:2}}>
+        <p style={{fontSize:9.5,color:'rgba(220,60,60,.75)',lineHeight:1.75,letterSpacing:'.02em',fontFamily:T.mono}}>
+          * Projeção baseada em 1% de risco/operação, ratio 7W:1L, retorno médio de 1.8R por operação vencedora.
+          R-multiples baseados na metodologia The Strategy. Desempenho histórico não garante resultados futuros.
         </p>
       </div>
     </div>
@@ -739,89 +702,79 @@ const Simulator = () => {
 };
 
 /* ─────────────────────────────────────────
-   SYSTEM STATUS — replaces Contact
+   SYSTEM STATUS
 ───────────────────────────────────────── */
 const SystemStatus = () => {
   const [tick, setTick] = useState(0);
-  useEffect(() => {
-    const id = setInterval(() => setTick(t => t + 1), 1000);
-    return () => clearInterval(id);
-  }, []);
-
-  const lat  = (3 + Math.sin(tick * .31)  * .18).toFixed(3);
-  const thru = (847 + Math.floor(Math.sin(tick * .71) * 9));
-  const up   = (99.997 + Math.sin(tick * .11) * .001).toFixed(3);
-
+  useEffect(() => { const id = setInterval(() => setTick(t => t+1), 1000); return () => clearInterval(id); }, []);
+  const lat  = (3+Math.sin(tick*.31)*.18).toFixed(3);
+  const thru = (847+Math.floor(Math.sin(tick*.71)*9));
+  const up   = (99.997+Math.sin(tick*.11)*.001).toFixed(3);
   const engines = [
-    { label: 'NEURAL ENGINE',     val: 'OPTIMAL',          bar: 100 },
-    { label: 'RISK PROTOCOL',     val: '1.0% SHIELD',      bar: 100 },
-    { label: 'MARKET FEED',       val: 'LIVE · XAUUSD M1', bar: 97 + (tick % 4) },
-    { label: 'STRATEGY CORE',     val: 'ADAPTIVE v2.0',    bar: 98 + (tick % 3) },
-    { label: 'CLAUDE CODE LAYER', val: 'SELF-OPTIMIZING',  bar: 96 + (tick % 5) },
+    { label:'NEURAL ENGINE',      val:'OPTIMAL',           bar:100 },
+    { label:'RISK ARMOR',         val:'1.0% HARD-LOCKED',  bar:100 },
+    { label:'MARKET FEED',        val:'LIVE · XAUUSD M1',  bar:97+(tick%4) },
+    { label:'COGNITIVE CORE',     val:'REASONING ACTIVE',  bar:99 },
+    { label:'CIRCUIT BREAKER',    val:'DRAWDOWN SHIELD',   bar:100 },
+    { label:'CLAUDE CODE LAYER',  val:'SELF-OPTIMIZING',   bar:96+(tick%5) },
   ];
   const diag = [
-    { k: 'LATENCY',    v: `${lat}ms`      },
-    { k: 'THROUGHPUT', v: `${thru} ops/s` },
-    { k: 'UPTIME',     v: `${up}%`        },
-    { k: 'PROTOCOL',   v: 'QUANTUM-SECURED' },
-    { k: 'CIPHER',     v: 'AES-256-GCM'  },
-    { k: 'ACCESS',     v: 'ELITE ONLY'   },
+    { k:'LATENCY',    v:`${lat}ms`        },
+    { k:'THROUGHPUT', v:`${thru} ops/s`   },
+    { k:'UPTIME',     v:`${up}%`          },
+    { k:'PROTOCOL',   v:'QUANTUM-SECURED' },
+    { k:'CIPHER',     v:'AES-256-GCM'     },
+    { k:'ACCESS',     v:'DOM INVESTITORE' },
   ];
-
   return (
-    <section id="status" style={{ padding:'120px clamp(20px,5vw,60px)', maxWidth:960, margin:'0 auto', fontFamily:T.font }}>
+    <section id="status" style={{padding:'120px clamp(20px,5vw,60px)',maxWidth:960,margin:'0 auto',fontFamily:T.font}}>
       <HoloReveal>
-        <div style={{ textAlign:'center', marginBottom:56 }}>
-          <div className="section-label" style={{ marginBottom:16 }}>SYSTEM STATUS</div>
-          <h2 className="h2" style={{ marginBottom:20 }}>
+        <div style={{textAlign:'center',marginBottom:56}}>
+          <div className="section-label" style={{marginBottom:16}}>SYSTEM STATUS</div>
+          <h2 className="h2" style={{marginBottom:20}}>
             Engines:{' '}
-            <DecryptText text="Optimized." style={{ color:'#C9A84C', textShadow:'0 0 30px rgba(201,168,76,.5)' }} delay={400}/>
+            <DecryptText text="Optimized." style={{color:T.gold,textShadow:'0 0 30px rgba(201,168,76,.5)'}} delay={400}/>
           </h2>
-          <p className="lead" style={{ maxWidth:520, margin:'0 auto' }}>
-            Motor autónomo em operação. Todos os sistemas nominais.
+          <p className="lead" style={{maxWidth:520,margin:'0 auto'}}>
+            Motor autónomo em operação. Frieza Algorítmica de Segunda Geração. Todos os sistemas nominais.
           </p>
         </div>
-
-        <div className="holo-panel" style={{ borderRadius:24, padding:'clamp(28px,5vw,56px)', position:'relative', overflow:'hidden' }}>
+        <div className="holo-panel" style={{borderRadius:24,padding:'clamp(28px,5vw,56px)',position:'relative',overflow:'hidden'}}>
           <div className="hud-grid" style={{borderRadius:24}}/>
-
-          {/* Top status bar */}
-          <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:40, paddingBottom:20, borderBottom:'1px solid rgba(201,168,76,.1)', position:'relative', zIndex:2 }}>
-            <div style={{ display:'flex', alignItems:'center', gap:12 }}>
-              <div style={{ width:10, height:10, borderRadius:'50%', background:'#C9A84C', boxShadow:'0 0 18px rgba(201,168,76,.9)', animation:'blink 1.8s infinite' }}/>
-              <span style={{ fontFamily:T.mono, fontSize:11, color:T.gold, letterSpacing:'.12em', fontWeight:800 }}>KRONEX IA · QUANTUM CORE v2.0</span>
+          {/* Top bar */}
+          <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:40,paddingBottom:20,borderBottom:'1px solid rgba(201,168,76,.12)',position:'relative',zIndex:2}}>
+            <div style={{display:'flex',alignItems:'center',gap:12}}>
+              <div style={{width:10,height:10,borderRadius:'50%',background:'#C9A84C',boxShadow:'0 0 18px rgba(201,168,76,.9)',animation:'blink 1.8s infinite'}}/>
+              <span style={{fontFamily:T.mono,fontSize:11,color:T.gold,letterSpacing:'.12em',fontWeight:800}}>KRONEX COGNITIVE · QUANTUM CORE v2.0</span>
             </div>
-            <div style={{ fontFamily:T.mono, fontSize:9, color:'rgba(201,168,76,.5)', letterSpacing:'.1em' }}>ALL SYSTEMS NOMINAL</div>
+            <div style={{fontFamily:T.mono,fontSize:9,color:T.muted,letterSpacing:'.1em'}}>ALL SYSTEMS NOMINAL</div>
           </div>
-
           {/* Engine bars */}
-          <div style={{ display:'flex', flexDirection:'column', gap:18, marginBottom:40, position:'relative', zIndex:2 }}>
+          <div style={{display:'flex',flexDirection:'column',gap:18,marginBottom:40,position:'relative',zIndex:2}}>
             {engines.map(e => (
-              <div key={e.label} style={{ display:'flex', alignItems:'center', gap:16 }}>
-                <div style={{ width:160, fontSize:9, fontFamily:T.mono, color:T.sub, letterSpacing:'.08em', flexShrink:0 }}>{e.label}</div>
-                <div style={{ flex:1, height:2, background:'rgba(201,168,76,.1)', borderRadius:1, overflow:'hidden' }}>
-                  <div style={{ width:`${Math.min(e.bar,100)}%`, height:'100%', background:'linear-gradient(90deg,#8B6914,#C9A84C,#FFD060)', borderRadius:1, boxShadow:'0 0 8px rgba(201,168,76,.6)', transition:'width .8s ease' }}/>
+              <div key={e.label} style={{display:'flex',alignItems:'center',gap:16}}>
+                <div style={{width:160,fontSize:9,fontFamily:T.mono,color:T.muted,letterSpacing:'.08em',flexShrink:0}}>{e.label}</div>
+                <div style={{flex:1,height:2,background:'rgba(201,168,76,.12)',borderRadius:1,overflow:'hidden'}}>
+                  <div style={{width:`${Math.min(e.bar,100)}%`,height:'100%',background:'linear-gradient(90deg,#8B6914,#C9A84C,#FFD060)',borderRadius:1,boxShadow:'0 0 8px rgba(201,168,76,.6)',transition:'width .8s ease'}}/>
                 </div>
-                <div style={{ width:140, textAlign:'right', fontSize:9, fontFamily:T.mono, color:'#FFD060', letterSpacing:'.07em', fontWeight:700, flexShrink:0 }}>{e.val}</div>
+                <div style={{width:160,textAlign:'right',fontSize:9,fontFamily:T.mono,color:T.bright,letterSpacing:'.07em',fontWeight:700,flexShrink:0}}>{e.val}</div>
               </div>
             ))}
           </div>
-
-          {/* Diagnostic grid */}
-          <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fit,minmax(160px,1fr))', gap:14, marginBottom:44, position:'relative', zIndex:2 }}>
+          {/* Diagnostics */}
+          <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(140px,1fr))',gap:12,marginBottom:44,position:'relative',zIndex:2}}>
             {diag.map(d => (
-              <div key={d.k} style={{ padding:'16px 14px', borderRadius:10, background:'rgba(201,168,76,.03)', border:'1px solid rgba(201,168,76,.1)', position:'relative', overflow:'hidden' }}>
-                <div style={{position:'absolute',top:0,left:0,right:0,height:'1px',background:'linear-gradient(90deg,transparent,rgba(201,168,76,.25),transparent)'}}/>
-                <div style={{ fontSize:8, color:T.muted, letterSpacing:'.12em', marginBottom:8, fontFamily:T.mono }}>{d.k}</div>
-                <div style={{ fontSize:13, fontWeight:800, color:'#C9A84C', fontFamily:T.mono, letterSpacing:'.04em', textShadow:'0 0 16px rgba(201,168,76,.4)' }}>{d.v}</div>
+              <div key={d.k} style={{padding:'15px 13px',borderRadius:10,background:'rgba(201,168,76,.04)',border:'1px solid rgba(201,168,76,.12)',position:'relative',overflow:'hidden'}}>
+                <div style={{position:'absolute',top:0,left:0,right:0,height:'1px',background:'linear-gradient(90deg,transparent,rgba(201,168,76,.28),transparent)'}}/>
+                <div style={{fontSize:8,color:T.muted,letterSpacing:'.12em',marginBottom:8,fontFamily:T.mono}}>{d.k}</div>
+                <div style={{fontSize:13,fontWeight:800,color:T.gold,fontFamily:T.mono,letterSpacing:'.04em',textShadow:'0 0 16px rgba(201,168,76,.4)'}}>{d.v}</div>
               </div>
             ))}
           </div>
-
-          {/* Closing statement */}
-          <div style={{ textAlign:'center', paddingTop:36, borderTop:'1px solid rgba(201,168,76,.08)', position:'relative', zIndex:2 }}>
-            <div style={{ fontSize:10, fontFamily:T.mono, color:T.muted, letterSpacing:'.14em', marginBottom:14 }}>ACCESS · DOM INVESTITORE VERIFIED MEMBERS ONLY</div>
-            <p style={{ fontSize:12, color:'rgba(201,168,76,.35)', fontFamily:T.mono, lineHeight:2, letterSpacing:'.04em' }}>
+          {/* Footer text */}
+          <div style={{textAlign:'center',paddingTop:34,borderTop:'1px solid rgba(201,168,76,.09)',position:'relative',zIndex:2}}>
+            <div style={{fontSize:10,fontFamily:T.mono,color:T.muted,letterSpacing:'.14em',marginBottom:14}}>ACCESS · DOM INVESTITORE VERIFIED MEMBERS ONLY</div>
+            <p style={{fontSize:12,color:T.muted,fontFamily:T.mono,lineHeight:2.1,letterSpacing:'.04em'}}>
               Tecnologia proprietária · Uso restrito · Todos os direitos reservados<br/>
               Esta ferramenta não se destina ao mercado público.
             </p>
@@ -844,34 +797,35 @@ const Navbar = ({ scrolled }) => {
     { label:'Sistema',       href:'#status'    },
   ];
   return (
-    <nav style={{
-      position:'fixed', top:0, left:0, right:0, zIndex:999, height:64,
-      padding:'0 clamp(16px,4vw,48px)', display:'flex', alignItems:'center', justifyContent:'space-between',
-      background:  scrolled ? 'rgba(4,4,4,.96)'               : 'transparent',
-      borderBottom:scrolled ? '1px solid rgba(201,168,76,.1)' : '1px solid transparent',
-      backdropFilter: scrolled ? 'blur(40px)' : 'none',
-      transition: 'all .5s ease', fontFamily: T.font,
-    }}>
+    <nav style={{ position:'fixed',top:0,left:0,right:0,zIndex:999,height:64,padding:'0 clamp(16px,4vw,48px)',display:'flex',alignItems:'center',justifyContent:'space-between',
+      background:scrolled?'rgba(4,4,4,.96)':'transparent',
+      borderBottom:scrolled?'1px solid rgba(201,168,76,.12)':'1px solid transparent',
+      backdropFilter:scrolled?'blur(40px)':'none',
+      transition:'all .5s ease', fontFamily:T.font }}>
       {scrolled && <div style={{position:'absolute',bottom:0,left:0,right:0,height:'1px',background:'linear-gradient(90deg,transparent,rgba(201,168,76,.35),transparent)'}}/>}
       {/* Logo */}
-      <div style={{ display:'flex', alignItems:'center', gap:10 }}>
-        <div style={{ width:32, height:32, background:'linear-gradient(135deg,#5C4208,#C9A84C,#FFD060)', borderRadius:8, display:'flex', alignItems:'center', justifyContent:'center', boxShadow:'0 0 24px rgba(201,168,76,.5)', position:'relative' }}>
+      <div style={{display:'flex',alignItems:'center',gap:10}}>
+        <div style={{width:32,height:32,background:'linear-gradient(135deg,#5C4208,#C9A84C,#FFD060)',borderRadius:8,display:'flex',alignItems:'center',justifyContent:'center',boxShadow:'0 0 24px rgba(201,168,76,.5)',position:'relative'}}>
           <div style={{position:'absolute',inset:-2,border:'1px solid rgba(201,168,76,.3)',borderRadius:10,animation:'rot-cw 10s linear infinite'}}/>
           <span style={{color:'#040404',fontSize:14,fontWeight:900}}>K</span>
         </div>
-        <span style={{fontWeight:800,fontSize:14,letterSpacing:'.1em',color:T.text,textTransform:'uppercase'}}>KRONEX <span style={{color:'#C9A84C',textShadow:'0 0 20px rgba(201,168,76,.7)'}}>IA</span></span>
+        <span style={{fontWeight:800,fontSize:13,letterSpacing:'.1em',color:T.text,textTransform:'uppercase'}}>KRONEX <span style={{color:T.gold,textShadow:'0 0 20px rgba(201,168,76,.7)'}}>COGNITIVE</span></span>
       </div>
-      {/* Links — hidden on small screens via inline conditional */}
-      <div style={{ display:'flex', gap:26 }}>
+      {/* Links */}
+      <div style={{display:'flex',gap:24}}>
         {links.map(l => (
           <a key={l.label} href={l.href}
-            style={{fontSize:10.5,fontWeight:600,letterSpacing:'.08em',color:T.sub,transition:'all .2s',textTransform:'uppercase'}}
-            onMouseEnter={e=>{e.target.style.color='#C9A84C';e.target.style.textShadow='0 0 16px rgba(201,168,76,.6)';}}
-            onMouseLeave={e=>{e.target.style.color=T.sub;e.target.style.textShadow='none';}}
+            style={{fontSize:10.5,fontWeight:600,letterSpacing:'.08em',color:T.muted,transition:'all .2s',textTransform:'uppercase'}}
+            onMouseEnter={e=>{e.target.style.color=T.gold;e.target.style.textShadow='0 0 16px rgba(201,168,76,.6)';}}
+            onMouseLeave={e=>{e.target.style.color=T.muted;e.target.style.textShadow='none';}}
           >{l.label}</a>
         ))}
       </div>
-      <a href="#status"><button className="btn-outline" style={{padding:'8px 22px',borderRadius:8,fontSize:10,letterSpacing:'.1em'}}>Terminal Privado</button></a>
+      <a href="#status">
+        <button className="btn-outline" style={{padding:'8px 16px',borderRadius:8,fontSize:8.5,letterSpacing:'.09em',whiteSpace:'nowrap'}}>
+          TERMINAL COGNITIVE REASONING
+        </button>
+      </a>
     </nav>
   );
 };
@@ -880,58 +834,53 @@ const Navbar = ({ scrolled }) => {
    HERO
 ───────────────────────────────────────── */
 const Hero = () => (
-  <section style={{ position:'relative', minHeight:'100vh', display:'flex', alignItems:'center', overflow:'hidden', fontFamily:T.font, background:'#040404' }}>
+  <section style={{position:'relative',minHeight:'100vh',display:'flex',alignItems:'center',overflow:'hidden',fontFamily:T.font,background:'#040404'}}>
     <EnergyCoreCanvas/>
     <NeuralCanvas opacity={0.22}/>
     <div className="parallax-slow" style={{position:'absolute',top:'36%',left:'50%',transform:'translate(-50%,-50%)',width:620,height:620,borderRadius:'50%',border:'1px solid rgba(201,168,76,.055)',pointerEvents:'none'}}/>
-
-    {/* HUD top-bar */}
-    <div style={{ position:'absolute',top:76,left:0,right:0,display:'flex',justifyContent:'space-between',padding:'0 clamp(20px,4vw,60px)',fontFamily:T.mono,fontSize:9,color:'rgba(201,168,76,.38)',letterSpacing:'.12em',animation:'slide-up .9s ease .4s both' }}>
-      <span>K.R.O.N.E.X · I.A · v2.0.26</span>
+    {/* HUD top bar */}
+    <div style={{position:'absolute',top:76,left:0,right:0,display:'flex',justifyContent:'space-between',padding:'0 clamp(20px,4vw,60px)',fontFamily:T.mono,fontSize:9,color:T.muted,letterSpacing:'.12em',animation:'slide-up .9s ease .4s both'}}>
+      <span>K.R.O.N.E.X · C.O.G.N.I.T.I.V.E · v2.0.26</span>
       <span>DOM · INVESTITORE · RESTRICTED ACCESS</span>
       <span>TERMINAL · PRIVADO · {new Date().getFullYear()}</span>
     </div>
-
-    <div className="parallax-slow" style={{ position:'relative',zIndex:2,maxWidth:1100,margin:'0 auto',padding:'120px clamp(20px,5vw,60px) 80px',textAlign:'center',fontFamily:T.font }}>
+    <div className="parallax-slow" style={{position:'relative',zIndex:2,maxWidth:1100,margin:'0 auto',padding:'120px clamp(20px,5vw,60px) 80px',textAlign:'center',fontFamily:T.font}}>
       <div className="tag" style={{marginBottom:32,animation:'slide-up .9s ease both'}}>
-        <span style={{width:6,height:6,borderRadius:'50%',background:'#C9A84C',display:'inline-block',boxShadow:'0 0 12px rgba(201,168,76,.9)',animation:'blink 1.5s infinite'}}/>
+        <span style={{width:6,height:6,borderRadius:'50%',background:T.gold,display:'inline-block',boxShadow:'0 0 12px rgba(201,168,76,.9)',animation:'blink 1.5s infinite'}}/>
         DOM INVESTITORE — Acesso Exclusivo Founder
       </div>
-
       <h1 className="h1" style={{marginBottom:32,animation:'slide-up .9s ease .15s both'}}>
-        <span style={{background:'linear-gradient(135deg,#E8E8E0 0%,#9a8a7a 35%,#C9A84C 72%,#FFD060 100%)',WebkitBackgroundClip:'text',WebkitTextFillColor:'transparent',backgroundClip:'text',display:'block'}}>
+        <span style={{background:'linear-gradient(135deg,#E8E8E0 0%,#C0C0BA 35%,#C9A84C 72%,#FFD060 100%)',WebkitBackgroundClip:'text',WebkitTextFillColor:'transparent',backgroundClip:'text',display:'block'}}>
           <DecryptText text="Quando a máquina trabalha," delay={600}/><br/>
           <DecryptText text="a mente descansa." delay={1000}/>
         </span>
-        <span style={{color:'#C9A84C',fontSize:'.68em',textShadow:'0 0 40px rgba(201,168,76,.4)',WebkitTextFillColor:'#C9A84C',display:'block',marginTop:14,letterSpacing:'-.01em'}}>
-          E um trader com a mente descansada é imbatível.
+        <span style={{color:T.gold,fontSize:'.68em',textShadow:'0 0 40px rgba(201,168,76,.4)',WebkitTextFillColor:T.gold,display:'block',marginTop:14,letterSpacing:'-.01em'}}>
+          E um trader com a mente descansada opera em estado de pura clareza.
         </span>
       </h1>
-
-      <p className="lead" style={{maxWidth:680,margin:'0 auto 48px',animation:'slide-up .9s ease .3s both',opacity:.85}}>
-        O KRONEX IA não substitui o seu estudo de M1. Ele financia-o.<br/>
-        A máquina extrai capital de forma fria e ininterrupta — criando a base financeira que separa o trader que opera com excelência do trader que opera com medo.
+      <p className="lead" style={{maxWidth:720,margin:'0 auto 20px',animation:'slide-up .9s ease .3s both'}}>
+        O KRONEX COGNITIVE não opera com intuição. Opera com <strong style={{color:T.text}}>raciocínio lógico de segunda geração</strong> — uma inteligência que absorve a pressão do mercado para que a sua mente funcione livre de distorção emocional.
       </p>
-
+      <p className="lead" style={{maxWidth:680,margin:'0 auto 48px',animation:'slide-up .9s ease .38s both',fontSize:'clamp(.9rem,1.8vw,1.06rem)'}}>
+        A máquina <strong style={{color:T.text}}>não tem sentimentos</strong>, não hesita e não quebra regras. Ela extrai capital de forma fria e ininterrupta — criando a base financeira que separa o trader que opera com excelência do trader que opera com medo.
+      </p>
       <div style={{display:'flex',gap:16,justifyContent:'center',flexWrap:'wrap',animation:'slide-up .9s ease .45s both'}}>
         <a href="#simulador"><button className="btn-primary" style={{padding:'18px 40px',borderRadius:10,fontSize:13,letterSpacing:'.06em'}}>Ver a Matemática &nbsp;→</button></a>
         <a href="#solucao"><button className="btn-outline" style={{padding:'18px 30px',borderRadius:10,fontSize:13}}>Como Funciona</button></a>
       </div>
-
       <div style={{display:'flex',gap:0,justifyContent:'center',marginTop:72,flexWrap:'wrap',animation:'slide-up .9s ease .6s both'}}>
-        {[{n:'87.5%',l:'Assertividade'},{n:'1:7',l:'Ratio Loss/Gain'},{n:'1.8R',l:'R médio por win'},{n:'24/7',l:'Automação'}].map((s,i)=>(
+        {[{n:'87.5%',l:'Assertividade'},{n:'1:7',l:'Ratio Loss/Gain'},{n:'1.8R',l:'R médio por win'},{n:'24/7',l:'Frieza Algorítmica'}].map((s,i)=>(
           <div key={i} style={{padding:'22px 36px',borderRight:i<3?'1px solid rgba(201,168,76,.08)':'none',textAlign:'center',position:'relative'}}>
             <div style={{position:'absolute',top:0,left:'50%',transform:'translateX(-50%)',width:'60%',height:'1px',background:'linear-gradient(90deg,transparent,rgba(201,168,76,.28),transparent)'}}/>
-            <div className="glitch-id" style={{fontSize:'clamp(1.3rem,3vw,2.1rem)',fontWeight:900,color:'#C9A84C',letterSpacing:'-.02em',textShadow:'0 0 30px rgba(201,168,76,.5)',fontVariantNumeric:'tabular-nums'}}>{s.n}</div>
+            <div className="glitch-id" style={{fontSize:'clamp(1.3rem,3vw,2.1rem)',fontWeight:900,color:T.gold,letterSpacing:'-.02em',textShadow:'0 0 30px rgba(201,168,76,.5)',fontVariantNumeric:'tabular-nums'}}>{s.n}</div>
             <div style={{fontSize:9,color:T.muted,marginTop:5,letterSpacing:'.12em',textTransform:'uppercase',fontFamily:T.mono}}>{s.l}</div>
           </div>
         ))}
       </div>
     </div>
-
     <div style={{position:'absolute',bottom:32,left:'50%',transform:'translateX(-50%)',animation:'quantum-float 3s infinite',opacity:.45}}>
       <div style={{width:22,height:36,border:'1px solid rgba(201,168,76,.38)',borderRadius:12,display:'flex',justifyContent:'center',paddingTop:6,boxShadow:'0 0 12px rgba(201,168,76,.18)'}}>
-        <div style={{width:2,height:7,background:'#C9A84C',borderRadius:2,animation:'blink 1.5s infinite',boxShadow:'0 0 8px rgba(201,168,76,.8)'}}/>
+        <div style={{width:2,height:7,background:T.gold,borderRadius:2,animation:'blink 1.5s infinite',boxShadow:'0 0 8px rgba(201,168,76,.8)'}}/>
       </div>
     </div>
   </section>
@@ -945,8 +894,8 @@ const Inimigo = () => {
   const pains = [
     { icon:'🔪', title:'A Faca no Pescoço', desc:'Operar com despesas por cobrir transforma cada boleta numa decisão emocional. O trader já não executa a estratégia — executa o medo de não pagar a renda.', stat:'Causa nº1 de ruína' },
     { icon:'🧠', title:'Colapso da Disciplina', desc:'O cérebro sob pressão financeira entra em modo de sobrevivência. O stop move. O alvo fecha cedo. A mesma estratégia que funciona em demo destrói a conta real.', stat:'78% das perdas evitáveis' },
-    { icon:'📉', title:'Consistência Impossível', desc:'Nenhum trader consegue manter frieza algorítmica operação após operação quando o resultado afeta diretamente a sua qualidade de vida. É biologia, não fraqueza.', stat:'0% sustentam a consistência' },
-    { icon:'⚡', title:'O Ciclo Vicioso', desc:'Perda → pressão → overtrading → mais perda. Sem uma fonte de rendimento base, o trader está permanentemente dentro deste ciclo. A saída não é mais estudo. É estrutura.', stat:'95% ficam presos aqui' },
+    { icon:'📉', title:'Consistência Impossível', desc:'Nenhum trader mantém frieza algorítmica operação após operação quando o resultado afeta diretamente a sua qualidade de vida. É biologia, não fraqueza.', stat:'0% sustentam a consistência' },
+    { icon:'⚡', title:'O Ciclo Vicioso', desc:'Perda → pressão → overtrading → mais perda. Sem uma fonte de rendimento base, o trader está preso neste ciclo. A saída não é mais estudo. É estrutura financeira.', stat:'95% ficam presos aqui' },
   ];
   return (
     <section id="inimigo" style={{padding:'120px clamp(20px,5vw,60px)',maxWidth:1200,margin:'0 auto',fontFamily:T.font}}>
@@ -954,7 +903,7 @@ const Inimigo = () => {
         <div style={{textAlign:'center',marginBottom:72}}>
           <div className="section-label" style={{marginBottom:16}}>O Inimigo Real</div>
           <h2 className="h2" style={{marginBottom:20}}>O mercado não destrói traders.<br/><span style={{color:'#ef4444',textShadow:'0 0 30px rgba(239,68,68,.4)'}}>A pressão financeira destrói traders.</span></h2>
-          <p className="lead" style={{maxWidth:620,margin:'0 auto'}}>Você já tem o conhecimento técnico. Você estuda The Strategy. O problema não é a estratégia — é a condição mental em que você a executa.</p>
+          <p className="lead" style={{maxWidth:660,margin:'0 auto'}}>Você já tem o conhecimento técnico. Você estuda The Strategy. O problema não é a estratégia — é a condição mental em que você a executa. O KRONEX COGNITIVE foi construído para resolver exatamente isso.</p>
         </div>
       </HoloReveal>
       <HoloReveal delay={0.08}>
@@ -963,19 +912,23 @@ const Inimigo = () => {
             <div style={{position:'absolute',inset:0,background:'radial-gradient(ellipse at 50% 50%,rgba(239,68,68,.05),transparent)',pointerEvents:'none'}}/>
             <div style={{fontSize:'clamp(3rem,10vw,6rem)',fontWeight:900,color:'#ef4444',lineHeight:1,letterSpacing:'-.04em',textShadow:'0 0 60px rgba(239,68,68,.5)'}}>95<span style={{fontSize:'.5em'}}>%</span></div>
             <div style={{fontSize:11,color:T.sub,marginTop:12,letterSpacing:'.1em'}}>DOS TRADERS DE VAREJO ENCERRAM O ANO NO NEGATIVO</div>
-            <div style={{fontSize:10,color:T.muted,marginTop:6,fontFamily:T.mono}}>A maioria não falha por falta de estratégia. Falha por operar sob pressão.</div>
+            <div style={{fontSize:10,color:T.muted,marginTop:6,fontFamily:T.mono}}>A maioria não falha por falta de estratégia. Falha por operar sob pressão financeira.</div>
           </div>
         </div>
       </HoloReveal>
       <HoloReveal delay={0.12}>
         <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(240px,1fr))',gap:16}}>
-          {pains.map((p,i)=>(
-            <div key={i} className="glass" style={{borderRadius:16,padding:'28px 24px',cursor:'none',borderColor:activeCard===i?'rgba(239,68,68,.28)':T.border,transform:activeCard===i?'translateY(-6px) scale(1.01)':'none',boxShadow:activeCard===i?'0 20px 60px rgba(239,68,68,.09)':'none',transition:'all .4s cubic-bezier(.16,1,.3,1)',position:'relative',overflow:'hidden'}}
+          {pains.map((p,i) => (
+            <div key={i} className="glass" style={{borderRadius:16,padding:'28px 24px',cursor:'none',
+              borderColor:activeCard===i?'rgba(239,68,68,.3)':T.border,
+              transform:activeCard===i?'translateY(-6px) scale(1.01)':'none',
+              boxShadow:activeCard===i?'0 20px 60px rgba(239,68,68,.09)':'none',
+              transition:'all .4s cubic-bezier(.16,1,.3,1)',position:'relative',overflow:'hidden'}}
               onMouseEnter={()=>setActiveCard(i)} onMouseLeave={()=>setActiveCard(null)}>
-              {activeCard===i&&<div style={{position:'absolute',top:0,left:0,right:0,height:'1px',background:'linear-gradient(90deg,transparent,rgba(239,68,68,.55),transparent)'}}/>}
+              {activeCard===i && <div style={{position:'absolute',top:0,left:0,right:0,height:'1px',background:'linear-gradient(90deg,transparent,rgba(239,68,68,.55),transparent)'}}/>}
               <div style={{fontSize:28,marginBottom:14}}>{p.icon}</div>
-              <div style={{fontSize:13,fontWeight:700,color:T.text,marginBottom:8}}>{p.title}</div>
-              <div style={{fontSize:13,color:T.sub,lineHeight:1.75,marginBottom:16}}>{p.desc}</div>
+              <div style={{fontSize:14,fontWeight:700,color:T.text,marginBottom:9}}>{p.title}</div>
+              <div style={{fontSize:13,color:T.sub,lineHeight:1.8,marginBottom:16}}>{p.desc}</div>
               <div style={{fontSize:10,fontWeight:800,color:'#ef4444',letterSpacing:'.07em',fontFamily:T.mono}}>{p.stat}</div>
             </div>
           ))}
@@ -994,14 +947,19 @@ const Solution = () => {
     <section id="solucao" style={{padding:'120px clamp(20px,5vw,60px)',maxWidth:1200,margin:'0 auto',fontFamily:T.font}}>
       <HoloReveal>
         <div style={{textAlign:'center',marginBottom:60}}>
-          <div className="section-label" style={{marginBottom:16}}>O Primeiro Funcionário de Elite</div>
-          <h2 className="h2" style={{marginBottom:20}}>O KRONEX não opera por você.<br/><span style={{color:'#C9A84C',textShadow:'0 0 30px rgba(201,168,76,.5)'}}>Opera para você.</span></h2>
-          <p className="lead" style={{maxWidth:660,margin:'0 auto'}}>Enquanto você aperfeiçoa a sua leitura do M1, o sistema extrai capital de forma fria e ininterrupta. Quando você senta à frente do gráfico, não está a tentar sobreviver. Está a tentar vencer.</p>
+          <div className="section-label" style={{marginBottom:16}}>Frieza Algorítmica de Segunda Geração</div>
+          <h2 className="h2" style={{marginBottom:20}}>O KRONEX COGNITIVE não opera por você.<br/><span style={{color:T.gold,textShadow:'0 0 30px rgba(201,168,76,.5)'}}>Opera para você.</span></h2>
+          <p className="lead" style={{maxWidth:720,margin:'0 auto'}}>Enquanto você aperfeiçoa a sua leitura do M1, o sistema extrai capital de forma fria e ininterrupta. A máquina não tem sentimentos, não hesita e não quebra regras. Quando você senta à frente do gráfico, não está a tentar sobreviver. Está a tentar vencer.</p>
         </div>
       </HoloReveal>
       <HoloReveal delay={0.08}>
         <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(200px,1fr))',gap:16,marginBottom:52}}>
-          {[{label:'Assertividade Histórica',value:87.5,suffix:'%',highlight:true},{label:'Alvos por Operação',value:4,prefix:'Média ',sub:'Gestão assimétrica de R/R por alvo'},{label:'Ratio Gain / Loss',value:7,suffix:':1',sub:'7 operações vencedoras por cada stop'},{label:'Risco Máx. por Trade',value:1,suffix:'%',sub:'Trava hard-coded. Inviolável.'}].map((m,i)=><MetricCard key={i} {...m}/>)}
+          {[
+            {label:'Assertividade Histórica',value:87.5,suffix:'%',highlight:true},
+            {label:'Alvos por Operação',value:4,prefix:'Média ',sub:'Gestão assimétrica de R/R por alvo'},
+            {label:'Ratio Gain / Loss',value:7,suffix:':1',sub:'7 operações vencedoras por cada stop'},
+            {label:'Armadura — Risco Máx.',value:1,suffix:'%',sub:'Trava hard-coded inviolável por operação'},
+          ].map((m,i) => <MetricCard key={i} {...m}/>)}
         </div>
       </HoloReveal>
       <HoloReveal delay={0.12}>
@@ -1009,22 +967,28 @@ const Solution = () => {
           <div className="hud-grid" style={{borderRadius:20}}/>
           <div style={{marginBottom:28,position:'relative'}}>
             <div className="section-label" style={{marginBottom:10}}>Execução Autónoma — Condução Barra a Barra</div>
-            <h3 className="h3">Da entrada ao Alvo 4: <span style={{color:'#C9A84C'}}>zero intervenção humana.</span></h3>
+            <h3 className="h3">Da entrada ao Alvo 4: <span style={{color:T.gold}}>zero intervenção humana.</span></h3>
           </div>
           <div ref={chartRef}><TradeChart active={chartVisible}/></div>
           <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(180px,1fr))',gap:14,marginTop:32}}>
-            {[{s:'01',t:'Entrada Precisa',d:'Algoritmo identifica zona de liquidez e aciona entrada com confirmação multi-timeframe no M1.'},{s:'02',t:'Alvo 1 → Parcial',d:'Realização parcial confirma a tese. Lucro imediato assegurado — stop passa a breakeven.'},{s:'03',t:'Breakeven Auto',d:'Stop movido para a entrada após T1. Operação passa a risco zero automaticamente.'},{s:'04',t:'Trailing Stop',d:'IA conduz a posição rastreando liquidez até o Alvo 4, maximizando o R final.'}].map((s,i)=>(
-              <div key={i} style={{padding:'20px',borderRadius:12,background:'rgba(201,168,76,.03)',border:'1px solid rgba(201,168,76,.08)',opacity:chartVisible?1:0,transform:chartVisible?'none':'translateY(20px)',transition:`all .6s ease ${i*.15+.5}s`,position:'relative',overflow:'hidden'}}>
+            {[
+              {s:'01',t:'Entrada Precisa',d:'Algoritmo identifica zona de liquidez e aciona entrada com confirmação multi-timeframe no M1. Sem emoção, sem hesitação.'},
+              {s:'02',t:'Alvo 1 → Parcial',d:'Realização parcial confirma a tese. Lucro imediato assegurado — stop passa a breakeven automaticamente.'},
+              {s:'03',t:'Breakeven Auto',d:'Stop movido para a entrada após T1. A operação passa a risco zero. O motor continua sem pressão.'},
+              {s:'04',t:'Trailing Stop',d:'O KRONEX COGNITIVE conduz a posição rastreando liquidez até o Alvo 4, maximizando o R com frieza cirúrgica.'},
+            ].map((s,i) => (
+              <div key={i} style={{padding:'20px',borderRadius:12,background:'rgba(201,168,76,.04)',border:'1px solid rgba(201,168,76,.1)',
+                opacity:chartVisible?1:0,transform:chartVisible?'none':'translateY(20px)',transition:`all .6s ease ${i*.15+.5}s`,position:'relative',overflow:'hidden'}}>
                 <div style={{position:'absolute',top:0,left:0,right:0,height:'1px',background:'linear-gradient(90deg,transparent,rgba(201,168,76,.22),transparent)'}}/>
-                <div style={{fontSize:9,fontWeight:900,color:'#C9A84C',letterSpacing:'.2em',marginBottom:10,fontFamily:T.mono}}>PASSO {s.s}</div>
-                <div style={{fontSize:13,fontWeight:700,color:T.text,marginBottom:6}}>{s.t}</div>
-                <div style={{fontSize:12,color:T.sub,lineHeight:1.75}}>{s.d}</div>
+                <div style={{fontSize:9,fontWeight:900,color:T.gold,letterSpacing:'.2em',marginBottom:10,fontFamily:T.mono}}>PASSO {s.s}</div>
+                <div style={{fontSize:13,fontWeight:700,color:T.text,marginBottom:7}}>{s.t}</div>
+                <div style={{fontSize:12.5,color:T.sub,lineHeight:1.78}}>{s.d}</div>
               </div>
             ))}
           </div>
         </div>
-        <div style={{marginTop:18,padding:'11px 16px',borderRadius:10,border:'1px solid rgba(201,168,76,.07)',background:'rgba(255,255,255,.01)'}}>
-          <p style={{fontSize:10,color:T.muted,letterSpacing:'.02em',lineHeight:1.75,fontFamily:T.mono}}><strong style={{color:T.sub}}>AVISO LEGAL:</strong> Desempenho histórico não garante resultados futuros. Mercados financeiros envolvem risco de perda total.</p>
+        <div style={{marginTop:18,padding:'11px 16px',borderRadius:10,border:'1px solid rgba(201,168,76,.08)',background:'rgba(255,255,255,.01)'}}>
+          <p style={{fontSize:10,color:T.muted,letterSpacing:'.02em',lineHeight:1.75,fontFamily:T.mono}}><strong style={{color:T.sub}}>AVISO LEGAL:</strong> Desempenho histórico não garante resultados futuros. Mercados financeiros envolvem risco de perda total do capital.</p>
         </div>
       </HoloReveal>
     </section>
@@ -1037,25 +1001,30 @@ const Solution = () => {
 const Technology = () => {
   const pillars = [
     {icon:'🔬',t:'Análise de Performance',d:'Audita cada operação — drawdown, win rate por sessão, eficiência de entrada — e identifica padrões de degradação antes de afetar resultados.'},
-    {icon:'♻️',t:'Refatoração Autónoma',d:'Quando um padrão de mercado muda, o motor refatora a sua própria lógica, testa em backtesting e faz deploy da versão otimizada.'},
-    {icon:'📡',t:'Integração Claude Code',d:'O Claude Code atua como arquiteto de IA — interpretando dados de performance, gerando código de otimização e supervisionando a evolução.'},
-    {icon:'🌐',t:'Aprendizado Contínuo',d:'Absorve dados de múltiplos mercados e condições macro, construindo uma biblioteca proprietária de padrões que se expande 24/7.'},
+    {icon:'♻️',t:'Refatoração Autónoma',d:'Quando um padrão de mercado muda, o motor refatora a sua própria lógica, testa em backtesting acelerado e faz deploy da versão otimizada.'},
+    {icon:'📡',t:'Claude Code Integration',d:'O Claude Code atua como arquiteto de IA — interpretando dados de performance, gerando código de otimização e supervisionando a evolução.'},
+    {icon:'🌐',t:'Raciocínio Adaptativo',d:'Absorve dados de múltiplos mercados e condições macro, construindo uma biblioteca de padrões cognitivos que se expande 24/7.'},
   ];
   return (
     <section id="tecnologia" style={{padding:'120px clamp(20px,5vw,60px)',maxWidth:1200,margin:'0 auto',fontFamily:T.font}}>
       <HoloReveal>
         <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(320px,1fr))',gap:60,alignItems:'center'}}>
           <div>
-            <div className="section-label" style={{marginBottom:16}}>Inteligência Evolutiva</div>
-            <h2 className="h2" style={{marginBottom:24}}>A primeira geração do KRONEX<br/>não é um produto.<br/><span style={{color:'#C9A84C',textShadow:'0 0 30px rgba(201,168,76,.5)'}}>
-              <DecryptText text="É um organismo tecnológico." delay={300}/>
+            <div className="section-label" style={{marginBottom:16}}>Inteligência Cognitiva Evolutiva</div>
+            <h2 className="h2" style={{marginBottom:24}}>O KRONEX COGNITIVE<br/>não é um produto.<br/><span style={{color:T.gold,textShadow:'0 0 30px rgba(201,168,76,.5)'}}>
+              <DecryptText text="É um organismo de raciocínio." delay={300}/>
             </span></h2>
-            <p className="lead" style={{marginBottom:32}}>Enquanto o mercado dorme, o KRONEX IA analisa a sua própria performance, refatora o código e otimiza estratégias autonomamente.</p>
+            <p className="lead" style={{marginBottom:32}}>Enquanto o mercado dorme, o KRONEX COGNITIVE analisa a sua própria performance, refatora o código e otimiza estratégias. Não é um robô que repete padrões — é um sistema que os <strong style={{color:T.text}}>compreende e evolui</strong>.</p>
             <div style={{display:'flex',flexDirection:'column',gap:14}}>
-              {['Análise de padrões históricos em milissegundos','Backtesting em tempo real com dados tick-by-tick','Deploy automático de versões otimizadas','Circuit breakers de IA para controle de drawdown'].map((f,i)=>(
+              {[
+                'Análise de padrões históricos em milissegundos',
+                'Backtesting em tempo real com dados tick-by-tick',
+                'Deploy automático de versões cognitivamente otimizadas',
+                'Circuit breakers de IA para controle de drawdown',
+              ].map((f,i) => (
                 <div key={i} style={{display:'flex',alignItems:'center',gap:14}}>
                   <div style={{width:20,height:20,borderRadius:'50%',background:'rgba(201,168,76,.08)',border:'1px solid rgba(201,168,76,.45)',display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0,boxShadow:'0 0 12px rgba(201,168,76,.2)'}}>
-                    <span style={{color:'#FFD060',fontSize:10,fontWeight:900}}>✓</span>
+                    <span style={{color:T.bright,fontSize:10,fontWeight:900}}>✓</span>
                   </div>
                   <span style={{fontSize:13,color:T.sub}}>{f}</span>
                 </div>
@@ -1063,26 +1032,26 @@ const Technology = () => {
             </div>
           </div>
           <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:14}}>
-            {pillars.map((p,i)=>(
+            {pillars.map((p,i) => (
               <div key={i} className="glass" style={{borderRadius:16,padding:'22px 18px',position:'relative',overflow:'hidden'}}>
-                <div style={{position:'absolute',top:0,left:0,right:0,height:'1px',background:'linear-gradient(90deg,transparent,rgba(201,168,76,.18),transparent)'}}/>
+                <div style={{position:'absolute',top:0,left:0,right:0,height:'1px',background:'linear-gradient(90deg,transparent,rgba(201,168,76,.2),transparent)'}}/>
                 <div style={{fontSize:22,marginBottom:12}}>{p.icon}</div>
-                <div style={{fontSize:13,fontWeight:700,color:T.text,marginBottom:7}}>{p.t}</div>
-                <div style={{fontSize:12,color:T.sub,lineHeight:1.75}}>{p.d}</div>
+                <div style={{fontSize:13,fontWeight:700,color:T.text,marginBottom:8}}>{p.t}</div>
+                <div style={{fontSize:12.5,color:T.sub,lineHeight:1.78}}>{p.d}</div>
               </div>
             ))}
           </div>
         </div>
       </HoloReveal>
       <HoloReveal delay={0.1}>
-        <div style={{marginTop:52,padding:'36px',borderRadius:20,background:'linear-gradient(135deg,rgba(201,168,76,.07) 0%,rgba(4,4,4,.97) 100%)',border:'1px solid rgba(201,168,76,.2)',boxShadow:'0 0 80px rgba(201,168,76,.07)',display:'flex',gap:36,alignItems:'flex-start',flexWrap:'wrap',position:'relative',overflow:'hidden'}}>
+        <div style={{marginTop:52,padding:'36px',borderRadius:20,background:'linear-gradient(135deg,rgba(201,168,76,.07) 0%,rgba(4,4,4,.97) 100%)',border:'1px solid rgba(201,168,76,.22)',boxShadow:'0 0 80px rgba(201,168,76,.07)',display:'flex',gap:36,alignItems:'flex-start',flexWrap:'wrap',position:'relative',overflow:'hidden'}}>
           <div className="hud-grid" style={{borderRadius:20}}/>
           <div style={{flex:'1 1 300px',position:'relative'}}>
             <div style={{display:'flex',alignItems:'center',gap:10,marginBottom:18}}>
-              <div style={{padding:'6px 14px',borderRadius:8,background:'rgba(201,168,76,.08)',border:'1px solid rgba(201,168,76,.28)',fontSize:9,fontWeight:900,color:'#C9A84C',letterSpacing:'.14em',fontFamily:T.mono}}>◈ POWERED BY CLAUDE CODE</div>
+              <div style={{padding:'6px 14px',borderRadius:8,background:'rgba(201,168,76,.08)',border:'1px solid rgba(201,168,76,.28)',fontSize:9,fontWeight:900,color:T.gold,letterSpacing:'.14em',fontFamily:T.mono}}>◈ POWERED BY CLAUDE CODE</div>
             </div>
-            <h3 className="h3" style={{marginBottom:14}}>IA que escreve, testa e melhora<br/>o seu próprio código algorítmico.</h3>
-            <p style={{fontSize:14,color:T.sub,lineHeight:1.85}}>A arquitetura do KRONEX integra o Claude Code como motor de meta-aprendizado: lê os logs de operações reais, gera hipóteses de melhoria, escreve e valida otimizações — tudo de forma autónoma e completamente auditável.</p>
+            <h3 className="h3" style={{marginBottom:14}}>IA que escreve, testa e melhora<br/>o seu próprio raciocínio algorítmico.</h3>
+            <p style={{fontSize:14,color:T.sub,lineHeight:1.88}}>A arquitetura do KRONEX COGNITIVE integra o Claude Code como motor de meta-aprendizado: lê os logs de operações reais, gera hipóteses de melhoria, escreve e valida otimizações — tudo de forma autónoma e completamente auditável. Um sistema que pensa sobre si mesmo.</p>
           </div>
           <div style={{flex:'1 1 280px'}}>
             <QuantumTerminal/>
@@ -1100,18 +1069,20 @@ const SimulatorSection = () => (
   <section id="simulador" style={{padding:'120px clamp(20px,5vw,60px)',maxWidth:1200,margin:'0 auto',fontFamily:T.font}}>
     <HoloReveal>
       <div style={{textAlign:'center',marginBottom:46}}>
-        <div className="section-label" style={{marginBottom:16}}>A Matemática do Hedge Emocional</div>
-        <h2 className="h2" style={{marginBottom:20}}>Simule quanto tempo leva<br/><span style={{color:'#C9A84C',textShadow:'0 0 30px rgba(201,168,76,.5)'}}>para a máquina criar a sua base.</span></h2>
-        <p className="lead" style={{maxWidth:580,margin:'0 auto'}}>Defina o capital que pretende alocar no KRONEX e veja quando ele começa a gerar o rendimento base que elimina a pressão das suas operações manuais.</p>
+        <div className="section-label" style={{marginBottom:16}}>Modelos Probabilísticos Avançados</div>
+        <h2 className="h2" style={{marginBottom:20}}>A Matemática do<br/><span style={{color:T.gold,textShadow:'0 0 30px rgba(201,168,76,.5)'}}>Hedge Emocional.</span></h2>
+        <p className="lead" style={{maxWidth:640,margin:'0 auto'}}>
+          Simule o crescimento exponencial blindado pela Armadura Matemática Hard-Coded. Os resultados refletem modelos probabilísticos baseados nos R-multiples estritos da metodologia The Strategy — não promessas, mas equações.
+        </p>
       </div>
     </HoloReveal>
     <HoloReveal delay={0.07}>
       <Simulator/>
-      <div style={{marginTop:36,padding:'22px 28px',borderRadius:14,background:'rgba(201,168,76,.04)',border:'1px solid rgba(201,168,76,.09)',display:'flex',gap:18,alignItems:'center',flexWrap:'wrap',position:'relative',overflow:'hidden'}}>
+      <div style={{marginTop:36,padding:'22px 28px',borderRadius:14,background:'rgba(201,168,76,.04)',border:'1px solid rgba(201,168,76,.1)',display:'flex',gap:18,alignItems:'flex-start',flexWrap:'wrap',position:'relative',overflow:'hidden'}}>
         <div style={{position:'absolute',top:0,left:0,right:0,height:'1px',background:'linear-gradient(90deg,transparent,rgba(201,168,76,.28),transparent)'}}/>
-        <div style={{fontSize:20,opacity:.65}}>💡</div>
-        <p style={{fontSize:13,color:T.sub,lineHeight:1.85,flex:1}}>
-          <strong style={{color:T.text}}>O objetivo do KRONEX não é enriquecer ao primeiro mês.</strong> É criar uma renda base consistente que elimine a pressão financeira sobre as suas operações manuais. Quando a máquina cobre os seus custos fixos, você opera com uma mente diferente.
+        <div style={{fontSize:20,opacity:.65,marginTop:2}}>💡</div>
+        <p style={{fontSize:13,color:T.sub,lineHeight:1.88,flex:1}}>
+          <strong style={{color:T.text}}>O objetivo do KRONEX COGNITIVE não é enriquecer ao primeiro mês.</strong> É criar uma renda base consistente que elimine a pressão financeira sobre as suas operações manuais. Quando a máquina absorve a pressão do mercado, você opera em estado de pura clareza.
         </p>
       </div>
     </HoloReveal>
@@ -1119,15 +1090,15 @@ const SimulatorSection = () => (
 );
 
 /* ─────────────────────────────────────────
-   ACESSO FOUNDER — no prices, showcase only
+   ACESSO FOUNDER
 ───────────────────────────────────────── */
 const AcessoFounder = () => {
   const benefits = [
-    'Acesso irrestrito ao motor KRONEX IA — uso ilimitado',
+    'Acesso irrestrito ao motor KRONEX COGNITIVE — uso ilimitado',
     '3 licenças de distribuição para a sua rede de confiança',
     'Retenção de 60% nas ativações realizadas via rede própria',
     'Participação societária crescente com a expansão do ecossistema',
-    'Acesso antecipado a todas as versões e atualizações do motor',
+    'Acesso antecipado a todas as versões e atualizações cognitivas',
     'Convites para eventos exclusivos de LP e formação avançada',
   ];
   return (
@@ -1135,53 +1106,52 @@ const AcessoFounder = () => {
       <HoloReveal>
         <div style={{textAlign:'center',marginBottom:52}}>
           <div className="section-label" style={{marginBottom:16}}>Acesso Exclusivo · DOM INVESTITORE</div>
-          <h2 className="h2" style={{marginBottom:20}}>Não é cliente.<br/><span style={{color:'#C9A84C',textShadow:'0 0 30px rgba(201,168,76,.5)'}}>É sócio.</span></h2>
-          <p className="lead" style={{maxWidth:640,margin:'0 auto'}}>Os alunos ativos do DOM INVESTITORE não compram uma licença. Entram como Sócios Founder — com acesso proprietário, modelo de receita e crescimento conjunto com o ecossistema KRONEX.</p>
+          <h2 className="h2" style={{marginBottom:20}}>Não é cliente.<br/><span style={{color:T.gold,textShadow:'0 0 30px rgba(201,168,76,.5)'}}>É sócio.</span></h2>
+          <p className="lead" style={{maxWidth:680,margin:'0 auto'}}>Os alunos ativos do DOM INVESTITORE não compram uma licença. Entram como Sócios Founder — com acesso proprietário ao KRONEX COGNITIVE, modelo de receita e crescimento conjunto com o ecossistema.</p>
         </div>
       </HoloReveal>
       <HoloReveal delay={0.07}>
         <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(320px,1fr))',gap:24,marginBottom:44}}>
-          {/* Acesso card */}
-          <div className="holo-panel" style={{borderRadius:20,padding:'40px 36px',position:'relative',overflow:'hidden',border:'1px solid rgba(201,168,76,.4)',boxShadow:'0 20px 100px rgba(201,168,76,.16),0 0 60px rgba(201,168,76,.07)'}}>
+          {/* Access card */}
+          <div className="holo-panel" style={{borderRadius:20,padding:'40px 36px',position:'relative',overflow:'hidden',border:'1px solid rgba(201,168,76,.42)',boxShadow:'0 20px 100px rgba(201,168,76,.16),0 0 60px rgba(201,168,76,.07)'}}>
             <div className="hud-grid" style={{borderRadius:20}}/>
             <div style={{position:'absolute',top:0,right:0,background:'linear-gradient(135deg,#5C4208,#C9A84C,#FFD060)',padding:'9px 20px',fontSize:8,fontWeight:900,letterSpacing:'.14em',borderRadius:'0 0 0 14px',color:'#040404',fontFamily:T.mono}}>SÓCIO FOUNDER</div>
             <div style={{position:'relative'}}>
-              <div style={{fontSize:10,fontWeight:900,color:'#C9A84C',letterSpacing:'.16em',textTransform:'uppercase',marginBottom:20,fontFamily:T.mono}}>Estrutura de Acesso</div>
+              <div style={{fontSize:10,fontWeight:900,color:T.gold,letterSpacing:'.16em',textTransform:'uppercase',marginBottom:20,fontFamily:T.mono}}>Estrutura de Acesso</div>
               <div style={{display:'flex',flexDirection:'column',gap:14,marginBottom:36}}>
-                {benefits.map((b,i)=>(
+                {benefits.map((b,i) => (
                   <div key={i} style={{display:'flex',gap:12,alignItems:'flex-start'}}>
-                    <span style={{color:'#C9A84C',fontSize:13,marginTop:1,flexShrink:0}}>→</span>
-                    <span style={{fontSize:13,color:T.sub,lineHeight:1.6}}>{b}</span>
+                    <span style={{color:T.gold,fontSize:13,marginTop:1,flexShrink:0}}>→</span>
+                    <span style={{fontSize:13,color:T.sub,lineHeight:1.65}}>{b}</span>
                   </div>
                 ))}
               </div>
-              <div style={{padding:'14px 18px',borderRadius:10,background:'rgba(201,168,76,.06)',border:'1px solid rgba(201,168,76,.2)',textAlign:'center',position:'relative',overflow:'hidden'}}>
+              <div style={{padding:'14px 18px',borderRadius:10,background:'rgba(201,168,76,.06)',border:'1px solid rgba(201,168,76,.22)',textAlign:'center',position:'relative',overflow:'hidden'}}>
                 <div style={{position:'absolute',top:0,left:0,right:0,height:'1px',background:'linear-gradient(90deg,transparent,rgba(201,168,76,.4),transparent)'}}/>
-                <div style={{fontSize:10,fontFamily:T.mono,color:'#C9A84C',letterSpacing:'.12em',fontWeight:800}}>ACESSO POR CONVITE — VAGAS LIMITADAS</div>
+                <div style={{fontSize:10,fontFamily:T.mono,color:T.gold,letterSpacing:'.12em',fontWeight:800}}>ACESSO POR CONVITE — VAGAS LIMITADAS</div>
                 <div style={{fontSize:9,color:T.muted,marginTop:5,fontFamily:T.mono}}>Exclusivo ao núcleo ativo DOM INVESTITORE</div>
               </div>
             </div>
           </div>
-
           {/* Revenue model */}
           <div className="glass" style={{borderRadius:20,padding:'40px 36px',display:'flex',flexDirection:'column',gap:28}}>
             <div>
-              <div style={{fontSize:10,fontWeight:900,color:'#C9A84C',letterSpacing:'.16em',textTransform:'uppercase',marginBottom:16,fontFamily:T.mono}}>Modelo Societário</div>
+              <div style={{fontSize:10,fontWeight:900,color:T.gold,letterSpacing:'.16em',textTransform:'uppercase',marginBottom:16,fontFamily:T.mono}}>Modelo Societário</div>
               <h3 className="h3" style={{marginBottom:12}}>O caixa flui para os sócios.</h3>
-              <p style={{fontSize:13,color:T.sub,lineHeight:1.85}}>O Sócio Founder retém a maior parte das ativações realizadas dentro da sua rede. O repasse ao ecossistema KRONEX é mínimo, fixo e previsível.</p>
+              <p style={{fontSize:13,color:T.sub,lineHeight:1.88}}>O Sócio Founder retém a maior parte das ativações realizadas dentro da sua rede. O repasse ao ecossistema KRONEX COGNITIVE é mínimo, fixo e previsível.</p>
             </div>
             <div style={{display:'flex',gap:16,justifyContent:'center',flexWrap:'wrap'}}>
-              {[{pct:'60%',label:'SÓCIO RETÉM',gold:true},{pct:'40%',label:'ROYALTIES KRONEX',gold:false}].map((item,i)=>(
-                <div key={i} style={{textAlign:'center',padding:'24px 32px',borderRadius:16,background:item.gold?'rgba(201,168,76,.06)':'rgba(255,255,255,.02)',border:`1px solid ${item.gold?'rgba(201,168,76,.2)':T.border}`,boxShadow:item.gold?'0 0 40px rgba(201,168,76,.07)':'none',position:'relative',overflow:'hidden'}}>
-                  {item.gold&&<div style={{position:'absolute',top:0,left:0,right:0,height:'1px',background:'linear-gradient(90deg,transparent,rgba(201,168,76,.4),transparent)'}}/>}
-                  <div style={{fontSize:'2.8rem',fontWeight:900,color:item.gold?'#C9A84C':T.sub,lineHeight:1,textShadow:item.gold?'0 0 40px rgba(201,168,76,.5)':'none'}}>{item.pct}</div>
+              {[{pct:'60%',label:'SÓCIO RETÉM',gold:true},{pct:'40%',label:'ROYALTIES KRONEX',gold:false}].map((item,i) => (
+                <div key={i} style={{textAlign:'center',padding:'24px 32px',borderRadius:16,background:item.gold?'rgba(201,168,76,.06)':'rgba(255,255,255,.02)',border:`1px solid ${item.gold?'rgba(201,168,76,.22)':T.border}`,boxShadow:item.gold?'0 0 40px rgba(201,168,76,.07)':'none',position:'relative',overflow:'hidden'}}>
+                  {item.gold && <div style={{position:'absolute',top:0,left:0,right:0,height:'1px',background:'linear-gradient(90deg,transparent,rgba(201,168,76,.4),transparent)'}}/>}
+                  <div style={{fontSize:'2.8rem',fontWeight:900,color:item.gold?T.gold:T.muted,lineHeight:1,textShadow:item.gold?'0 0 40px rgba(201,168,76,.5)':'none'}}>{item.pct}</div>
                   <div style={{fontSize:9,color:item.gold?T.sub:T.muted,marginTop:8,letterSpacing:'.1em',fontFamily:T.mono}}>{item.label}</div>
                 </div>
               ))}
             </div>
-            <div style={{padding:'18px',borderRadius:12,background:'rgba(201,168,76,.04)',border:'1px solid rgba(201,168,76,.08)',display:'flex',gap:12,alignItems:'flex-start'}}>
-              <span style={{color:'#C9A84C',fontSize:14}}>◈</span>
-              <p style={{fontSize:12,color:T.sub,lineHeight:1.8}}>Os Fundadores entram no piso histórico. Quando o KRONEX for distribuído ao mercado público, as condições de entrada actuais são mantidas vitalíciamente para quem entrou nesta fase.</p>
+            <div style={{padding:'18px',borderRadius:12,background:'rgba(201,168,76,.04)',border:'1px solid rgba(201,168,76,.1)',display:'flex',gap:12,alignItems:'flex-start'}}>
+              <span style={{color:T.gold,fontSize:14}}>◈</span>
+              <p style={{fontSize:12.5,color:T.sub,lineHeight:1.85}}>Os Fundadores entram no piso histórico. Quando o KRONEX COGNITIVE for distribuído ao mercado público, as condições de entrada actuais são mantidas vitalíciamente para quem entrou nesta fase.</p>
             </div>
           </div>
         </div>
@@ -1191,38 +1161,42 @@ const AcessoFounder = () => {
 };
 
 /* ─────────────────────────────────────────
-   GARANTIA
+   GARANTIA — ARMADURA MATEMÁTICA
 ───────────────────────────────────────── */
 const Garantia = () => (
   <section style={{padding:'80px clamp(20px,5vw,60px)',maxWidth:900,margin:'0 auto',fontFamily:T.font}}>
     <HoloReveal>
-      <div className="holo-panel" style={{borderRadius:24,padding:'clamp(32px,5vw,64px)',textAlign:'center',position:'relative',overflow:'hidden',border:'1px solid rgba(201,168,76,.26)',boxShadow:'0 0 100px rgba(201,168,76,.09),0 0 200px rgba(201,168,76,.04)'}}>
+      <div className="holo-panel" style={{borderRadius:24,padding:'clamp(32px,5vw,64px)',textAlign:'center',position:'relative',overflow:'hidden',border:'1px solid rgba(201,168,76,.28)',boxShadow:'0 0 100px rgba(201,168,76,.1),0 0 200px rgba(201,168,76,.05)'}}>
         <div className="hud-grid" style={{borderRadius:24,animationDuration:'6s'}}/>
+        {/* Shield icon */}
         <div style={{position:'relative',width:80,height:80,margin:'0 auto 28px'}}>
-          <div style={{position:'absolute',inset:-12,border:'1px dashed rgba(201,168,76,.18)',borderRadius:'50%',animation:'rot-cw 14s linear infinite'}}/>
-          <div style={{position:'absolute',inset:-4,border:'1px solid transparent',borderTopColor:'rgba(201,168,76,.45)',borderRadius:'50%',animation:'rot-cw 3.5s linear infinite',boxShadow:'0 0 10px rgba(201,168,76,.3)'}}/>
-          <div style={{width:80,height:80,borderRadius:'50%',background:'linear-gradient(135deg,rgba(201,168,76,.14),rgba(201,168,76,.04))',border:'1px solid rgba(201,168,76,.32)',display:'flex',alignItems:'center',justifyContent:'center',boxShadow:'0 0 40px rgba(201,168,76,.18)',fontSize:32}}>🛡</div>
+          <div style={{position:'absolute',inset:-12,border:'1px dashed rgba(201,168,76,.2)',borderRadius:'50%',animation:'rot-cw 14s linear infinite'}}/>
+          <div style={{position:'absolute',inset:-4,border:'1px solid transparent',borderTopColor:'rgba(201,168,76,.48)',borderRadius:'50%',animation:'rot-cw 3.5s linear infinite',boxShadow:'0 0 10px rgba(201,168,76,.3)'}}/>
+          <div style={{width:80,height:80,borderRadius:'50%',background:'linear-gradient(135deg,rgba(201,168,76,.15),rgba(201,168,76,.04))',border:'1px solid rgba(201,168,76,.35)',display:'flex',alignItems:'center',justifyContent:'center',boxShadow:'0 0 40px rgba(201,168,76,.18)',fontSize:32}}>🛡</div>
         </div>
-        <div className="section-label" style={{marginBottom:16}}>Garantia Arquitetural</div>
-        <h2 className="h2" style={{marginBottom:28}}>O Escudo de <span style={{color:'#C9A84C',textShadow:'0 0 30px rgba(201,168,76,.5)'}}>1%</span></h2>
-        <p style={{fontSize:'clamp(.95rem,2vw,1.1rem)',color:T.sub,lineHeight:1.95,maxWidth:640,margin:'0 auto 40px'}}>
+        <div className="section-label" style={{marginBottom:16}}>Blindagem Total de Capital</div>
+        <h2 className="h2" style={{marginBottom:28}}>Armadura Matemática <span style={{color:T.gold,textShadow:'0 0 30px rgba(201,168,76,.5)'}}>Hard-Coded</span></h2>
+        <p style={{fontSize:'clamp(.95rem,2vw,1.1rem)',color:T.sub,lineHeight:1.95,maxWidth:680,margin:'0 auto 40px'}}>
           Não fazemos promessas de retorno. Quem faz isso está a vender ilusão.<br/><br/>
-          O que garantimos é arquitetural: o código do KRONEX IA tem uma trava inviolável de{' '}
-          <strong style={{color:T.text}}>máximo 1% de risco por operação</strong> sobre o capital alocado.
-          Não é uma configuração. Não é uma preferência. É uma limitação hard-coded que não pode ser removida, alterada ou contornada — nem por nós.
+          O KRONEX COGNITIVE opera sob uma <strong style={{color:T.text}}>Armadura Matemática Hard-Coded</strong> — uma trava inviolável de máximo <strong style={{color:T.text}}>1% de risco por operação</strong> sobre o capital alocado.
+          Não é uma configuração. Não é uma preferência do utilizador. É uma limitação inscrita no código fonte que não pode ser removida, alterada ou contornada — nem por nós. <strong style={{color:T.text}}>A máquina não tem permissão para quebrar esta regra.</strong>
         </p>
         <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(200px,1fr))',gap:16,marginBottom:40,textAlign:'left'}}>
-          {[{icon:'🔒',t:'Hard-Coded',d:'Limitação inscrita diretamente no código fonte. Não existe painel, botão ou opção para remover.'},{icon:'⚡',t:'Por Operação',d:'O risco é calculado e aplicado individualmente em cada boleta executada pelo sistema.'},{icon:'🧮',t:'Sobre o Capital Real',d:'Calculado sobre o capital que você decidiu alocar — não sobre lucros, não sobre margem livre.'}].map((item,i)=>(
-            <div key={i} style={{padding:'22px',borderRadius:12,background:'rgba(201,168,76,.04)',border:'1px solid rgba(201,168,76,.09)',position:'relative',overflow:'hidden'}}>
-              <div style={{position:'absolute',top:0,left:0,right:0,height:'1px',background:'linear-gradient(90deg,transparent,rgba(201,168,76,.18),transparent)'}}/>
+          {[
+            {icon:'🔒',t:'Hard-Coded',d:'Limitação inscrita diretamente no código fonte. Não existe painel, botão ou opção para remover.'},
+            {icon:'⚡',t:'Por Operação',d:'O risco é calculado e aplicado individualmente em cada boleta executada pelo sistema.'},
+            {icon:'🧮',t:'Sobre o Capital Real',d:'Calculado sobre o capital que você decidiu alocar — não sobre lucros, não sobre margem livre.'},
+          ].map((item,i) => (
+            <div key={i} style={{padding:'22px',borderRadius:12,background:'rgba(201,168,76,.045)',border:'1px solid rgba(201,168,76,.12)',position:'relative',overflow:'hidden'}}>
+              <div style={{position:'absolute',top:0,left:0,right:0,height:'1px',background:'linear-gradient(90deg,transparent,rgba(201,168,76,.2),transparent)'}}/>
               <div style={{fontSize:24,marginBottom:10}}>{item.icon}</div>
-              <div style={{fontSize:13,fontWeight:700,color:T.text,marginBottom:6}}>{item.t}</div>
-              <div style={{fontSize:12,color:T.sub,lineHeight:1.75}}>{item.d}</div>
+              <div style={{fontSize:13,fontWeight:700,color:T.text,marginBottom:7}}>{item.t}</div>
+              <div style={{fontSize:12.5,color:T.sub,lineHeight:1.78}}>{item.d}</div>
             </div>
           ))}
         </div>
         <p style={{fontSize:12,color:T.muted,lineHeight:1.95,maxWidth:560,margin:'0 auto',fontStyle:'italic',fontFamily:T.mono}}>
-          Isto não é uma garantia de lucro. É uma garantia de disciplina — que é, na prática, o que destrói 95% das contas de traders que sabem o que estão a fazer.
+          Isto não é uma garantia de lucro. É uma garantia de disciplina — que é, na prática, o que destrói 95% das contas de traders que já sabem o que estão a fazer.
         </p>
       </div>
     </HoloReveal>
@@ -1235,39 +1209,42 @@ const Garantia = () => (
 const Roadmap = () => {
   const [activeNode, setActiveNode] = useState(0);
   const milestones = [
-    {date:'AGO 2026',t:'Lançamento Oficial',d:'Motor algorítmico em produção. Primeiros 50 Sócios Founder ativados. Painel de performance ao vivo.',status:'live',m:['50 Sócios Founder','100% automático','Motor v1.0']},
-    {date:'SET 2026',t:'Integração IA Avançada',d:'Refinamento preditivo barra a barra com modelos de segunda geração. Claude Code integrado ao loop de otimização.',status:'next',m:['Claude Code live','Auto-refactor ativo','Target 90%']},
-    {date:'OUT 2026',t:'Expansão de Ativos',d:'Multi-asset screening otimizado: Forex, Índices, Cripto e Commodities. Novos pares analisados em paralelo.',status:'future',m:['Forex + Cripto','+6 ativos','Multi-screen']},
-    {date:'NOV 2026',t:'Escalabilidade de Parceiros',d:'Painel avançado de royalties automatizados. Dashboard de sócios com rastreamento de receita em tempo real.',status:'future',m:['200 sócios','Dashboard 2.0','Royalties auto']},
+    {date:'AGO 2026',t:'Lançamento Oficial',d:'Motor cognitivo em produção. Primeiros 50 Sócios Founder ativados. Painel de performance ao vivo.',status:'live',m:['50 Founders','Motor v1.0','100% auto']},
+    {date:'SET 2026',t:'Cognitive Layer 2',d:'Refinamento preditivo barra a barra com modelos de raciocínio de segunda geração. Claude Code integrado ao loop.',status:'next',m:['Reasoning v2','Auto-refactor','Target 90%']},
+    {date:'OUT 2026',t:'Multi-Asset Expansion',d:'Screening multi-asset otimizado: Forex, Índices, Cripto e Commodities. Raciocínio paralelo em múltiplos pares.',status:'future',m:['Forex+Cripto','+6 ativos','Multi-screen']},
+    {date:'NOV 2026',t:'Partner Ecosystem',d:'Painel avançado de royalties automatizados. Dashboard de sócios com rastreamento de receita em tempo real.',status:'future',m:['200 sócios','Dashboard 2.0','Royalties auto']},
   ];
-  const sColor = {live:'#C9A84C',next:'#f59e0b',future:T.muted};
+  const sColor = {live:T.gold,next:T.amber,future:T.muted};
   const sLabel  = {live:'AO VIVO',next:'PRÓXIMO',future:'PLANEADO'};
   return (
     <section style={{padding:'120px clamp(20px,5vw,60px)',maxWidth:1200,margin:'0 auto',fontFamily:T.font}}>
       <HoloReveal>
         <div style={{textAlign:'center',marginBottom:64}}>
           <div className="section-label" style={{marginBottom:16}}>Roadmap de Execução</div>
-          <h2 className="h2" style={{marginBottom:20}}>Velocidade de Day Trade.<br/><span style={{color:'#C9A84C',textShadow:'0 0 30px rgba(201,168,76,.5)'}}>Lançamentos mensais.</span></h2>
-          <p className="lead" style={{maxWidth:480,margin:'0 auto'}}>No mercado de Day Trade, velocidade é vantagem competitiva. Cada mês entregamos uma evolução concreta e mensurável.</p>
+          <h2 className="h2" style={{marginBottom:20}}>Velocidade de Day Trade.<br/><span style={{color:T.gold,textShadow:'0 0 30px rgba(201,168,76,.5)'}}>Lançamentos mensais.</span></h2>
+          <p className="lead" style={{maxWidth:480,margin:'0 auto'}}>No mercado de Day Trade, velocidade é vantagem competitiva. Cada mês entregamos uma evolução concreta e mensurável do motor cognitivo.</p>
         </div>
-        {/* Progress track */}
         <div style={{position:'relative',marginBottom:44,padding:'0 20px'}}>
           <div style={{height:1,background:'rgba(201,168,76,.1)',borderRadius:1}}>
             <div style={{height:'100%',width:`${(activeNode/(milestones.length-1))*100}%`,background:'linear-gradient(90deg,#FFD060,#C9A84C,rgba(201,168,76,.4))',borderRadius:1,transition:'width .7s ease',boxShadow:'0 0 14px rgba(201,168,76,.6)'}}/>
           </div>
           <div style={{position:'absolute',top:-5,left:0,right:0,display:'flex',justifyContent:'space-between',padding:'0 20px'}}>
-            {milestones.map((_,i)=>(
-              <div key={i} onClick={()=>setActiveNode(i)} style={{width:12,height:12,borderRadius:'50%',cursor:'none',background:i<=activeNode?'#C9A84C':T.bg,border:`2px solid ${i<=activeNode?'#C9A84C':'rgba(201,168,76,.2)'}`,boxShadow:i===activeNode?'0 0 24px rgba(201,168,76,.85)':i<activeNode?'0 0 10px rgba(201,168,76,.4)':'none',transition:'all .4s ease',position:'relative'}}>
-                {i===activeNode&&<div style={{position:'absolute',top:-2,left:-2,width:16,height:16,borderRadius:'50%',border:'1px solid rgba(201,168,76,.5)',animation:'node-ping 1.5s infinite'}}/>}
+            {milestones.map((_,i) => (
+              <div key={i} onClick={()=>setActiveNode(i)} style={{width:12,height:12,borderRadius:'50%',cursor:'none',background:i<=activeNode?T.gold:T.bg,border:`2px solid ${i<=activeNode?T.gold:'rgba(201,168,76,.2)'}`,boxShadow:i===activeNode?'0 0 24px rgba(201,168,76,.85)':i<activeNode?'0 0 10px rgba(201,168,76,.4)':'none',transition:'all .4s ease',position:'relative'}}>
+                {i===activeNode && <div style={{position:'absolute',top:-2,left:-2,width:16,height:16,borderRadius:'50%',border:'1px solid rgba(201,168,76,.5)',animation:'node-ping 1.5s infinite'}}/>}
               </div>
             ))}
           </div>
         </div>
         <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(240px,1fr))',gap:16}}>
-          {milestones.map((m,i)=>(
-            <div key={i} onClick={()=>setActiveNode(i)} style={{borderRadius:18,padding:'28px 24px',cursor:'none',background:activeNode===i?'linear-gradient(135deg,rgba(201,168,76,.09) 0%,rgba(4,4,4,.98) 100%)':T.bgCard,border:`1px solid ${activeNode===i?'rgba(201,168,76,.38)':T.border}`,boxShadow:activeNode===i?'0 0 60px rgba(201,168,76,.11),inset 0 0 30px rgba(201,168,76,.04)':'none',backdropFilter:'blur(24px)',transition:'all .5s ease',position:'relative',overflow:'hidden'}}>
-              {activeNode===i&&<div style={{position:'absolute',top:0,left:0,right:0,height:'1px',background:'linear-gradient(90deg,transparent,rgba(201,168,76,.5),transparent)'}}/>}
-              <div style={{position:'absolute',top:0,left:0,width:36,height:36,borderTop:`2px solid ${sColor[m.status]}`,borderLeft:`2px solid ${sColor[m.status]}`,borderRadius:'18px 0 0 0',opacity:activeNode===i?.75:.22,transition:'opacity .4s'}}/>
+          {milestones.map((m,i) => (
+            <div key={i} onClick={()=>setActiveNode(i)} style={{borderRadius:18,padding:'28px 24px',cursor:'none',
+              background:activeNode===i?'linear-gradient(135deg,rgba(201,168,76,.09) 0%,rgba(4,4,4,.98) 100%)':T.bgCard,
+              border:`1px solid ${activeNode===i?'rgba(201,168,76,.4)':T.border}`,
+              boxShadow:activeNode===i?'0 0 60px rgba(201,168,76,.11),inset 0 0 30px rgba(201,168,76,.04)':'none',
+              backdropFilter:'blur(24px)',transition:'all .5s ease',position:'relative',overflow:'hidden'}}>
+              {activeNode===i && <div style={{position:'absolute',top:0,left:0,right:0,height:'1px',background:'linear-gradient(90deg,transparent,rgba(201,168,76,.5),transparent)'}}/>}
+              <div style={{position:'absolute',top:0,left:0,width:36,height:36,borderTop:`2px solid ${sColor[m.status]}`,borderLeft:`2px solid ${sColor[m.status]}`,borderRadius:'18px 0 0 0',opacity:activeNode===i?.78:.2,transition:'opacity .4s'}}/>
               <div style={{display:'flex',justifyContent:'space-between',alignItems:'flex-start',marginBottom:16}}>
                 <div>
                   <div style={{fontSize:10,fontWeight:900,color:sColor[m.status],letterSpacing:'.14em',marginBottom:5,fontFamily:T.mono}}>{m.date}</div>
@@ -1275,24 +1252,24 @@ const Roadmap = () => {
                 </div>
               </div>
               <div style={{fontSize:14,fontWeight:700,color:T.text,marginBottom:10,lineHeight:1.3}}>{m.t}</div>
-              <div style={{fontSize:12,color:T.sub,lineHeight:1.8,marginBottom:18}}>{m.d}</div>
+              <div style={{fontSize:12.5,color:T.sub,lineHeight:1.8,marginBottom:18}}>{m.d}</div>
               <div style={{display:'flex',gap:6,flexWrap:'wrap'}}>
-                {m.m.map((met,j)=>(
-                  <span key={j} style={{fontSize:9,padding:'3px 8px',borderRadius:6,background:'rgba(201,168,76,.05)',border:'1px solid rgba(201,168,76,.11)',color:T.sub,fontWeight:700,letterSpacing:'.06em',fontFamily:T.mono}}>{met}</span>
+                {m.m.map((met,j) => (
+                  <span key={j} style={{fontSize:9,padding:'3px 8px',borderRadius:6,background:'rgba(201,168,76,.05)',border:'1px solid rgba(201,168,76,.13)',color:T.muted,fontWeight:700,letterSpacing:'.06em',fontFamily:T.mono}}>{met}</span>
                 ))}
               </div>
             </div>
           ))}
         </div>
-        <div style={{textAlign:'center',marginTop:64,padding:'56px clamp(20px,6vw,80px)',borderRadius:24,background:'linear-gradient(135deg,rgba(201,168,76,.07) 0%,rgba(4,4,4,.95) 100%)',border:'1px solid rgba(201,168,76,.18)',boxShadow:'0 0 100px rgba(201,168,76,.06)',position:'relative',overflow:'hidden'}}>
+        <div style={{textAlign:'center',marginTop:64,padding:'56px clamp(20px,6vw,80px)',borderRadius:24,background:'linear-gradient(135deg,rgba(201,168,76,.07) 0%,rgba(4,4,4,.95) 100%)',border:'1px solid rgba(201,168,76,.2)',boxShadow:'0 0 100px rgba(201,168,76,.06)',position:'relative',overflow:'hidden'}}>
           <div className="hud-grid" style={{borderRadius:24}}/>
           <div style={{position:'absolute',top:0,left:0,right:0,height:'1px',background:'linear-gradient(90deg,transparent,rgba(201,168,76,.38),transparent)'}}/>
-          <div style={{position:'relative',fontSize:'clamp(1.1rem,2.8vw,1.85rem)',fontWeight:700,lineHeight:1.7,color:T.text,maxWidth:700,margin:'0 auto'}}>
-            "Não estamos construindo apenas um robô. Estamos construindo{' '}
-            <span style={{color:'#C9A84C',textShadow:'0 0 30px rgba(201,168,76,.6)'}}>a infraestrutura de capital</span>{' '}
-            que permite ao trader operar com excelência."
+          <div style={{position:'relative',fontSize:'clamp(1.1rem,2.8vw,1.85rem)',fontWeight:700,lineHeight:1.75,color:T.text,maxWidth:700,margin:'0 auto'}}>
+            "Não estamos construindo um robô. Estamos construindo{' '}
+            <span style={{color:T.gold,textShadow:'0 0 30px rgba(201,168,76,.6)'}}>um sistema com profundidade analítica</span>{' '}
+            que absorve a pressão do mercado para que a mente do trader opere em estado de pura clareza."
           </div>
-          <div style={{marginTop:22,fontSize:10,color:T.muted,letterSpacing:'.14em',fontFamily:T.mono}}>— KRONEX IA TEAM · 2026</div>
+          <div style={{marginTop:22,fontSize:10,color:T.muted,letterSpacing:'.14em',fontFamily:T.mono}}>— KRONEX COGNITIVE TEAM · 2026</div>
         </div>
       </HoloReveal>
     </section>
@@ -1300,20 +1277,20 @@ const Roadmap = () => {
 };
 
 /* ─────────────────────────────────────────
-   FOOTER — minimal showcase
+   FOOTER
 ───────────────────────────────────────── */
 const Footer = () => (
-  <footer style={{borderTop:'1px solid rgba(201,168,76,.07)',padding:'44px clamp(20px,5vw,60px)',fontFamily:T.font,position:'relative'}}>
+  <footer style={{borderTop:'1px solid rgba(201,168,76,.08)',padding:'44px clamp(20px,5vw,60px)',fontFamily:T.font,position:'relative'}}>
     <div style={{position:'absolute',top:0,left:0,right:0,height:'1px',background:'linear-gradient(90deg,transparent,rgba(201,168,76,.18),rgba(201,168,76,.38),rgba(201,168,76,.18),transparent)'}}/>
     <div style={{maxWidth:1200,margin:'0 auto',display:'flex',justifyContent:'space-between',alignItems:'center',flexWrap:'wrap',gap:20}}>
       <div style={{display:'flex',alignItems:'center',gap:10}}>
         <div style={{width:26,height:26,background:'linear-gradient(135deg,#5C4208,#C9A84C,#FFD060)',borderRadius:6,display:'flex',alignItems:'center',justifyContent:'center',boxShadow:'0 0 16px rgba(201,168,76,.4)'}}>
           <span style={{color:'#040404',fontSize:11,fontWeight:900}}>K</span>
         </div>
-        <span style={{fontWeight:800,fontSize:13,letterSpacing:'.1em',color:T.text,textTransform:'uppercase'}}>KRONEX <span style={{color:'#C9A84C'}}>IA</span></span>
+        <span style={{fontWeight:800,fontSize:13,letterSpacing:'.1em',color:T.text,textTransform:'uppercase'}}>KRONEX <span style={{color:T.gold}}>COGNITIVE</span></span>
       </div>
-      <div style={{fontSize:10,color:T.muted,textAlign:'center',lineHeight:2.1,fontFamily:T.mono}}>
-        © 2026 Kronex IA · Tecnologia Proprietária · Todos os direitos reservados<br/>
+      <div style={{fontSize:10,color:T.muted,textAlign:'center',lineHeight:2.2,fontFamily:T.mono}}>
+        © 2026 Kronex Cognitive · Tecnologia Proprietária · Todos os direitos reservados<br/>
         Instrumentos financeiros envolvem risco. Desempenho passado não garante resultados futuros.
       </div>
       <div style={{fontSize:10,color:T.muted,fontFamily:T.mono,letterSpacing:'.06em'}}>PÁGINA RESTRITA · DOM INVESTITORE</div>
@@ -1333,7 +1310,7 @@ function KronexPresentation() {
     return () => window.removeEventListener('scroll', fn);
   }, []);
   return (
-    <div style={{ background: T.bg, minHeight: '100vh', fontFamily: T.font }}>
+    <div style={{ background:T.bg, minHeight:'100vh', fontFamily:T.font }}>
       <GlobalStyles/>
       <Navbar scrolled={scrolled}/>
       <Hero/>
