@@ -1,1333 +1,1504 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>KRONEX COGNITIVE — Terminal Privado · DOM INVESTITORE</title>
-  <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
-  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
-  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-  <style>
-    *{box-sizing:border-box;margin:0;padding:0;}
-    html{scroll-behavior:smooth;--mx:0;--my:0;}
-    body{background:#040404;overflow-x:hidden;cursor:none;color:#E8E8E0;}
-    ::-webkit-scrollbar{width:2px;}
-    ::-webkit-scrollbar-track{background:#040404;}
-    ::-webkit-scrollbar-thumb{background:linear-gradient(180deg,#8B6914,#C9A84C,#FFD060);border-radius:2px;}
-    #cursor-dot{position:fixed;width:6px;height:6px;background:#C9A84C;border-radius:50%;transform:translate(-50%,-50%);pointer-events:none;z-index:99999;box-shadow:0 0 12px rgba(201,168,76,.9),0 0 24px rgba(201,168,76,.5);}
-    #cursor-ring{position:fixed;width:28px;height:28px;border:1px solid rgba(201,168,76,.45);border-radius:50%;transform:translate(-50%,-50%);pointer-events:none;z-index:99998;}
-  </style>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>SMITH — Operational Financial Intelligence · Dom Investitore</title>
+
+<!-- Fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+
+<!-- Tailwind Play CDN -->
+<script src="https://cdn.tailwindcss.com"></script>
+
+<!-- React 18 + Babel -->
+<script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+<!-- Framer Motion via ESM shim -->
+<script src="https://cdn.jsdelivr.net/npm/framer-motion@11/dist/framer-motion.js"></script>
+
+<!-- GSAP + ScrollTrigger -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+
+<!-- Three.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+<!-- Tailwind config: paleta SMITH -->
+<script>
+tailwind.config = {
+  theme: {
+    extend: {
+      colors: {
+        void:      '#030303',
+        deep:      '#050505',
+        graphite:  '#111111',
+        titanium:  '#1A1A1A',
+        slate:     '#2A2A2A',
+        champ:     '#D8C08A',
+        gold:      '#C9A86A',
+        bronze:    '#8D7447',
+        hi:        '#F0E2BD',
+        txt:       '#F5F5F3',
+        txt2:      '#E7D6B1',
+        muted:     '#8E8E93',
+      },
+      fontFamily: {
+        display: ["'Space Grotesk'", 'system-ui', 'sans-serif'],
+        body:    ["'Inter'", 'system-ui', 'sans-serif'],
+        mono:    ["'JetBrains Mono'", 'monospace'],
+      },
+      animation: {
+        'smith-metal': 'smithMetal 6s ease-in-out infinite',
+        'vol-breathe':  'volBreathe 9s ease-in-out infinite',
+        'pulse-dot':    'pulseDot 2.4s ease-in-out infinite',
+        'scan-line':    'scanLine 7s linear infinite',
+        'log-scroll':   'logScroll 48s linear infinite',
+        'sig-breathe':  'sigBreathe 10s ease-in-out infinite',
+        'ring-a':       'ringA 14s linear infinite',
+        'ring-b':       'ringB 20s linear infinite reverse',
+        'ring-c':       'ringC 28s linear infinite',
+        'orb-float':    'orbFloat 5s ease-in-out infinite',
+        'blink':        'blink 1s step-end infinite',
+        'node-pulse':   'nodePulse 2s ease-in-out infinite',
+      },
+      keyframes: {
+        smithMetal:  {'0%,100%':{'background-position':'0% 50%'},'50%':{'background-position':'100% 50%'}},
+        volBreathe:  {'0%,100%':{opacity:'.52',filter:'blur(60px)'},'50%':{opacity:'.88',filter:'blur(48px)'}},
+        pulseDot:    {'0%,100%':{opacity:'.4',boxShadow:'0 0 4px rgba(201,168,106,.28)'},'50%':{opacity:'1',boxShadow:'0 0 16px rgba(201,168,106,.9)'}},
+        scanLine:    {'0%':{top:'-2px'},'100%':{top:'102%'}},
+        logScroll:   {'0%':{transform:'translateY(0)'},'100%':{transform:'translateY(-50%)'}},
+        sigBreathe:  {'0%,100%':{'letter-spacing':'.26em',opacity:'.18'},'50%':{'letter-spacing':'.44em',opacity:'.3'}},
+        ringA:       {from:{transform:'rotateX(68deg) rotateZ(0deg)'},to:{transform:'rotateX(68deg) rotateZ(360deg)'}},
+        ringB:       {from:{transform:'rotateY(68deg) rotateZ(20deg)'},to:{transform:'rotateY(68deg) rotateZ(-340deg)'}},
+        ringC:       {from:{transform:'rotateX(20deg) rotateZ(55deg)'},to:{transform:'rotateX(20deg) rotateZ(415deg)'}},
+        orbFloat:    {'0%,100%':{transform:'scale(.96) translateY(0)',opacity:'.82'},'50%':{transform:'scale(1.04) translateY(-7px)',opacity:'1'}},
+        blink:       {'0%,100%':{opacity:'1'},'50%':{opacity:'0'}},
+        nodePulse:   {'0%,100%':{opacity:'.3',transform:'scale(1)'},'50%':{opacity:'1',transform:'scale(1.5)'}},
+      },
+      backdropBlur: { 'xl2': '28px' },
+    }
+  }
+}
+</script>
+
+<style>
+/* ─────────────────────────────────────────────────
+   RESET + BASE
+───────────────────────────────────────────────── */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{background:#030303;color:#F5F5F3;font-family:'Inter',system-ui,sans-serif;
+     -webkit-font-smoothing:antialiased;overflow-x:hidden;scroll-behavior:auto}
+body{min-height:100vh;overflow-x:hidden}
+::-webkit-scrollbar{width:1px}
+::-webkit-scrollbar-track{background:#030303}
+::-webkit-scrollbar-thumb{background:rgba(201,168,106,.3)}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}}
+
+/* ─────────────────────────────────────────────────
+   THREE.JS CANVAS (quantum smoke, fixed, z-0)
+───────────────────────────────────────────────── */
+#qc{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:0;transition:opacity 2s ease}
+
+/* ─────────────────────────────────────────────────
+   LOADER
+───────────────────────────────────────────────── */
+#loader{position:fixed;inset:0;z-index:9999;background:#000;
+  display:flex;align-items:center;justify-content:center;
+  flex-direction:column;gap:22px;pointer-events:none}
+.ld-logo{
+  font-family:'Space Grotesk',sans-serif;
+  font-size:clamp(3rem,8vw,5rem);font-weight:700;letter-spacing:-.055em;
+  opacity:0;
+  background:linear-gradient(135deg,#F0E2BD 0%,#D8C08A 30%,#C9A86A 55%,#8D7447 78%,#F0E2BD 100%);
+  background-size:220% 220%;
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+  animation:smithMetal 4s ease-in-out infinite
+}
+.ld-bar-wrap{width:clamp(140px,24vw,220px);height:1px;background:rgba(255,255,255,.07);border-radius:1px;overflow:hidden}
+.ld-bar{height:100%;width:0;background:linear-gradient(90deg,transparent,#D8C08A,rgba(216,192,138,.55));border-radius:1px}
+.ld-pct{font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:600;letter-spacing:.3em;color:#D8C08A;opacity:.7}
+.ld-msg{font-family:'JetBrains Mono',monospace;font-size:7px;letter-spacing:.2em;text-transform:uppercase;color:#8E8E93;opacity:.35;margin-top:-14px}
+
+/* ─────────────────────────────────────────────────
+   GLASS PREMIUM — Apple Vision Pro aesthetic
+───────────────────────────────────────────────── */
+.glass{
+  background:rgba(8,8,8,.62);
+  backdrop-filter:blur(28px) saturate(150%);
+  -webkit-backdrop-filter:blur(28px) saturate(150%);
+  border:1px solid rgba(216,192,138,.12);
+  border-radius:4px;position:relative;
+  box-shadow:
+    inset 0 1px 0 rgba(240,226,189,.07),
+    inset 0 -1px 0 rgba(0,0,0,.28),
+    0 20px 80px rgba(0,0,0,.48),
+    0 0 60px rgba(201,168,106,.04),
+    0 0 120px rgba(201,168,106,.015);
+  transition:box-shadow .45s ease,border-color .45s ease
+}
+.glass::before{content:'';position:absolute;top:-1px;left:-1px;width:14px;height:14px;
+  border-top:1px solid rgba(216,192,138,.22);border-left:1px solid rgba(216,192,138,.22);
+  border-radius:4px 0 0 0;pointer-events:none;z-index:1}
+.glass::after{content:'';position:absolute;bottom:-1px;right:-1px;width:14px;height:14px;
+  border-bottom:1px solid rgba(216,192,138,.22);border-right:1px solid rgba(216,192,138,.22);
+  border-radius:0 0 4px 0;pointer-events:none;z-index:1}
+.glass:hover{
+  border-color:rgba(216,192,138,.2);
+  box-shadow:
+    inset 0 1px 0 rgba(240,226,189,.1),
+    inset 0 -1px 0 rgba(0,0,0,.35),
+    0 24px 96px rgba(0,0,0,.55),
+    0 0 80px rgba(201,168,106,.075),
+    0 0 160px rgba(201,168,106,.025)
+}
+
+/* ─────────────────────────────────────────────────
+   SMITH LOGO — gradiente metálico premium
+───────────────────────────────────────────────── */
+.smith-text{
+  background:linear-gradient(135deg,#F0E2BD 0%,#D8C08A 22%,#C9A86A 48%,#8D7447 72%,#F0E2BD 100%);
+  background-size:220% 220%;
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+  animation:smithMetal 6s ease-in-out infinite;
+  filter:
+    drop-shadow(0 2px 0 rgba(141,116,71,.55))
+    drop-shadow(0 4px 3px rgba(0,0,0,.5))
+    drop-shadow(0 0 40px rgba(201,168,106,.22))
+    drop-shadow(0 0 80px rgba(216,192,138,.1))
+}
+/* metal escovado via pseudo-element */
+.smith-brushed::after{
+  content:attr(data-text);
+  position:absolute;inset:0;
+  background:
+    repeating-linear-gradient(
+      90deg,
+      transparent 0px,rgba(255,255,255,.012) 1px,transparent 2px,transparent 5px
+    ),
+    repeating-linear-gradient(
+      0deg,
+      transparent 0px,rgba(255,255,255,.004) 1px,transparent 3px,transparent 9px
+    );
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+  pointer-events:none;z-index:2;mix-blend-mode:overlay
+}
+
+/* ─────────────────────────────────────────────────
+   HERO — 5 camadas de profundidade
+───────────────────────────────────────────────── */
+#s1{
+  min-height:100vh;
+  background:
+    radial-gradient(ellipse 72% 56% at 50% 52%,rgba(201,168,106,.10) 0%,rgba(201,168,106,.03) 45%,transparent 68%),
+    radial-gradient(ellipse 42% 36% at 78% 44%,rgba(216,192,138,.055) 0%,transparent 60%),
+    radial-gradient(ellipse 36% 42% at 22% 56%,rgba(201,168,106,.04) 0%,transparent 65%),
+    linear-gradient(180deg,#111111 0%,#030303 28%,#030303 72%,#111111 100%),
+    #030303
+}
+/* vinheta */
+#s1::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse 100% 100% at 50% 50%,transparent 38%,rgba(0,0,0,.68) 100%);
+  pointer-events:none;z-index:1
+}
+/* scanline radar */
+#s1::after{
+  content:'';position:absolute;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,transparent,rgba(216,192,138,.08) 25%,rgba(240,226,189,.18) 50%,rgba(216,192,138,.08) 75%,transparent);
+  animation:scanLine 7s linear infinite;
+  pointer-events:none;z-index:6;opacity:.55
+}
+
+/* luz volumétrica */
+.s1-vol{
+  position:absolute;
+  width:clamp(300px,60vw,700px);height:clamp(120px,25vw,280px);
+  border-radius:50%;
+  background:radial-gradient(ellipse,rgba(201,168,106,.14) 0%,rgba(216,192,138,.06) 40%,transparent 70%);
+  pointer-events:none;z-index:2;
+  animation:volBreathe 9s ease-in-out infinite;
+  top:50%;left:50%;transform:translate(-50%,-50%)
+}
+/* rede neural (camada 2) */
+#neural-layer{position:fixed;inset:0;z-index:2;pointer-events:none;opacity:0;transition:opacity 2.4s ease .8s}
+/* partículas canvas */
+#hpc{position:absolute;inset:0;z-index:3;pointer-events:none;opacity:.7}
+
+/* glitch */
+@keyframes smithGlitch{
+  0%,100%{clip-path:none;transform:translateX(0)}
+  18%{clip-path:inset(28% 0 44% 0);transform:translateX(-5px)}
+  19%{clip-path:inset(8% 0 82% 0);transform:translateX(5px)}
+  20%{clip-path:none;transform:translateX(0)}
+  62%{clip-path:inset(64% 0 18% 0);transform:translateX(3px)}
+  63%{clip-path:none;transform:translateX(0)}
+}
+.glitch{animation:smithGlitch .15s steps(1) forwards,smithMetal 6s ease-in-out infinite!important}
+
+/* strip telemetria */
+.s1-strip{
+  position:absolute;top:0;left:0;right:0;height:34px;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 clamp(20px,5vw,56px);
+  border-bottom:1px solid rgba(216,192,138,.08);
+  background:rgba(3,3,3,.92);backdrop-filter:blur(20px);
+  z-index:7
+}
+
+/* ─────────────────────────────────────────────────
+   SECTION BACKGROUNDS — gradiente por seção
+───────────────────────────────────────────────── */
+.sec-s2::before{content:'';position:absolute;inset:0;pointer-events:none;z-index:0;background:radial-gradient(ellipse 60% 40% at 80% 50%,rgba(201,168,106,.028) 0%,transparent 70%)}
+.sec-s3::before{content:'';position:absolute;inset:0;pointer-events:none;z-index:0;background:radial-gradient(ellipse 50% 60% at 20% 50%,rgba(216,192,138,.022) 0%,transparent 70%)}
+.sec-s4::before{content:'';position:absolute;inset:0;pointer-events:none;z-index:0;background:radial-gradient(ellipse 70% 50% at 50% 30%,rgba(201,168,106,.032) 0%,transparent 65%)}
+.sec-s5::before{content:'';position:absolute;inset:0;pointer-events:none;z-index:0;background:radial-gradient(ellipse 55% 45% at 75% 60%,rgba(216,192,138,.025) 0%,transparent 70%)}
+.sec-s6::before{content:'';position:absolute;inset:0;pointer-events:none;z-index:0;background:radial-gradient(ellipse 60% 50% at 30% 50%,rgba(201,168,106,.028) 0%,transparent 70%)}
+.sec-s7::before{content:'';position:absolute;inset:0;pointer-events:none;z-index:0;background:radial-gradient(ellipse 65% 45% at 65% 40%,rgba(216,192,138,.02) 0%,transparent 70%)}
+.sec-s8::before{content:'';position:absolute;inset:0;pointer-events:none;z-index:0;background:radial-gradient(ellipse 70% 60% at 50% 50%,rgba(201,168,106,.04) 0%,transparent 65%)}
+
+/* ─────────────────────────────────────────────────
+   HR DIVISOR
+───────────────────────────────────────────────── */
+.hr-smith{
+  height:1px;
+  background:linear-gradient(90deg,transparent,rgba(216,192,138,.18) 18%,rgba(216,192,138,.18) 82%,transparent);
+  opacity:.8
+}
+
+/* ─────────────────────────────────────────────────
+   TERMINAL / LOG
+───────────────────────────────────────────────── */
+.term-wrap{
+  border:1px solid rgba(216,192,138,.1);border-radius:5px;overflow:hidden;
+  background:rgba(6,6,6,.92);
+  box-shadow:0 0 0 1px rgba(201,168,106,.05),0 24px 48px rgba(0,0,0,.5),inset 0 1px 0 rgba(240,226,189,.04)
+}
+.log-track{display:flex;flex-direction:column;padding:14px 14px 0;animation:logScroll 48s linear infinite;animation-play-state:paused}
+.log-track.run{animation-play-state:running}
+.log-line{display:flex;align-items:baseline;gap:8px;padding:2px 0;line-height:1.82}
+.log-ts{font-family:'JetBrains Mono',monospace;font-size:8px;color:#8E8E93;opacity:.2;flex-shrink:0;letter-spacing:.04em}
+.log-msg{font-family:'JetBrains Mono',monospace;font-size:9px;color:#E7D6B1;opacity:.4;word-break:break-all;letter-spacing:.02em}
+.log-line.ok .log-msg{color:#F5F5F3;opacity:0;animation:fadeLogW 4.2s ease-in-out infinite}
+.log-line.gd .log-msg{color:#D8C08A;opacity:0;animation:fadeLogG 3.8s ease-in-out infinite}
+.log-line.inf .log-msg{color:#E7D6B1;opacity:.6}
+@keyframes fadeLogW{0%,100%{opacity:.08}50%{opacity:.82}}
+@keyframes fadeLogG{0%,100%{opacity:.1}50%{opacity:1;color:#D8C08A;text-shadow:0 0 10px rgba(216,192,138,.5)}}
+
+/* ─────────────────────────────────────────────────
+   PIPELINE STEPS
+───────────────────────────────────────────────── */
+.s3-step{display:flex;align-items:center;gap:16px;padding:clamp(10px,1.6vh,14px) 0;
+  border-bottom:1px solid rgba(216,192,138,.06);opacity:.22;transition:opacity .6s ease}
+.s3-step:last-child{border-bottom:none}
+.s3-step.active{opacity:1}
+.s3-step-dot{width:8px;height:8px;border-radius:50%;border:1px solid rgba(216,192,138,.3);
+  flex-shrink:0;transition:all .5s ease}
+.s3-step.active .s3-step-dot{background:#D8C08A;border-color:#D8C08A;
+  box-shadow:0 0 10px rgba(216,192,138,.6);animation:nodePulse 2s ease-in-out infinite}
+.s3-step-log-txt{font-family:'JetBrains Mono',monospace;font-size:9px;color:#E7D6B1;opacity:.55;letter-spacing:.04em}
+.s3-step.active .s3-step-log-txt{color:#D8C08A;opacity:.9}
+.s3-step-status{font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:.1em;
+  color:#D8C08A;opacity:0;text-transform:uppercase;transition:opacity .4s}
+.s3-step.active .s3-step-status{opacity:.55}
+.s3-eline{width:1px;height:clamp(8px,1.2vh,12px);
+  background:linear-gradient(180deg,rgba(201,168,106,.06),rgba(216,192,138,.25));
+  margin-left:clamp(36px,5vw,54px)}
+
+/* ─────────────────────────────────────────────────
+   BARRAS DE ASSERTIVIDADE
+───────────────────────────────────────────────── */
+.assert-bar{
+  height:3px;border-radius:2px;
+  background:linear-gradient(90deg,#8D7447,#C9A86A,#D8C08A,#F0E2BD);
+  width:0;transition:width 1.5s cubic-bezier(.16,1,.3,1);
+  box-shadow:0 0 6px rgba(201,168,106,.4)
+}
+
+/* ─────────────────────────────────────────────────
+   SLIDER personalizado
+───────────────────────────────────────────────── */
+.smith-slider{-webkit-appearance:none;appearance:none;flex:1;height:2px;
+  background:rgba(255,255,255,.07);border-radius:1px;outline:none;cursor:pointer}
+.smith-slider::-webkit-slider-thumb{-webkit-appearance:none;width:13px;height:13px;
+  border-radius:50%;background:linear-gradient(135deg,#F0E2BD,#C9A86A);
+  border:1.5px solid #030303;box-shadow:0 0 8px rgba(201,168,106,.6);cursor:pointer}
+.smith-slider::-moz-range-thumb{width:13px;height:13px;border-radius:50%;
+  background:linear-gradient(135deg,#F0E2BD,#C9A86A);
+  border:1.5px solid #030303;cursor:pointer}
+
+/* ─────────────────────────────────────────────────
+   ORB 3D (S6 núcleo)
+───────────────────────────────────────────────── */
+.s6-stage{width:clamp(220px,32vw,300px);height:clamp(220px,32vw,300px);perspective:900px}
+.s6-gyro{width:100%;height:100%;transform-style:preserve-3d;position:relative}
+.s6-ring{position:absolute;inset:0;border-radius:50%;transform-style:preserve-3d;animation-play-state:paused}
+.s6-ring.r1{animation:ringA 14s linear infinite;border:1px solid rgba(201,168,106,.32);box-shadow:0 0 12px rgba(201,168,106,.06)}
+.s6-ring.r2{inset:20px;transform:rotateY(68deg) rotateZ(20deg);animation:ringB 20s linear infinite;border:1px solid rgba(255,255,255,.052)}
+.s6-ring.r3{inset:40px;transform:rotateX(20deg) rotateZ(55deg);animation:ringC 28s linear infinite;border:1px solid rgba(201,168,106,.1)}
+.s6-ring.go{animation-play-state:running}
+.s6-orb{
+  position:absolute;inset:50%;translate:-50% -50%;border-radius:50%;
+  background:radial-gradient(circle at 37% 32%,rgba(255,255,255,.1) 0%,rgba(201,168,106,.18) 30%,rgba(100,78,14,.22) 62%,rgba(3,3,3,.97) 100%);
+  border:1px solid rgba(201,168,106,.35);
+  animation:orbFloat 5s ease-in-out infinite;animation-play-state:paused;
+  --sz:clamp(60px,8vw,82px);width:var(--sz);height:var(--sz)
+}
+.s6-orb.go{animation-play-state:running}
+.s6-orb::before{content:'';position:absolute;top:17%;left:21%;width:17px;height:11px;border-radius:50%;background:rgba(255,255,255,.15);filter:blur(3px)}
+.s6-orb::after{content:'';position:absolute;inset:-22px;border-radius:50%;background:radial-gradient(circle,rgba(201,168,106,.14) 0%,transparent 66%);filter:blur(10px)}
+
+/* ─────────────────────────────────────────────────
+   FRAMER MOTION — classes utilitárias de apoio
+───────────────────────────────────────────────── */
+.fm-will-change{will-change:transform,opacity}
+
+/* ─────────────────────────────────────────────────
+   S9 FECHAMENTO
+───────────────────────────────────────────────── */
+.s9-dark{position:fixed;inset:0;background:#000;pointer-events:none;z-index:0;opacity:0}
+.s9-sig{font-family:'JetBrains Mono',monospace;font-size:8px;font-weight:300;
+  letter-spacing:.3em;text-transform:uppercase;color:#8E8E93;opacity:.2;
+  text-align:center;line-height:2.2;animation:sigBreathe 10s ease-in-out infinite}
+@keyframes borderSweep{
+  0%{background-position:-100% 0}
+  100%{background-position:200% 0}
+}
+</style>
 </head>
 <body>
-<div id="cursor-dot"></div>
-<div id="cursor-ring"></div>
-<div id="root"></div>
 
-<script type="text/babel" data-presets="react">
-const { useState, useEffect, useRef } = React;
+<!-- Three.js quantum smoke (camada 1 + 2) -->
+<canvas id="qc" aria-hidden="true" style="position:fixed;inset:0;z-index:0;pointer-events:none;opacity:0;transition:opacity 2s ease"></canvas>
 
-/* ─────────────────────────────────────────
-   CURSOR
-───────────────────────────────────────── */
-const initCursor = () => {
-  const dot  = document.getElementById('cursor-dot');
-  const ring = document.getElementById('cursor-ring');
-  if (!dot || !ring) return;
-  let rx = 0, ry = 0, cx = 0, cy = 0;
-  const onMove = e => {
-    cx = e.clientX; cy = e.clientY;
-    dot.style.left = cx + 'px'; dot.style.top = cy + 'px';
-    document.documentElement.style.setProperty('--mx', ((cx / window.innerWidth) - .5) * 2);
-    document.documentElement.style.setProperty('--my', ((cy / window.innerHeight) - .5) * 2);
-  };
-  const tick = () => {
-    rx += (cx - rx) * .1; ry += (cy - ry) * .1;
-    ring.style.left = rx + 'px'; ring.style.top = ry + 'px';
-    requestAnimationFrame(tick);
-  };
-  window.addEventListener('mousemove', onMove, { passive: true });
-  tick();
-};
+<!-- Loader Atlas -->
+<canvas id="neural-layer" aria-hidden="true" style="position:fixed;inset:0;z-index:2;pointer-events:none;opacity:0;transition:opacity 2.4s ease .8s"></canvas>
 
-/* ─────────────────────────────────────────
-   DESIGN TOKENS — HIGH CONTRAST CORRECTED
-   text    #E8E8E0  White Premium     — títulos, corpo principal
-   sub     #B8B8B2  Prata Acetinado   — texto secundário, leads, descrições
-   muted   #9A9A95  Prata Cinza       — labels mono, metadados HUD
-   gold    #C9A84C  Ouro Champagne    — destaque principal
-   bright  #FFD060  Ouro Vibrante     — métricas, números, CTAs
-───────────────────────────────────────── */
-const T = {
-  bg      : '#040404',
-  bgCard  : 'rgba(201,168,76,0.03)',
-  border  : 'rgba(201,168,76,0.12)',
-  borderHi: 'rgba(201,168,76,0.45)',
-  accent  : '#8B6914',
-  gold    : '#C9A84C',
-  bright  : '#FFD060',
-  dim     : '#A8873A',
-  glow    : 'rgba(201,168,76,0.28)',
-  text    : '#E8E8E0',   /* Branco Premium — máximo contraste */
-  sub     : '#B8B8B2',   /* Prata Acetinado — secundário legível */
-  muted   : '#9A9A95',   /* Prata Cinza — metadados/labels HUD */
-  red     : '#dc2626',
-  amber   : '#f59e0b',
-  font    : "'Inter','SF Pro Display',system-ui,-apple-system,sans-serif",
-  mono    : "'Fira Code','Courier New',monospace",
-};
+<div id="loader" aria-hidden="true">
+  <div class="ld-logo" id="ldlogo">SMITH</div>
+  <div class="ld-bar-wrap"><div class="ld-bar" id="ldbar"></div></div>
+  <span class="ld-pct" id="ldpct">0%</span>
+  <span class="ld-msg" id="ldmsg">Inicializando sistema cognitivo</span>
+</div>
 
-/* ─────────────────────────────────────────
-   GLOBAL CSS
-───────────────────────────────────────── */
-const GlobalStyles = () => (
-  <style>{`
-    @import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900&display=swap');
-    a { text-decoration: none; color: inherit; }
+<!-- React root -->
+<div id="root" style="position:relative;z-index:1"></div>
 
-    @keyframes blink        { 0%,100%{opacity:1} 50%{opacity:0} }
-    @keyframes slide-up     { from{opacity:0;transform:translateY(36px)} to{opacity:1;transform:translateY(0)} }
-    @keyframes pulse-glow   { 0%,100%{box-shadow:0 0 20px rgba(201,168,76,.3),0 0 50px rgba(201,168,76,.12)} 50%{box-shadow:0 0 40px rgba(201,168,76,.65),0 0 100px rgba(201,168,76,.25)} }
-    @keyframes border-cycle { 0%,100%{border-color:rgba(201,168,76,.18)} 50%{border-color:rgba(201,168,76,.65)} }
-    @keyframes scan-sweep   { 0%{top:0;opacity:1} 88%{opacity:.9} 100%{top:100%;opacity:0} }
-    @keyframes rot-cw       { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
-    @keyframes rot-ccw      { from{transform:rotate(0deg)} to{transform:rotate(-360deg)} }
-    @keyframes quantum-float{ 0%,100%{transform:translateY(0) rotate(0deg)} 30%{transform:translateY(-9px) rotate(.3deg)} 65%{transform:translateY(-13px) rotate(-.2deg)} }
-    @keyframes node-ping    { 0%{transform:scale(1);opacity:1} 100%{transform:scale(2.8);opacity:0} }
-    @keyframes flicker      { 0%,97%,100%{opacity:1} 98%{opacity:.7} 99%{opacity:1} }
-    @keyframes grid-pulse   { 0%,100%{opacity:.08} 50%{opacity:.18} }
-    @keyframes shimmer      { 0%{background-position:-400% 0} 100%{background-position:400% 0} }
-    @keyframes number-flash { 0%,100%{color:#C9A84C;text-shadow:0 0 20px rgba(201,168,76,.4)} 50%{color:#FFD060;text-shadow:0 0 50px rgba(255,208,96,.85),0 0 90px rgba(255,208,96,.35)} }
-    @keyframes glitch       { 0%,91%,100%{transform:translate(0);filter:none} 93%{transform:translate(-3px,1px);filter:hue-rotate(70deg) brightness(1.4)} 95%{transform:translate(3px,-1px);filter:hue-rotate(-70deg)} 97%{transform:translate(0)} }
-    @keyframes type-cursor  { 0%,100%{opacity:1} 50%{opacity:0} }
-    @keyframes energy-ring  { 0%{transform:scale(.5);opacity:.9} 100%{transform:scale(3);opacity:0} }
+<!-- ═══════════════════════════════════════════════════════════
+     Three.js GLSL Quantum Smoke
+════════════════════════════════════════════════════════════ -->
+<script>
+(function(){
+  if(typeof THREE==='undefined')return;
+  const cv=document.getElementById('qc');
+  const renderer=new THREE.WebGLRenderer({canvas:cv,alpha:true,antialias:false,powerPreference:'low-power'});
+  renderer.setPixelRatio(Math.min(devicePixelRatio,1.5));
+  renderer.setClearColor(0x000000,0);
+  const scene=new THREE.Scene(),camera=new THREE.OrthographicCamera(-1,1,1,-1,0,1);
+  const frag=`
+    precision mediump float;
+    uniform float uTime;uniform vec2 uRes;uniform float uInt;
+    vec2 h2(vec2 p){p=vec2(dot(p,vec2(127.1,311.7)),dot(p,vec2(269.5,183.3)));return -1.0+2.0*fract(sin(p)*43758.5453);}
+    float gn(vec2 p){vec2 i=floor(p),f=fract(p),u=f*f*(3.0-2.0*f);return mix(mix(dot(h2(i),f),dot(h2(i+vec2(1,0)),f-vec2(1,0)),u.x),mix(dot(h2(i+vec2(0,1)),f-vec2(0,1)),dot(h2(i+vec2(1,1)),f-vec2(1,1)),u.x),u.y);}
+    float fbm(vec2 p){float v=0.,a=.5;mat2 r=mat2(cos(.5),sin(.5),-sin(.5),cos(.5));for(int i=0;i<5;i++){v+=a*gn(p);p=r*p*2.1+vec2(.3,.2)*uTime*.04;a*=.5;}return v;}
+    void main(){
+      vec2 uv=(gl_FragCoord.xy/uRes)*2.-1.;uv.x*=uRes.x/uRes.y;
+      float t=uTime*.055;
+      vec2 q=vec2(fbm(uv+t),fbm(uv+vec2(5.2,1.3)+t));
+      vec2 r=vec2(fbm(uv+4.*q+vec2(1.7,9.2)+t*.8),fbm(uv+4.*q+vec2(8.3,2.8)+t*.8));
+      float f=fbm(uv+4.*r);float s=(f*.5+.5);
+      vec3 hi=vec3(.941,.886,.741),gold=vec3(.788,.659,.416),dp=vec3(.02,.018,.014);
+      vec3 champ=mix(gold,hi,sin(uTime*.03)*.5+.5);
+      vec3 col=mix(dp,champ*.08,s*s*uInt);
+      float v=1.-dot(uv*.5,uv*.5);col*=v*v;
+      gl_FragColor=vec4(col,s*s*.14*uInt);
+    }`;
+  const mat=new THREE.ShaderMaterial({
+    vertexShader:'void main(){gl_Position=vec4(position,1.);}',
+    fragmentShader:frag,
+    uniforms:{uTime:{value:0},uRes:{value:new THREE.Vector2()},uInt:{value:0}},
+    transparent:true,depthWrite:false
+  });
+  scene.add(new THREE.Mesh(new THREE.PlaneGeometry(2,2),mat));
+  function rs(){const W=innerWidth,H=innerHeight;renderer.setSize(W,H);mat.uniforms.uRes.value.set(W,H);}
+  rs();
+  let tgt=0,cur=0;
+  window._qi=v=>{tgt=Math.max(0,Math.min(3,v));};
+  (function loop(t){requestAnimationFrame(loop);mat.uniforms.uTime.value=t*.001;cur+=(tgt-cur)*.014;mat.uniforms.uInt.value=cur;renderer.render(scene,camera);})(0);
+  addEventListener('resize',rs,{passive:true});
+})();
+</script>
 
-    .btn-primary {
-      background: linear-gradient(135deg,#6B4F0A 0%,#C9A84C 45%,#FFD060 100%);
-      color: #040404; border: none; cursor: none;
-      font-family: ${T.font}; font-weight: 800; letter-spacing: .08em;
-      animation: pulse-glow 3s infinite;
-      transition: transform .2s, filter .2s;
-      position: relative; overflow: hidden;
-    }
-    .btn-primary::after {
-      content:''; position:absolute; inset:0;
-      background: linear-gradient(90deg,transparent 0%,rgba(255,255,255,.18) 50%,transparent 100%);
-      background-size: 200% 100%; animation: shimmer 3s infinite;
-    }
-    .btn-primary:hover { transform: translateY(-3px) scale(1.02); filter: brightness(1.15); }
-
-    .btn-outline {
-      background: transparent; border: 1px solid rgba(201,168,76,.55);
-      color: #C9A84C; cursor: none; font-family: ${T.font}; font-weight: 600;
-      letter-spacing: .06em; transition: all .3s; position: relative; overflow: hidden;
-    }
-    .btn-outline:hover { border-color:#C9A84C; color:#FFD060; box-shadow:0 0 24px rgba(201,168,76,.3),inset 0 0 20px rgba(201,168,76,.06); }
-
-    .glass {
-      background: rgba(201,168,76,.028); border: 1px solid rgba(201,168,76,.12);
-      backdrop-filter: blur(28px); -webkit-backdrop-filter: blur(28px);
-      transition: all .4s ease; position: relative;
-    }
-    .glass::before {
-      content:''; position:absolute; inset:0; border-radius:inherit;
-      background: linear-gradient(135deg,rgba(201,168,76,.05) 0%,transparent 55%,rgba(201,168,76,.02) 100%);
-      pointer-events: none;
-    }
-    .glass:hover { background: rgba(201,168,76,.055); border-color: rgba(201,168,76,.25); box-shadow: 0 0 30px rgba(201,168,76,.08); }
-
-    .holo-panel {
-      background: linear-gradient(135deg,rgba(201,168,76,.06) 0%,rgba(14,10,2,.97) 55%,rgba(201,168,76,.035) 100%);
-      border: 1px solid rgba(201,168,76,.22);
-      box-shadow: 0 0 60px rgba(201,168,76,.1),0 0 120px rgba(201,168,76,.05),inset 0 0 60px rgba(201,168,76,.04),inset 0 1px 0 rgba(201,168,76,.18);
-      backdrop-filter: blur(40px); -webkit-backdrop-filter: blur(40px);
-    }
-
-    .tag {
-      display:inline-flex; align-items:center; gap:7px; padding:6px 18px;
-      border-radius:100px; background:rgba(201,168,76,.07); border:1px solid rgba(201,168,76,.35);
-      color:#C9A84C; font-size:10px; font-weight:700; letter-spacing:.14em; text-transform:uppercase;
-      animation: border-cycle 3s infinite; box-shadow: 0 0 22px rgba(201,168,76,.12);
-    }
-    .section-label {
-      font-size:10px; font-weight:800; letter-spacing:.22em; text-transform:uppercase;
-      color:#C9A84C; text-shadow:0 0 22px rgba(201,168,76,.5);
-    }
-    .h1  { font-size:clamp(2.3rem,6vw,4.6rem); font-weight:800; line-height:1.05; letter-spacing:-.03em; }
-    .h2  { font-size:clamp(1.7rem,4vw,2.9rem); font-weight:700; line-height:1.1;  letter-spacing:-.02em; }
-    .h3  { font-size:clamp(1.05rem,2.5vw,1.5rem); font-weight:600; line-height:1.3; }
-    .lead{ font-size:clamp(.95rem,2vw,1.15rem); line-height:1.88; color:#B8B8B2; font-weight:400; }
-
-    input[type=range] { -webkit-appearance:none; appearance:none; width:100%; height:1px; background:rgba(201,168,76,.15); border-radius:1px; outline:none; cursor:none; }
-    input[type=range]::-webkit-slider-thumb { -webkit-appearance:none; width:14px; height:14px; border-radius:50%; background:radial-gradient(circle,#FFD060,#C9A84C); box-shadow:0 0 16px rgba(201,168,76,.65),0 0 32px rgba(201,168,76,.3); cursor:none; }
-
-    .parallax-slow { transform:translate(calc(var(--mx)*-8px),calc(var(--my)*-8px)); }
-    .parallax-mid  { transform:translate(calc(var(--mx)*-22px),calc(var(--my)*-22px)); }
-
-    .corner-tl { position:absolute; top:-1px; left:-1px;  width:18px; height:18px; border-top:2px solid rgba(201,168,76,.6); border-left:2px solid rgba(201,168,76,.6); }
-    .corner-tr { position:absolute; top:-1px; right:-1px; width:18px; height:18px; border-top:2px solid rgba(201,168,76,.6); border-right:2px solid rgba(201,168,76,.6); }
-    .corner-bl { position:absolute; bottom:-1px; left:-1px;  width:18px; height:18px; border-bottom:2px solid rgba(201,168,76,.6); border-left:2px solid rgba(201,168,76,.6); }
-    .corner-br { position:absolute; bottom:-1px; right:-1px; width:18px; height:18px; border-bottom:2px solid rgba(201,168,76,.6); border-right:2px solid rgba(201,168,76,.6); }
-
-    .holo-scan-line {
-      position:absolute; left:0; right:0; height:1px; pointer-events:none; z-index:100;
-      background:linear-gradient(90deg,transparent,rgba(201,168,76,.28),#C9A84C,#FFD060,#C9A84C,rgba(201,168,76,.28),transparent);
-      box-shadow:0 0 18px rgba(201,168,76,.9),0 0 36px rgba(201,168,76,.5);
-      animation: scan-sweep 1.1s ease-in-out forwards;
-    }
-
-    .metric-flash { animation: number-flash 2.8s ease-in-out infinite; }
-    .glitch-id    { animation: glitch 9s infinite; }
-
-    .hud-grid {
-      position:absolute; inset:0; pointer-events:none;
-      background-image:
-        linear-gradient(rgba(201,168,76,.05) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(201,168,76,.05) 1px, transparent 1px);
-      background-size: 40px 40px;
-      animation: grid-pulse 5s infinite;
-    }
-  `}</style>
-);
-
-/* ─────────────────────────────────────────
-   HOOKS
-───────────────────────────────────────── */
-const useIntersection = (threshold = 0.07) => {
-  const ref = useRef(null);
-  const [visible, setVisible] = useState(false);
-  useEffect(() => {
-    const el = ref.current; if (!el) return;
-    const obs = new IntersectionObserver(([e]) => { if (e.isIntersecting) setVisible(true); }, { threshold });
-    obs.observe(el); return () => obs.disconnect();
-  }, [threshold]);
-  return [ref, visible];
-};
-
-/* ─────────────────────────────────────────
-   HOLO REVEAL
-───────────────────────────────────────── */
-const HoloReveal = ({ children, delay = 0, threshold = 0.06 }) => {
-  const ref = useRef(null);
-  const [revealed, setRevealed] = useState(false);
-  const [scanning, setScanning] = useState(false);
-  useEffect(() => {
-    const el = ref.current; if (!el) return;
-    const obs = new IntersectionObserver(([e]) => {
-      if (e.isIntersecting && !revealed) {
-        setScanning(true); setRevealed(true);
-        setTimeout(() => setScanning(false), 1300);
-      }
-    }, { threshold });
-    obs.observe(el); return () => obs.disconnect();
-  }, [threshold, revealed]);
-  return (
-    <div ref={ref} style={{
-      position: 'relative',
-      opacity:    revealed ? 1 : 0,
-      transform:  revealed ? 'none' : 'translateY(26px)',
-      filter:     revealed ? 'none' : 'blur(6px)',
-      transition: revealed ? `all 1.1s cubic-bezier(.16,1,.3,1) ${delay}s` : 'none',
-    }}>
-      {scanning && <div className="holo-scan-line" style={{ top: 0 }} />}
-      {children}
-    </div>
-  );
-};
-
-/* ─────────────────────────────────────────
-   DECRYPT TEXT — matrix character reveal
-───────────────────────────────────────── */
-const DECODE_CHARS = '█▓▒░│┤╡╢╖╕╣║╗╝╜╛┐└┴┬├─┼╞╟╚╔╩╦╠═╬╧╤╥╙╘╒╓╫╪┘┌αβγδΩΨΦΣΠΔ01';
-const DecryptText = ({ text, delay = 0, style = {}, className = '' }) => {
-  const ref   = useRef(null);
-  const [phase,   setPhase]   = useState('idle');
-  const [display, setDisplay] = useState('');
-  useEffect(() => {
-    const el = ref.current; if (!el) return;
-    const obs = new IntersectionObserver(([e]) => {
-      if (e.isIntersecting && phase === 'idle') setTimeout(() => setPhase('scramble'), delay);
-    }, { threshold: 0.1 });
-    obs.observe(el); return () => obs.disconnect();
-  }, [phase, delay]);
-  useEffect(() => {
-    if (phase === 'idle') {
-      setDisplay(text.split('').map(c => /\s/.test(c) ? c : DECODE_CHARS[0]).join(''));
-      return;
-    }
-    if (phase !== 'scramble') return;
-    let frame = 0; const total = 85;
-    const id = setInterval(() => {
-      frame++;
-      const rc = Math.floor(Math.pow(frame / total, .65) * text.length);
-      setDisplay(text.split('').map((c, i) => {
-        if (/\s/.test(c)) return c;
-        return i <= rc ? c : DECODE_CHARS[Math.floor(Math.random() * DECODE_CHARS.length)];
-      }).join(''));
-      if (frame >= total) { setDisplay(text); setPhase('done'); clearInterval(id); }
-    }, 16);
-    return () => clearInterval(id);
-  }, [phase, text]);
-  return <span ref={ref} className={className} style={{ ...style, fontVariantLigatures: 'none' }}>{display}</span>;
-};
-
-/* ─────────────────────────────────────────
-   NEURAL CANVAS
-───────────────────────────────────────── */
-const NeuralCanvas = ({ opacity = 0.28 }) => {
-  const cvs = useRef(null);
-  useEffect(() => {
-    const canvas = cvs.current; if (!canvas) return;
-    const ctx = canvas.getContext('2d');
-    const resize = () => { canvas.width = canvas.offsetWidth; canvas.height = canvas.offsetHeight; };
-    resize();
-    const ro = new ResizeObserver(resize); ro.observe(canvas);
-    const N = 88, MAX_D = 145;
-    const pts = Array.from({ length: N }, (_, i) => ({
-      x: Math.random() * canvas.width, y: Math.random() * canvas.height,
-      vx: (Math.random() - .5) * .22, vy: (Math.random() - .5) * .22,
-      r: Math.random() * 1.3 + .4, a: Math.random() * .5 + .15,
-      pulse: Math.random() * Math.PI * 2,
-      type: i < 5 ? 'core' : i < 18 ? 'data' : 'node',
-    }));
-    let id, t = 0, mx = window.innerWidth / 2, my = window.innerHeight / 2;
-    const onMove = e => { mx = e.clientX; my = e.clientY; };
-    window.addEventListener('mousemove', onMove, { passive: true });
-    const draw = () => {
-      t += .007; ctx.clearRect(0, 0, canvas.width, canvas.height);
-      pts.forEach(p => {
-        if (p.type === 'data') {
-          const dx = mx - p.x, dy = my - p.y, d = Math.sqrt(dx*dx+dy*dy);
-          if (d < 220) { p.vx += dx/d*.004; p.vy += dy/d*.004; }
-        }
-        p.vx *= .998; p.vy *= .998;
-        p.x += p.vx; p.y += p.vy;
-        if (p.x < 0 || p.x > canvas.width)  p.vx *= -1;
-        if (p.y < 0 || p.y > canvas.height) p.vy *= -1;
-      });
-      for (let i = 0; i < N; i++) for (let j = i+1; j < N; j++) {
-        const dx = pts[i].x-pts[j].x, dy = pts[i].y-pts[j].y, d = Math.sqrt(dx*dx+dy*dy);
-        if (d < MAX_D) {
-          const a = (1-d/MAX_D)*.17;
-          const isCore = pts[i].type==='core'||pts[j].type==='core';
-          const isData = pts[i].type==='data'||pts[j].type==='data';
-          ctx.beginPath(); ctx.moveTo(pts[i].x,pts[i].y); ctx.lineTo(pts[j].x,pts[j].y);
-          ctx.strokeStyle = isCore ? `rgba(255,208,96,${a*1.5})` : isData ? `rgba(180,220,255,${a*.7})` : `rgba(201,168,76,${a})`;
-          ctx.lineWidth = .5; ctx.stroke();
+<!-- ═══════════════════════════════════════════════════════════
+     REDE NEURAL — organismo digital vivo
+     Linhas finas opacidade variável, glow champagne,
+     profundidade simulada por z-index e blur de pontos
+════════════════════════════════════════════════════════════ -->
+<script>
+(function(){
+  var cv=document.getElementById('neural-layer');
+  if(!cv)return;
+  var ctx=cv.getContext('2d');
+  var W,H,nodes=[],raf;
+  function mkNode(){
+    var z=Math.random();
+    return{x:Math.random()*W,y:Math.random()*H,
+      vx:(Math.random()-.5)*(.1+z*.09),vy:(Math.random()-.5)*(.1+z*.09),
+      z:z,r:.3+z*1.1,pa:.12+z*.42,pp:Math.random()*Math.PI*2,
+      drift:(Math.random()-.5)*.0011};
+  }
+  function resize(){W=cv.width=innerWidth;H=cv.height=innerHeight;}
+  function init(){resize();nodes=Array.from({length:56},mkNode);}
+  var t=0;
+  function draw(){
+    t+=.005;ctx.clearRect(0,0,W,H);
+    for(var i=0;i<nodes.length;i++){
+      for(var j=i+1;j<nodes.length;j++){
+        var ni=nodes[i],nj=nodes[j];
+        var dx=ni.x-nj.x,dy=ni.y-nj.y;
+        var d=Math.sqrt(dx*dx+dy*dy);
+        var maxD=90+(ni.z+nj.z)*45;
+        if(d<maxD){
+          var ratio=1-d/maxD;
+          var avgZ=(ni.z+nj.z)/2;
+          var alpha=ratio*(.07+avgZ*.08);
+          ctx.beginPath();ctx.moveTo(ni.x,ni.y);ctx.lineTo(nj.x,nj.y);
+          if(d<38){
+            ctx.strokeStyle='rgba(240,226,189,'+(alpha*1.9)+')';
+            ctx.lineWidth=.28+avgZ*.38;
+          } else {
+            ctx.strokeStyle='rgba(201,168,106,'+alpha+')';
+            ctx.lineWidth=.15+avgZ*.22;
+          }
+          ctx.stroke();
         }
       }
-      pts.forEach(p => {
-        const f = .7 + .3 * Math.sin(p.pulse + t);
-        const color = p.type==='core' ? `rgba(255,208,96,${p.a*f*1.5})` : p.type==='data' ? `rgba(180,220,255,${p.a*f*.8})` : `rgba(201,168,76,${p.a*f})`;
-        ctx.beginPath(); ctx.arc(p.x,p.y,p.r*f,0,Math.PI*2); ctx.fillStyle=color; ctx.fill();
-        if (p.type === 'core') {
-          ctx.beginPath(); ctx.arc(p.x,p.y,p.r*5,0,Math.PI*2);
-          ctx.fillStyle=`rgba(255,208,96,0.07)`; ctx.fill();
-        }
-      });
-      id = requestAnimationFrame(draw);
-    };
-    draw();
-    return () => { cancelAnimationFrame(id); ro.disconnect(); window.removeEventListener('mousemove', onMove); };
-  }, []);
-  return <canvas ref={cvs} style={{ position:'absolute', inset:0, width:'100%', height:'100%', opacity }} />;
-};
-
-/* ─────────────────────────────────────────
-   ENERGY CORE CANVAS
-───────────────────────────────────────── */
-const EnergyCoreCanvas = () => {
-  const cvs = useRef(null);
-  useEffect(() => {
-    const canvas = cvs.current; if (!canvas) return;
-    const ctx = canvas.getContext('2d');
-    const resize = () => { canvas.width = canvas.offsetWidth; canvas.height = canvas.offsetHeight; };
-    resize();
-    const ro = new ResizeObserver(resize); ro.observe(canvas);
-    let id, t = 0;
-    const draw = () => {
-      t += .009;
-      const W = canvas.width, H = canvas.height, cx = W/2, cy = H*.41;
-      ctx.clearRect(0,0,W,H);
-      for (let x=0; x<W; x+=44) for (let y=0; y<H; y+=44) {
-        const d = Math.sqrt((x-cx)**2+(y-cy)**2);
-        const a = Math.max(0,.12-(d/Math.max(W,H))*.15);
-        ctx.beginPath(); ctx.arc(x,y,.8,0,Math.PI*2);
-        ctx.fillStyle=`rgba(201,168,76,${a})`; ctx.fill();
+    }
+    nodes.forEach(function(p){
+      p.vx+=p.drift*Math.sin(t+p.pp);
+      p.vy+=p.drift*Math.cos(t*.7+p.pp);
+      var sp=Math.sqrt(p.vx*p.vx+p.vy*p.vy);
+      var maxSp=.14+p.z*.11;
+      if(sp>maxSp){p.vx*=maxSp/sp;p.vy*=maxSp/sp;}
+      p.x+=p.vx;p.y+=p.vy;
+      if(p.x<0||p.x>W)p.vx*=-1;
+      if(p.y<0||p.y>H)p.vy*=-1;
+      var pulse=.7+.3*Math.sin(p.pp+t*(1+p.z));
+      var alpha=p.pa*pulse;
+      if(p.z>.5){
+        ctx.beginPath();ctx.arc(p.x,p.y,p.r*4.2,0,Math.PI*2);
+        ctx.fillStyle='rgba(216,192,138,'+(alpha*.055)+')';ctx.fill();
       }
-      for (let i=0; i<5; i++) {
-        const phase = ((t*.22+i/5)%1);
-        ctx.beginPath(); ctx.arc(cx,cy,40+phase*(W*.38),0,Math.PI*2);
-        ctx.strokeStyle=`rgba(201,168,76,${(1-phase)*.3})`;
-        ctx.lineWidth=1; ctx.stroke();
-      }
-      const rings=[{a:W*.25,b:H*.105,tilt:-.22,spd:.007},{a:W*.19,b:H*.155,tilt:.52,spd:-.005},{a:W*.32,b:H*.08,tilt:.1,spd:.004}];
-      rings.forEach(r => {
-        ctx.save(); ctx.translate(cx,cy); ctx.rotate(r.tilt);
-        ctx.beginPath(); ctx.ellipse(0,0,r.a,r.b,0,0,Math.PI*2);
-        ctx.strokeStyle='rgba(201,168,76,.15)'; ctx.lineWidth=.8;
-        ctx.setLineDash([4,10]); ctx.stroke(); ctx.setLineDash([]); ctx.restore();
-        const ang = t*r.spd*100;
-        const px = cx + Math.cos(ang)*r.a*Math.cos(r.tilt) - Math.sin(ang)*r.b*Math.sin(r.tilt);
-        const py = cy + Math.cos(ang)*r.a*Math.sin(r.tilt) + Math.sin(ang)*r.b*Math.cos(r.tilt);
-        const g = ctx.createRadialGradient(px,py,0,px,py,10);
-        g.addColorStop(0,'rgba(255,220,100,.95)'); g.addColorStop(1,'transparent');
-        ctx.beginPath(); ctx.arc(px,py,10,0,Math.PI*2); ctx.fillStyle=g; ctx.fill();
-        ctx.beginPath(); ctx.arc(px,py,2.5,0,Math.PI*2); ctx.fillStyle='#FFD060'; ctx.fill();
-      });
-      const aura = ctx.createRadialGradient(cx,cy,0,cx,cy,90+15*Math.sin(t));
-      aura.addColorStop(0,'rgba(255,240,190,.48)'); aura.addColorStop(.4,'rgba(201,168,76,.25)');
-      aura.addColorStop(.75,'rgba(201,168,76,.07)'); aura.addColorStop(1,'transparent');
-      ctx.beginPath(); ctx.arc(cx,cy,90+15*Math.sin(t),0,Math.PI*2); ctx.fillStyle=aura; ctx.fill();
-      const core = ctx.createRadialGradient(cx,cy,0,cx,cy,28+4*Math.sin(t*1.8));
-      core.addColorStop(0,'rgba(255,255,240,.98)'); core.addColorStop(.4,'rgba(255,225,130,.9)');
-      core.addColorStop(.8,'rgba(201,168,76,.5)'); core.addColorStop(1,'transparent');
-      ctx.beginPath(); ctx.arc(cx,cy,28+4*Math.sin(t*1.8),0,Math.PI*2); ctx.fillStyle=core; ctx.fill();
-      ctx.beginPath(); ctx.arc(cx,cy,7,0,Math.PI*2); ctx.fillStyle='rgba(255,255,255,.96)'; ctx.fill();
-      const bs=210, bo=13;
-      ctx.strokeStyle='rgba(201,168,76,.32)'; ctx.lineWidth=1.2;
-      [[cx-bs/2,cy-bs/2,1,1],[cx+bs/2,cy-bs/2,-1,1],[cx-bs/2,cy+bs/2,1,-1],[cx+bs/2,cy+bs/2,-1,-1]].forEach(([bx,by,sx,sy])=>{
-        ctx.beginPath(); ctx.moveTo(bx,by+sy*bo); ctx.lineTo(bx,by); ctx.lineTo(bx+sx*bo,by); ctx.stroke();
-      });
-      ctx.font=`700 8.5px ${T.mono}`; ctx.fillStyle='rgba(201,168,76,.6)';
-      ctx.fillText('COGNITIVE · ACTIVE',cx-bs/2+4,cy-bs/2-6);
-      ctx.textAlign='right'; ctx.fillText('87.5% ASSERTIVIDADE',cx+bs/2-4,cy-bs/2-6);
-      ctx.textAlign='left';  ctx.fillText(`Δ${(Math.sin(t)*.01+.042).toFixed(4)}%`,cx-bs/2+4,cy+bs/2+14);
-      ctx.textAlign='right'; ctx.fillText('M1 · LIVE',cx+bs/2-4,cy+bs/2+14);
-      ctx.textAlign='left';
-      id = requestAnimationFrame(draw);
-    };
-    draw();
-    return () => { cancelAnimationFrame(id); ro.disconnect(); };
-  }, []);
-  return <canvas ref={cvs} style={{ position:'absolute', inset:0, width:'100%', height:'100%' }} />;
-};
+      ctx.beginPath();ctx.arc(p.x,p.y,p.r*pulse,0,Math.PI*2);
+      ctx.fillStyle=p.z>.6
+        ?'rgba(240,226,189,'+alpha+')'
+        :'rgba(201,168,106,'+(alpha*.68)+')';
+      ctx.fill();
+    });
+    raf=requestAnimationFrame(draw);
+  }
+  init();draw();
+  setTimeout(function(){cv.style.opacity='.82';},1900);
+  addEventListener('resize',function(){resize();},{passive:true});
+})();
+</script>
 
-/* ─────────────────────────────────────────
-   TYPEWRITER TERMINAL
-───────────────────────────────────────── */
-const TypeLine = ({ text, color, onDone }) => {
-  const [out, setOut] = useState('');
-  useEffect(() => {
-    let i = 0;
-    const id = setInterval(() => {
-      i++; setOut(text.slice(0, i));
-      if (i >= text.length) { clearInterval(id); if (onDone) onDone(); }
-    }, 18);
-    return () => clearInterval(id);
-  }, [text]);
-  return (
-    <div style={{ color, lineHeight: 1.9, minHeight: '1.9em' }}>
-      {out}
-      {out.length < text.length && <span style={{ animation: 'type-cursor .5s infinite', color: T.gold }}>█</span>}
-    </div>
-  );
-};
+<!-- ═══════════════════════════════════════════════════════════
+     LOADER — sequência Atlas 3s
+════════════════════════════════════════════════════════════ -->
+<script>
+(function(){
+  const loader=document.getElementById('loader');
+  const ldlogo=document.getElementById('ldlogo');
+  const ldbar=document.getElementById('ldbar');
+  const ldpct=document.getElementById('ldpct');
+  const ldmsg=document.getElementById('ldmsg');
+  if(!loader)return;
+  const msgs=['Verificando integridade neural...','Carregando parâmetros operacionais...','Conectando MT5 Bridge...','Sincronizando cloud matrix soberana...','Calibrando assertividade histórica...','Sistema cognitivo inicializado.'];
+  let pct=0,mi=0;
+  if(typeof gsap!=='undefined') gsap.to(ldlogo,{opacity:1,duration:.8,delay:.3,ease:'power2.out'});
+  else{setTimeout(()=>{ldlogo.style.opacity='1';},300);}
+  const tmr=setInterval(()=>{
+    pct=Math.min(pct+(Math.random()*3.2+1.1),100);
+    ldbar.style.width=pct+'%';ldpct.textContent=Math.floor(pct)+'%';
+    if(pct>(mi+1)*(100/msgs.length)){ldmsg.textContent=msgs[Math.min(mi,msgs.length-1)];mi++;}
+    if(pct>=100){clearInterval(tmr);ldpct.textContent='100%';ldmsg.textContent=msgs[msgs.length-1];setTimeout(reveal,400);}
+  },48);
+  function reveal(){
+    const fl=document.createElement('div');
+    fl.style.cssText='position:fixed;inset:0;z-index:9998;background:#fff;pointer-events:none;opacity:0';
+    document.body.appendChild(fl);
+    if(typeof gsap==='undefined'){loader.style.display='none';fl.remove();window._loaderDone=true;return;}
+    gsap.timeline()
+      .to(fl,{opacity:.14,duration:.07,ease:'power4.in'})
+      .to(fl,{opacity:0,duration:.55,ease:'power4.out'})
+      .to(loader,{opacity:0,duration:.45,ease:'power3.in',onComplete:()=>{loader.style.display='none';fl.remove();}},0)
+      .add(()=>window._qi&&window._qi(1.5),.12);
+    window._loaderDone=true;
+    /* hero SMITH emerge — React gerencia via ref exposto globalmente */
+    setTimeout(()=>window._heroReveal&&window._heroReveal(),200);
+  }
+})();
+</script>
 
-const QuantumTerminal = () => {
-  const LINES = [
-    { text: '$ kronex-cognitive connect --market XAUUSD --tf M1', color: T.gold },
-    { text: '→ Loading 4,293 bars · Tick data: LIVE · Reason Engine: ON', color: T.sub },
-    { text: '✓ Price structure mapped · FVG zones: 7 · BOS confirmed', color: '#FFD060' },
-    { text: '$ kronex-cognitive risk --armor 1pct --circuit-breaker ON', color: T.gold },
-    { text: '→ Armadura Matemática: 1.00% max/trade · HARD-LOCKED', color: T.sub },
-    { text: '✓ Circuit Breaker ACTIVE · Drawdown shield: INVIOLÁVEL', color: '#FFD060' },
-    { text: '$ kronex-cognitive execute --targets 4 --trail T4 --logic STRICT', color: T.gold },
-    { text: '→ FVG + Mitigation + Confirmation · The Strategy Protocol', color: T.sub },
-    { text: '→ T1:1R · T2:2R · T3:3R · T4:trailing avg 4R', color: T.sub },
-    { text: '✓ Frieza Algorítmica v2 · Win: 87.5% · Avg 1.8R · COGNITIVE ●', color: '#FFD060' },
-  ];
-  const [shown, setShown] = useState([]);
-  const [active, setActive] = useState(false);
-  const ref = useRef(null);
-  useEffect(() => {
-    const obs = new IntersectionObserver(([e]) => { if (e.isIntersecting && !active) setActive(true); }, { threshold: .3 });
-    if (ref.current) obs.observe(ref.current);
-    return () => obs.disconnect();
-  }, [active]);
-  useEffect(() => {
-    if (!active) return;
-    const push = i => {
-      if (i >= LINES.length) return;
-      setTimeout(() => { setShown(p => [...p, i]); push(i + 1); }, i === 0 ? 0 : 500);
-    };
-    push(0);
-  }, [active]);
-  return (
-    <div ref={ref} style={{ background:'rgba(0,0,0,.97)', borderRadius:14, border:'1px solid rgba(201,168,76,.2)', overflow:'hidden', animation:'flicker 10s infinite', boxShadow:'0 0 50px rgba(201,168,76,.08)' }}>
-      <div style={{ padding:'10px 16px', borderBottom:'1px solid rgba(201,168,76,.12)', display:'flex', gap:6, alignItems:'center', background:'rgba(201,168,76,.04)' }}>
-        {['#ff5f57','#ffbd2e','#28c840'].map(c => <div key={c} style={{ width:9, height:9, borderRadius:'50%', background:c }} />)}
-        <span style={{ fontSize:9, color:T.muted, marginLeft:8, fontFamily:T.mono, letterSpacing:'.06em' }}>kronex-cognitive · v2.0.26 · DOM INVESTITORE</span>
-        <div style={{ marginLeft:'auto', width:6, height:6, borderRadius:'50%', background:'#C9A84C', boxShadow:'0 0 10px rgba(201,168,76,.9)', animation:'blink 1.5s infinite' }} />
-      </div>
-      <div style={{ padding:'18px 20px', fontFamily:T.mono, fontSize:11.5 }}>
-        {shown.map(i => <TypeLine key={i} text={LINES[i].text} color={LINES[i].color} />)}
-        {shown.length < LINES.length && shown.length > 0 && (
-          <div style={{ color:'rgba(201,168,76,.3)', animation:'blink 1s infinite' }}>█</div>
-        )}
-      </div>
-    </div>
-  );
-};
+<!-- ═══════════════════════════════════════════════════════════
+     REACT APP (JSX via Babel)
+════════════════════════════════════════════════════════════ -->
+<script type="text/babel" data-presets="react" data-plugins="transform-modules-umd">
+const {
+  useState, useEffect, useRef, useCallback,
+  Fragment
+} = React;
 
-/* ─────────────────────────────────────────
-   TRADE CHART
-───────────────────────────────────────── */
-const TradeChart = ({ active }) => {
-  const pts = [
-    { label:'Entrada', x:60,  y:175, c:T.gold  },
-    { label:'T1 — 1R', x:155, y:138, c:T.gold  },
-    { label:'T2 — 2R', x:240, y:105, c:T.amber },
-    { label:'T3 — 3R', x:330, y:72,  c:T.amber },
-    { label:'T4 — 4R', x:420, y:42,  c:T.text  },
-  ];
-  const pathD = pts.map((p,i) => `${i===0?'M':'L'} ${p.x} ${p.y}`).join(' ');
-  return (
-    <svg viewBox="0 0 500 215" style={{ width:'100%', maxWidth:540, overflow:'visible' }}>
-      <defs>
-        <linearGradient id="lG" x1="0%" y1="0%" x2="100%" y2="0%">
-          <stop offset="0%" stopColor="#C9A84C"/>
-          <stop offset="60%" stopColor="#f59e0b"/>
-          <stop offset="100%" stopColor="#E8E8E0"/>
-        </linearGradient>
-        <linearGradient id="aG" x1="0%" y1="0%" x2="0%" y2="100%">
-          <stop offset="0%" stopColor="#C9A84C" stopOpacity=".32"/>
-          <stop offset="100%" stopColor="#C9A84C" stopOpacity="0"/>
-        </linearGradient>
-        <filter id="glow1"><feGaussianBlur stdDeviation="4" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
-        <filter id="glow2"><feGaussianBlur stdDeviation="8" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
-      </defs>
-      {[55,85,115,145,175].map(y => <line key={y} x1="40" y1={y} x2="460" y2={y} stroke="rgba(201,168,76,0.07)" strokeWidth="1" strokeDasharray="4 8"/>)}
-      <path d={`${pathD} L 420 205 L 60 205 Z`} fill="url(#aG)" style={{ opacity:active?1:0, transition:'opacity 1s ease 2s' }}/>
-      <path d={pathD} fill="none" stroke="#C9A84C" strokeWidth="8" strokeOpacity=".09" filter="url(#glow2)" strokeLinecap="round" strokeLinejoin="round" style={{ strokeDasharray:700,strokeDashoffset:active?0:700,transition:'stroke-dashoffset 2.8s ease .3s' }}/>
-      <path d={pathD} fill="none" stroke="url(#lG)" strokeWidth="2" filter="url(#glow1)" strokeLinecap="round" strokeLinejoin="round" style={{ strokeDasharray:700,strokeDashoffset:active?0:700,transition:'stroke-dashoffset 2.8s ease .3s' }}/>
-      {pts.map((p,i) => (
-        <g key={i} style={{ opacity:active?1:0, transition:`opacity .5s ease ${.8+i*.35}s` }}>
-          <circle cx={p.x} cy={p.y} r="15" fill={p.c} fillOpacity=".06"/>
-          <circle cx={p.x} cy={p.y} r="5"  fill={p.c} filter="url(#glow1)"/>
-          <circle cx={p.x} cy={p.y} r="9"  fill="none" stroke={p.c} strokeWidth="1" strokeOpacity=".4"/>
-          <text x={p.x} y={p.y-18} textAnchor="middle" fontSize="9" fill={p.c} fontWeight="700" letterSpacing=".06em" fontFamily="Inter,sans-serif">{p.label}</text>
-        </g>
-      ))}
-      <line x1="40" y1="205" x2="460" y2="205" stroke="rgba(201,168,76,0.15)" strokeWidth="1"/>
-    </svg>
-  );
-};
+/* Framer Motion — disponível via window.Motion */
+const FM = window.Motion || {};
+const motion = FM.motion || {};
+const AnimatePresence = FM.AnimatePresence || (({children})=>children);
+const useAnimation = FM.useAnimation || (()=>({start:()=>{}}));
+const useInView = FM.useInView || ((ref)=>{
+  /* fallback: IntersectionObserver manual */
+  const [inView,setInView] = useState(false);
+  useEffect(()=>{
+    if(!ref.current)return;
+    const obs=new IntersectionObserver(([e])=>e.isIntersecting&&setInView(true),{threshold:.15});
+    obs.observe(ref.current);
+    return()=>obs.disconnect();
+  },[ref]);
+  return inView;
+});
 
-/* ─────────────────────────────────────────
-   METRIC CARD
-───────────────────────────────────────── */
-const MetricCard = ({ label, value, suffix='', prefix='', sub, highlight }) => {
-  const [ref, active] = useIntersection(.3);
-  const [n, setN] = useState(0);
-  const target = parseFloat(value);
-  const dec    = String(value).includes('.') ? 1 : 0;
-  useEffect(() => {
-    if (!active) return;
-    let start = null;
-    const step = ts => {
-      if (!start) start = ts;
-      const p = Math.min((ts-start)/2200, 1);
-      setN(parseFloat(((1-Math.pow(1-p,4))*target).toFixed(dec)));
-      if (p < 1) requestAnimationFrame(step);
-    };
-    requestAnimationFrame(step);
-  }, [active, target, dec]);
-  return (
-    <div ref={ref} className={highlight ? 'holo-panel' : 'glass'} style={{ borderRadius:16, padding:'28px 24px', position:'relative', overflow:'visible',
-      boxShadow:highlight?'0 0 60px rgba(201,168,76,.14),0 0 120px rgba(201,168,76,.07),inset 0 0 30px rgba(201,168,76,.05)':'none' }}>
-      <div className="corner-tl"/><div className="corner-tr"/><div className="corner-bl"/><div className="corner-br"/>
-      <div style={{ position:'absolute',inset:-14,pointerEvents:'none' }}>
-        <div style={{ position:'absolute',inset:0,border:'1px dashed rgba(201,168,76,.08)',borderRadius:30,animation:'rot-cw 22s linear infinite' }}/>
-        {highlight && <div style={{ position:'absolute',inset:4,border:'1px solid transparent',borderTopColor:'rgba(201,168,76,.45)',borderRadius:26,animation:'rot-cw 4s linear infinite',boxShadow:'0 0 8px rgba(201,168,76,.3)' }}/>}
-      </div>
-      <div style={{ fontSize:9,fontWeight:800,letterSpacing:'.18em',textTransform:'uppercase',color:T.gold,marginBottom:14,opacity:.9 }}>{label}</div>
-      <div className={highlight ? 'metric-flash' : ''} style={{ fontSize:'clamp(1.9rem,5vw,3rem)', fontWeight:900, letterSpacing:'-.03em', lineHeight:1,
-        color:highlight?T.bright:T.text, fontVariantNumeric:'tabular-nums',
-        textShadow:highlight?'0 0 40px rgba(255,208,96,.6),0 0 80px rgba(201,168,76,.3)':'none' }}>
-        {prefix}{n}{suffix}
-      </div>
-      {sub && <div style={{ marginTop:10, fontSize:11, color:T.muted, lineHeight:1.6, letterSpacing:'.02em' }}>{sub}</div>}
-    </div>
-  );
-};
+/* ─── spring config (Framer Motion) ──────────────────── */
+const SPRING_SMOOTH = {type:'spring',stiffness:60,damping:20,mass:.8};
+const SPRING_SNAPPY = {type:'spring',stiffness:120,damping:22,mass:.6};
+const EASE_EXPO     = [.16,1,.3,1];
 
-/* ─────────────────────────────────────────
-   SIMULATOR — corrected math
-   1% risco/trade · avg 1.8R win (4 targets)
-   per-trade exponential compound
-───────────────────────────────────────── */
-const WIN_RATIO = 7 / 8;
-const WIN_PCT   = 0.018;  /* 1% risco × 1.8R avg (4 alvos The Strategy) */
-const LOSS_PCT  = 0.010;  /* 1% risco stop */
+/* ─── helpers ────────────────────────────────────────── */
+const fmt = v => new Intl.NumberFormat('pt-PT',{style:'currency',currency:'EUR',maximumFractionDigits:0}).format(v);
+const clamp = (v,mn,mx) => Math.max(mn,Math.min(mx,v));
 
-const fmtEuro = n => {
-  if (n >= 1e9) return `€${(n/1e9).toFixed(2)}B`;
-  if (n >= 1e6) return `€${(n/1e6).toFixed(2)}M`;
-  if (n >= 1e3) return `€${Math.round(n).toLocaleString('pt-PT')}`;
-  return `€${n.toFixed(0)}`;
-};
-const fmtMult = x => {
-  if (x >= 1e6) return `${(x/1e6).toFixed(1)}M×`;
-  if (x >= 1e3) return `${(x/1e3).toFixed(1)}k×`;
-  return `${Math.round(x)}×`;
-};
-
-const Simulator = () => {
-  const [capital, setCapital] = useState(1000);
-  const [ops,     setOps]     = useState(10);
-  const [months,  setMonths]  = useState(6);
-  const [burst,   setBurst]   = useState(false);
-
-  const tradesPerMonth = ops * 4;
-  const winsPerMonth   = Math.round(tradesPerMonth * WIN_RATIO);
-  const lossesPerMonth = tradesPerMonth - winsPerMonth;
-  /* Juros compostos por operação individual — matematicamente correto */
-  const monthlyMult  = Math.pow(1+WIN_PCT, winsPerMonth) * Math.pow(1-LOSS_PCT, lossesPerMonth);
-  const monthlyRetPct = ((monthlyMult-1)*100).toFixed(1);
-
-  const capitalAt = m => { let b = capital; for (let i=0; i<m; i++) b *= monthlyMult; return b; };
-  const arr     = Array.from({ length:months }, (_,i) => ({ label:`M${i+1}`, v:capitalAt(i+1) }));
-  const final   = capitalAt(months);
-  const profit  = final - capital;
-  const growthX = final / capital;
-  const maxV    = Math.max(...arr.map(m => m.v));
-
-  const fire = setter => val => { setter(val); setBurst(true); setTimeout(() => setBurst(false), 500); };
-
-  const controls = [
-    { label:'Capital Alocado',       disp:fmtEuro(capital), min:500,  max:50000, step:500, val:capital, set:fire(setCapital), lo:'€500',  hi:'€50k'  },
-    { label:'Operações / Semana',    disp:ops,               min:5,    max:25,    step:1,   val:ops,     set:fire(setOps),     lo:'5',     hi:'25'    },
-    { label:'Horizonte (meses)',     disp:`${months} meses`, min:1,    max:24,    step:1,   val:months,  set:fire(setMonths),  lo:'1m',    hi:'24m'   },
-  ];
-
-  return (
-    <div style={{ borderRadius:20, padding:'clamp(24px,4vw,44px)',
-      background:'linear-gradient(135deg,rgba(201,168,76,.055) 0%,rgba(8,5,1,.98) 60%,rgba(201,168,76,.03) 100%)',
-      border:'1px solid rgba(201,168,76,.24)',
-      boxShadow:burst
-        ? '0 0 120px rgba(201,168,76,.24),0 0 240px rgba(201,168,76,.12),inset 0 0 80px rgba(201,168,76,.05)'
-        : '0 0 80px rgba(201,168,76,.1),0 0 160px rgba(201,168,76,.05),inset 0 0 80px rgba(201,168,76,.035)',
-      position:'relative', overflow:'hidden', transition:'box-shadow .35s ease',
-    }}>
-      {burst && <div style={{ position:'absolute',inset:0,background:'radial-gradient(ellipse at 50% 40%,rgba(201,168,76,.1),transparent)',pointerEvents:'none',borderRadius:20,zIndex:1 }}/>}
-      <div className="hud-grid" style={{ borderRadius:20 }}/>
-
-      {/* Header */}
-      <div style={{ display:'flex',alignItems:'center',gap:10,marginBottom:28,position:'relative',zIndex:2 }}>
-        <div style={{ width:8,height:8,borderRadius:'50%',background:'#C9A84C',boxShadow:'0 0 16px rgba(201,168,76,.7)',animation:'blink 2s infinite' }}/>
-        <span style={{ fontSize:9,fontWeight:800,color:'#C9A84C',letterSpacing:'.17em',textTransform:'uppercase',fontFamily:T.mono }}>SIMULADOR · COMPOSTO / OPERAÇÃO · MODELO THE STRATEGY</span>
-        <div style={{ marginLeft:'auto',display:'flex',gap:4 }}>
-          {[.4,.65,.4].map((o,i)=><div key={i} style={{width:3,height:3,borderRadius:'50%',background:`rgba(201,168,76,${o})`,animation:`blink ${1+i*.28}s infinite`}}/>)}
-        </div>
-      </div>
-
-      {/* Math basis */}
-      <div style={{ marginBottom:28,padding:'12px 15px',borderRadius:8,background:'rgba(201,168,76,.05)',border:'1px solid rgba(201,168,76,.14)',position:'relative',zIndex:2 }}>
-        <div style={{ fontSize:9.5,fontFamily:T.mono,color:T.sub,letterSpacing:'.05em',lineHeight:2 }}>
-          <span style={{color:T.bright,fontWeight:800}}>ARMADURA MATEMÁTICA</span> &nbsp;·&nbsp;
-          1% risco/operação &nbsp;·&nbsp; avg 1.8R (4 alvos: T1:1R · T2:2R · T3:3R · T4:4R) &nbsp;·&nbsp;
-          87.5% assertividade (7W:1L) &nbsp;·&nbsp;
-          <span style={{color:T.gold}}>modelos probabilísticos R-multiples estritos · The Strategy</span> &nbsp;·&nbsp;
-          circuit breakers de drawdown ativos
-        </div>
-      </div>
-
-      {/* Controls */}
-      <div style={{ display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(200px,1fr))',gap:28,marginBottom:32,position:'relative',zIndex:2 }}>
-        {controls.map(c => (
-          <div key={c.label}>
-            <div style={{ display:'flex',justifyContent:'space-between',marginBottom:10 }}>
-              <span style={{ fontSize:9,color:T.muted,letterSpacing:'.08em',textTransform:'uppercase',fontFamily:T.mono }}>{c.label}</span>
-              <span style={{ fontSize:13,fontWeight:800,color:T.bright,textShadow:'0 0 16px rgba(255,208,96,.55)',fontVariantNumeric:'tabular-nums',transition:'all .2s' }}>{c.disp}</span>
-            </div>
-            <input type="range" min={c.min} max={c.max} step={c.step} value={c.val} onChange={e=>c.set(Number(e.target.value))}/>
-            <div style={{ display:'flex',justifyContent:'space-between',marginTop:5 }}>
-              <span style={{fontSize:9,color:T.muted,fontFamily:T.mono}}>{c.lo}</span>
-              <span style={{fontSize:9,color:T.muted,fontFamily:T.mono}}>{c.hi}</span>
-            </div>
-          </div>
-        ))}
-      </div>
-
-      {/* Bar chart */}
-      <div style={{ marginBottom:24,position:'relative',zIndex:2 }}>
-        <div style={{ display:'flex',alignItems:'flex-end',gap:months>14?2:months>8?4:7,height:112 }}>
-          {arr.map((m,i) => {
-            const hPct = (m.v/maxV)*96;
-            return (
-              <div key={i} style={{ flex:1,display:'flex',flexDirection:'column',alignItems:'center',gap:3 }}>
-                <div style={{ width:'100%',height:`${hPct}px`,minHeight:3,borderRadius:'3px 3px 0 0',
-                  background:'linear-gradient(180deg,#FFD060,#C9A84C 55%,#8B6914)',
-                  boxShadow:'0 -6px 22px rgba(201,168,76,.55)',
-                  transition:'height .55s cubic-bezier(.34,1.56,.64,1)',
-                  position:'relative',overflow:'hidden' }}>
-                  <div style={{position:'absolute',top:0,left:0,right:0,height:'100%',background:'linear-gradient(180deg,rgba(255,255,255,.22) 0%,transparent 55%)',borderRadius:'3px 3px 0 0'}}/>
-                </div>
-                {months<=12&&<span style={{fontSize:7.5,color:T.muted,letterSpacing:'.04em',fontFamily:T.mono}}>{m.label}</span>}
-              </div>
-            );
-          })}
-        </div>
-        <div style={{height:1,background:'linear-gradient(90deg,transparent,rgba(201,168,76,.35),transparent)'}}/>
-      </div>
-
-      {/* Result tiles */}
-      <div style={{ display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:10,marginBottom:18,position:'relative',zIndex:2 }}>
-        {[
-          { label:'Capital Final',  val:fmtEuro(final)    },
-          { label:'Lucro Total',    val:fmtEuro(profit)   },
-          { label:'Multiplicador',  val:fmtMult(growthX)  },
-          { label:'Retorno / Mês',  val:`+${monthlyRetPct}%` },
-        ].map(r => (
-          <div key={r.label} style={{ textAlign:'center',padding:'14px 8px',
-            background:burst?'rgba(201,168,76,.09)':'rgba(201,168,76,.045)',
-            border:`1px solid ${burst?'rgba(201,168,76,.38)':'rgba(201,168,76,.14)'}`,
-            borderRadius:10,position:'relative',overflow:'hidden',transition:'all .3s' }}>
-            <div style={{position:'absolute',top:0,left:0,right:0,height:'1px',background:'linear-gradient(90deg,transparent,rgba(201,168,76,.4),transparent)'}}/>
-            <div style={{fontSize:8.5,color:T.muted,letterSpacing:'.09em',marginBottom:7,textTransform:'uppercase',fontFamily:T.mono}}>{r.label}</div>
-            <div style={{fontSize:'clamp(.82rem,2vw,1.05rem)',fontWeight:900,color:T.gold,textShadow:'0 0 20px rgba(201,168,76,.5)',fontVariantNumeric:'tabular-nums'}}>{r.val}</div>
-          </div>
-        ))}
-      </div>
-
-      {/* Disclaimer */}
-      <div style={{padding:'11px 15px',background:'rgba(220,38,38,.04)',borderRadius:8,border:'1px solid rgba(220,38,38,.12)',position:'relative',zIndex:2}}>
-        <p style={{fontSize:9.5,color:'rgba(220,60,60,.75)',lineHeight:1.75,letterSpacing:'.02em',fontFamily:T.mono}}>
-          * Projeção baseada em 1% de risco/operação, ratio 7W:1L, retorno médio de 1.8R por operação vencedora.
-          R-multiples baseados na metodologia The Strategy. Desempenho histórico não garante resultados futuros.
-        </p>
-      </div>
-    </div>
-  );
-};
-
-/* ─────────────────────────────────────────
-   SYSTEM STATUS
-───────────────────────────────────────── */
-const SystemStatus = () => {
-  const [tick, setTick] = useState(0);
-  useEffect(() => { const id = setInterval(() => setTick(t => t+1), 1000); return () => clearInterval(id); }, []);
-  const lat  = (3+Math.sin(tick*.31)*.18).toFixed(3);
-  const thru = (847+Math.floor(Math.sin(tick*.71)*9));
-  const up   = (99.997+Math.sin(tick*.11)*.001).toFixed(3);
-  const engines = [
-    { label:'NEURAL ENGINE',      val:'OPTIMAL',           bar:100 },
-    { label:'RISK ARMOR',         val:'1.0% HARD-LOCKED',  bar:100 },
-    { label:'MARKET FEED',        val:'LIVE · XAUUSD M1',  bar:97+(tick%4) },
-    { label:'COGNITIVE CORE',     val:'REASONING ACTIVE',  bar:99 },
-    { label:'CIRCUIT BREAKER',    val:'DRAWDOWN SHIELD',   bar:100 },
-    { label:'CLAUDE CODE LAYER',  val:'SELF-OPTIMIZING',   bar:96+(tick%5) },
-  ];
-  const diag = [
-    { k:'LATENCY',    v:`${lat}ms`        },
-    { k:'THROUGHPUT', v:`${thru} ops/s`   },
-    { k:'UPTIME',     v:`${up}%`          },
-    { k:'PROTOCOL',   v:'QUANTUM-SECURED' },
-    { k:'CIPHER',     v:'AES-256-GCM'     },
-    { k:'ACCESS',     v:'DOM INVESTITORE' },
-  ];
-  return (
-    <section id="status" style={{padding:'120px clamp(20px,5vw,60px)',maxWidth:960,margin:'0 auto',fontFamily:T.font}}>
-      <HoloReveal>
-        <div style={{textAlign:'center',marginBottom:56}}>
-          <div className="section-label" style={{marginBottom:16}}>SYSTEM STATUS</div>
-          <h2 className="h2" style={{marginBottom:20}}>
-            Engines:{' '}
-            <DecryptText text="Optimized." style={{color:T.gold,textShadow:'0 0 30px rgba(201,168,76,.5)'}} delay={400}/>
-          </h2>
-          <p className="lead" style={{maxWidth:520,margin:'0 auto'}}>
-            Motor autónomo em operação. Frieza Algorítmica de Segunda Geração. Todos os sistemas nominais.
-          </p>
-        </div>
-        <div className="holo-panel" style={{borderRadius:24,padding:'clamp(28px,5vw,56px)',position:'relative',overflow:'hidden'}}>
-          <div className="hud-grid" style={{borderRadius:24}}/>
-          {/* Top bar */}
-          <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:40,paddingBottom:20,borderBottom:'1px solid rgba(201,168,76,.12)',position:'relative',zIndex:2}}>
-            <div style={{display:'flex',alignItems:'center',gap:12}}>
-              <div style={{width:10,height:10,borderRadius:'50%',background:'#C9A84C',boxShadow:'0 0 18px rgba(201,168,76,.9)',animation:'blink 1.8s infinite'}}/>
-              <span style={{fontFamily:T.mono,fontSize:11,color:T.gold,letterSpacing:'.12em',fontWeight:800}}>KRONEX COGNITIVE · QUANTUM CORE v2.0</span>
-            </div>
-            <div style={{fontFamily:T.mono,fontSize:9,color:T.muted,letterSpacing:'.1em'}}>ALL SYSTEMS NOMINAL</div>
-          </div>
-          {/* Engine bars */}
-          <div style={{display:'flex',flexDirection:'column',gap:18,marginBottom:40,position:'relative',zIndex:2}}>
-            {engines.map(e => (
-              <div key={e.label} style={{display:'flex',alignItems:'center',gap:16}}>
-                <div style={{width:160,fontSize:9,fontFamily:T.mono,color:T.muted,letterSpacing:'.08em',flexShrink:0}}>{e.label}</div>
-                <div style={{flex:1,height:2,background:'rgba(201,168,76,.12)',borderRadius:1,overflow:'hidden'}}>
-                  <div style={{width:`${Math.min(e.bar,100)}%`,height:'100%',background:'linear-gradient(90deg,#8B6914,#C9A84C,#FFD060)',borderRadius:1,boxShadow:'0 0 8px rgba(201,168,76,.6)',transition:'width .8s ease'}}/>
-                </div>
-                <div style={{width:160,textAlign:'right',fontSize:9,fontFamily:T.mono,color:T.bright,letterSpacing:'.07em',fontWeight:700,flexShrink:0}}>{e.val}</div>
-              </div>
-            ))}
-          </div>
-          {/* Diagnostics */}
-          <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(140px,1fr))',gap:12,marginBottom:44,position:'relative',zIndex:2}}>
-            {diag.map(d => (
-              <div key={d.k} style={{padding:'15px 13px',borderRadius:10,background:'rgba(201,168,76,.04)',border:'1px solid rgba(201,168,76,.12)',position:'relative',overflow:'hidden'}}>
-                <div style={{position:'absolute',top:0,left:0,right:0,height:'1px',background:'linear-gradient(90deg,transparent,rgba(201,168,76,.28),transparent)'}}/>
-                <div style={{fontSize:8,color:T.muted,letterSpacing:'.12em',marginBottom:8,fontFamily:T.mono}}>{d.k}</div>
-                <div style={{fontSize:13,fontWeight:800,color:T.gold,fontFamily:T.mono,letterSpacing:'.04em',textShadow:'0 0 16px rgba(201,168,76,.4)'}}>{d.v}</div>
-              </div>
-            ))}
-          </div>
-          {/* Footer text */}
-          <div style={{textAlign:'center',paddingTop:34,borderTop:'1px solid rgba(201,168,76,.09)',position:'relative',zIndex:2}}>
-            <div style={{fontSize:10,fontFamily:T.mono,color:T.muted,letterSpacing:'.14em',marginBottom:14}}>ACCESS · DOM INVESTITORE VERIFIED MEMBERS ONLY</div>
-            <p style={{fontSize:12,color:T.muted,fontFamily:T.mono,lineHeight:2.1,letterSpacing:'.04em'}}>
-              Tecnologia proprietária · Uso restrito · Todos os direitos reservados<br/>
-              Esta ferramenta não se destina ao mercado público.
-            </p>
-          </div>
-        </div>
-      </HoloReveal>
-    </section>
-  );
-};
-
-/* ─────────────────────────────────────────
-   NAVBAR
-───────────────────────────────────────── */
-const Navbar = ({ scrolled }) => {
-  const links = [
-    { label:'O Problema',    href:'#inimigo'   },
-    { label:'A Solução',     href:'#solucao'   },
-    { label:'Simulador',     href:'#simulador' },
-    { label:'Acesso Founder',href:'#oferta'    },
-    { label:'Sistema',       href:'#status'    },
-  ];
-  return (
-    <nav style={{ position:'fixed',top:0,left:0,right:0,zIndex:999,height:64,padding:'0 clamp(16px,4vw,48px)',display:'flex',alignItems:'center',justifyContent:'space-between',
-      background:scrolled?'rgba(4,4,4,.96)':'transparent',
-      borderBottom:scrolled?'1px solid rgba(201,168,76,.12)':'1px solid transparent',
-      backdropFilter:scrolled?'blur(40px)':'none',
-      transition:'all .5s ease', fontFamily:T.font }}>
-      {scrolled && <div style={{position:'absolute',bottom:0,left:0,right:0,height:'1px',background:'linear-gradient(90deg,transparent,rgba(201,168,76,.35),transparent)'}}/>}
-      {/* Logo */}
-      <div style={{display:'flex',alignItems:'center',gap:10}}>
-        <div style={{width:32,height:32,background:'linear-gradient(135deg,#5C4208,#C9A84C,#FFD060)',borderRadius:8,display:'flex',alignItems:'center',justifyContent:'center',boxShadow:'0 0 24px rgba(201,168,76,.5)',position:'relative'}}>
-          <div style={{position:'absolute',inset:-2,border:'1px solid rgba(201,168,76,.3)',borderRadius:10,animation:'rot-cw 10s linear infinite'}}/>
-          <span style={{color:'#040404',fontSize:14,fontWeight:900}}>K</span>
-        </div>
-        <span style={{fontWeight:800,fontSize:13,letterSpacing:'.1em',color:T.text,textTransform:'uppercase'}}>KRONEX <span style={{color:T.gold,textShadow:'0 0 20px rgba(201,168,76,.7)'}}>COGNITIVE</span></span>
-      </div>
-      {/* Links */}
-      <div style={{display:'flex',gap:24}}>
-        {links.map(l => (
-          <a key={l.label} href={l.href}
-            style={{fontSize:10.5,fontWeight:600,letterSpacing:'.08em',color:T.muted,transition:'all .2s',textTransform:'uppercase'}}
-            onMouseEnter={e=>{e.target.style.color=T.gold;e.target.style.textShadow='0 0 16px rgba(201,168,76,.6)';}}
-            onMouseLeave={e=>{e.target.style.color=T.muted;e.target.style.textShadow='none';}}
-          >{l.label}</a>
-        ))}
-      </div>
-      <a href="#status">
-        <button className="btn-outline" style={{padding:'8px 16px',borderRadius:8,fontSize:8.5,letterSpacing:'.09em',whiteSpace:'nowrap'}}>
-          TERMINAL COGNITIVE REASONING
-        </button>
-      </a>
-    </nav>
-  );
-};
-
-/* ─────────────────────────────────────────
-   HERO
-───────────────────────────────────────── */
-const Hero = () => (
-  <section style={{position:'relative',minHeight:'100vh',display:'flex',alignItems:'center',overflow:'hidden',fontFamily:T.font,background:'#040404'}}>
-    <EnergyCoreCanvas/>
-    <NeuralCanvas opacity={0.22}/>
-    <div className="parallax-slow" style={{position:'absolute',top:'36%',left:'50%',transform:'translate(-50%,-50%)',width:620,height:620,borderRadius:'50%',border:'1px solid rgba(201,168,76,.055)',pointerEvents:'none'}}/>
-    {/* HUD top bar */}
-    <div style={{position:'absolute',top:76,left:0,right:0,display:'flex',justifyContent:'space-between',padding:'0 clamp(20px,4vw,60px)',fontFamily:T.mono,fontSize:9,color:T.muted,letterSpacing:'.12em',animation:'slide-up .9s ease .4s both'}}>
-      <span>K.R.O.N.E.X · C.O.G.N.I.T.I.V.E · v2.0.26</span>
-      <span>DOM · INVESTITORE · RESTRICTED ACCESS</span>
-      <span>TERMINAL · PRIVADO · {new Date().getFullYear()}</span>
-    </div>
-    <div className="parallax-slow" style={{position:'relative',zIndex:2,maxWidth:1100,margin:'0 auto',padding:'120px clamp(20px,5vw,60px) 80px',textAlign:'center',fontFamily:T.font}}>
-      <div className="tag" style={{marginBottom:32,animation:'slide-up .9s ease both'}}>
-        <span style={{width:6,height:6,borderRadius:'50%',background:T.gold,display:'inline-block',boxShadow:'0 0 12px rgba(201,168,76,.9)',animation:'blink 1.5s infinite'}}/>
-        DOM INVESTITORE — Acesso Exclusivo Founder
-      </div>
-      <h1 className="h1" style={{marginBottom:32,animation:'slide-up .9s ease .15s both'}}>
-        <span style={{background:'linear-gradient(135deg,#E8E8E0 0%,#C0C0BA 35%,#C9A84C 72%,#FFD060 100%)',WebkitBackgroundClip:'text',WebkitTextFillColor:'transparent',backgroundClip:'text',display:'block'}}>
-          <DecryptText text="Quando a máquina trabalha," delay={600}/><br/>
-          <DecryptText text="a mente descansa." delay={1000}/>
-        </span>
-        <span style={{color:T.gold,fontSize:'.68em',textShadow:'0 0 40px rgba(201,168,76,.4)',WebkitTextFillColor:T.gold,display:'block',marginTop:14,letterSpacing:'-.01em'}}>
-          E um trader com a mente descansada opera em estado de pura clareza.
-        </span>
-      </h1>
-      <p className="lead" style={{maxWidth:720,margin:'0 auto 20px',animation:'slide-up .9s ease .3s both'}}>
-        O KRONEX COGNITIVE não opera com intuição. Opera com <strong style={{color:T.text}}>raciocínio lógico de segunda geração</strong> — uma inteligência que absorve a pressão do mercado para que a sua mente funcione livre de distorção emocional.
-      </p>
-      <p className="lead" style={{maxWidth:680,margin:'0 auto 48px',animation:'slide-up .9s ease .38s both',fontSize:'clamp(.9rem,1.8vw,1.06rem)'}}>
-        A máquina <strong style={{color:T.text}}>não tem sentimentos</strong>, não hesita e não quebra regras. Ela extrai capital de forma fria e ininterrupta — criando a base financeira que separa o trader que opera com excelência do trader que opera com medo.
-      </p>
-      <div style={{display:'flex',gap:16,justifyContent:'center',flexWrap:'wrap',animation:'slide-up .9s ease .45s both'}}>
-        <a href="#simulador"><button className="btn-primary" style={{padding:'18px 40px',borderRadius:10,fontSize:13,letterSpacing:'.06em'}}>Ver a Matemática &nbsp;→</button></a>
-        <a href="#solucao"><button className="btn-outline" style={{padding:'18px 30px',borderRadius:10,fontSize:13}}>Como Funciona</button></a>
-      </div>
-      <div style={{display:'flex',gap:0,justifyContent:'center',marginTop:72,flexWrap:'wrap',animation:'slide-up .9s ease .6s both'}}>
-        {[{n:'87.5%',l:'Assertividade'},{n:'1:7',l:'Ratio Loss/Gain'},{n:'1.8R',l:'R médio por win'},{n:'24/7',l:'Frieza Algorítmica'}].map((s,i)=>(
-          <div key={i} style={{padding:'22px 36px',borderRight:i<3?'1px solid rgba(201,168,76,.08)':'none',textAlign:'center',position:'relative'}}>
-            <div style={{position:'absolute',top:0,left:'50%',transform:'translateX(-50%)',width:'60%',height:'1px',background:'linear-gradient(90deg,transparent,rgba(201,168,76,.28),transparent)'}}/>
-            <div className="glitch-id" style={{fontSize:'clamp(1.3rem,3vw,2.1rem)',fontWeight:900,color:T.gold,letterSpacing:'-.02em',textShadow:'0 0 30px rgba(201,168,76,.5)',fontVariantNumeric:'tabular-nums'}}>{s.n}</div>
-            <div style={{fontSize:9,color:T.muted,marginTop:5,letterSpacing:'.12em',textTransform:'uppercase',fontFamily:T.mono}}>{s.l}</div>
-          </div>
-        ))}
-      </div>
-    </div>
-    <div style={{position:'absolute',bottom:32,left:'50%',transform:'translateX(-50%)',animation:'quantum-float 3s infinite',opacity:.45}}>
-      <div style={{width:22,height:36,border:'1px solid rgba(201,168,76,.38)',borderRadius:12,display:'flex',justifyContent:'center',paddingTop:6,boxShadow:'0 0 12px rgba(201,168,76,.18)'}}>
-        <div style={{width:2,height:7,background:T.gold,borderRadius:2,animation:'blink 1.5s infinite',boxShadow:'0 0 8px rgba(201,168,76,.8)'}}/>
-      </div>
-    </div>
-  </section>
-);
-
-/* ─────────────────────────────────────────
-   O INIMIGO
-───────────────────────────────────────── */
-const Inimigo = () => {
-  const [activeCard, setActiveCard] = useState(null);
-  const pains = [
-    { icon:'🔪', title:'A Faca no Pescoço', desc:'Operar com despesas por cobrir transforma cada boleta numa decisão emocional. O trader já não executa a estratégia — executa o medo de não pagar a renda.', stat:'Causa nº1 de ruína' },
-    { icon:'🧠', title:'Colapso da Disciplina', desc:'O cérebro sob pressão financeira entra em modo de sobrevivência. O stop move. O alvo fecha cedo. A mesma estratégia que funciona em demo destrói a conta real.', stat:'78% das perdas evitáveis' },
-    { icon:'📉', title:'Consistência Impossível', desc:'Nenhum trader mantém frieza algorítmica operação após operação quando o resultado afeta diretamente a sua qualidade de vida. É biologia, não fraqueza.', stat:'0% sustentam a consistência' },
-    { icon:'⚡', title:'O Ciclo Vicioso', desc:'Perda → pressão → overtrading → mais perda. Sem uma fonte de rendimento base, o trader está preso neste ciclo. A saída não é mais estudo. É estrutura financeira.', stat:'95% ficam presos aqui' },
-  ];
-  return (
-    <section id="inimigo" style={{padding:'120px clamp(20px,5vw,60px)',maxWidth:1200,margin:'0 auto',fontFamily:T.font}}>
-      <HoloReveal>
-        <div style={{textAlign:'center',marginBottom:72}}>
-          <div className="section-label" style={{marginBottom:16}}>O Inimigo Real</div>
-          <h2 className="h2" style={{marginBottom:20}}>O mercado não destrói traders.<br/><span style={{color:'#ef4444',textShadow:'0 0 30px rgba(239,68,68,.4)'}}>A pressão financeira destrói traders.</span></h2>
-          <p className="lead" style={{maxWidth:660,margin:'0 auto'}}>Você já tem o conhecimento técnico. Você estuda The Strategy. O problema não é a estratégia — é a condição mental em que você a executa. O KRONEX COGNITIVE foi construído para resolver exatamente isso.</p>
-        </div>
-      </HoloReveal>
-      <HoloReveal delay={0.08}>
-        <div style={{textAlign:'center',marginBottom:60}}>
-          <div className="glass" style={{display:'inline-block',padding:'36px 60px',borderRadius:20,border:'1px solid rgba(239,68,68,.16)',boxShadow:'0 0 60px rgba(239,68,68,.07)',position:'relative',overflow:'hidden'}}>
-            <div style={{position:'absolute',inset:0,background:'radial-gradient(ellipse at 50% 50%,rgba(239,68,68,.05),transparent)',pointerEvents:'none'}}/>
-            <div style={{fontSize:'clamp(3rem,10vw,6rem)',fontWeight:900,color:'#ef4444',lineHeight:1,letterSpacing:'-.04em',textShadow:'0 0 60px rgba(239,68,68,.5)'}}>95<span style={{fontSize:'.5em'}}>%</span></div>
-            <div style={{fontSize:11,color:T.sub,marginTop:12,letterSpacing:'.1em'}}>DOS TRADERS DE VAREJO ENCERRAM O ANO NO NEGATIVO</div>
-            <div style={{fontSize:10,color:T.muted,marginTop:6,fontFamily:T.mono}}>A maioria não falha por falta de estratégia. Falha por operar sob pressão financeira.</div>
-          </div>
-        </div>
-      </HoloReveal>
-      <HoloReveal delay={0.12}>
-        <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(240px,1fr))',gap:16}}>
-          {pains.map((p,i) => (
-            <div key={i} className="glass" style={{borderRadius:16,padding:'28px 24px',cursor:'none',
-              borderColor:activeCard===i?'rgba(239,68,68,.3)':T.border,
-              transform:activeCard===i?'translateY(-6px) scale(1.01)':'none',
-              boxShadow:activeCard===i?'0 20px 60px rgba(239,68,68,.09)':'none',
-              transition:'all .4s cubic-bezier(.16,1,.3,1)',position:'relative',overflow:'hidden'}}
-              onMouseEnter={()=>setActiveCard(i)} onMouseLeave={()=>setActiveCard(null)}>
-              {activeCard===i && <div style={{position:'absolute',top:0,left:0,right:0,height:'1px',background:'linear-gradient(90deg,transparent,rgba(239,68,68,.55),transparent)'}}/>}
-              <div style={{fontSize:28,marginBottom:14}}>{p.icon}</div>
-              <div style={{fontSize:14,fontWeight:700,color:T.text,marginBottom:9}}>{p.title}</div>
-              <div style={{fontSize:13,color:T.sub,lineHeight:1.8,marginBottom:16}}>{p.desc}</div>
-              <div style={{fontSize:10,fontWeight:800,color:'#ef4444',letterSpacing:'.07em',fontFamily:T.mono}}>{p.stat}</div>
-            </div>
-          ))}
-        </div>
-      </HoloReveal>
-    </section>
-  );
-};
-
-/* ─────────────────────────────────────────
-   A SOLUÇÃO
-───────────────────────────────────────── */
-const Solution = () => {
-  const [chartRef, chartVisible] = useIntersection(.28);
-  return (
-    <section id="solucao" style={{padding:'120px clamp(20px,5vw,60px)',maxWidth:1200,margin:'0 auto',fontFamily:T.font}}>
-      <HoloReveal>
-        <div style={{textAlign:'center',marginBottom:60}}>
-          <div className="section-label" style={{marginBottom:16}}>Frieza Algorítmica de Segunda Geração</div>
-          <h2 className="h2" style={{marginBottom:20}}>O KRONEX COGNITIVE não opera por você.<br/><span style={{color:T.gold,textShadow:'0 0 30px rgba(201,168,76,.5)'}}>Opera para você.</span></h2>
-          <p className="lead" style={{maxWidth:720,margin:'0 auto'}}>Enquanto você aperfeiçoa a sua leitura do M1, o sistema extrai capital de forma fria e ininterrupta. A máquina não tem sentimentos, não hesita e não quebra regras. Quando você senta à frente do gráfico, não está a tentar sobreviver. Está a tentar vencer.</p>
-        </div>
-      </HoloReveal>
-      <HoloReveal delay={0.08}>
-        <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(200px,1fr))',gap:16,marginBottom:52}}>
-          {[
-            {label:'Assertividade Histórica',value:87.5,suffix:'%',highlight:true},
-            {label:'Alvos por Operação',value:4,prefix:'Média ',sub:'Gestão assimétrica de R/R por alvo'},
-            {label:'Ratio Gain / Loss',value:7,suffix:':1',sub:'7 operações vencedoras por cada stop'},
-            {label:'Armadura — Risco Máx.',value:1,suffix:'%',sub:'Trava hard-coded inviolável por operação'},
-          ].map((m,i) => <MetricCard key={i} {...m}/>)}
-        </div>
-      </HoloReveal>
-      <HoloReveal delay={0.12}>
-        <div className="holo-panel" style={{borderRadius:20,padding:'clamp(24px,4vw,48px)',position:'relative',overflow:'hidden'}}>
-          <div className="hud-grid" style={{borderRadius:20}}/>
-          <div style={{marginBottom:28,position:'relative'}}>
-            <div className="section-label" style={{marginBottom:10}}>Execução Autónoma — Condução Barra a Barra</div>
-            <h3 className="h3">Da entrada ao Alvo 4: <span style={{color:T.gold}}>zero intervenção humana.</span></h3>
-          </div>
-          <div ref={chartRef}><TradeChart active={chartVisible}/></div>
-          <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(180px,1fr))',gap:14,marginTop:32}}>
-            {[
-              {s:'01',t:'Entrada Precisa',d:'Algoritmo identifica zona de liquidez e aciona entrada com confirmação multi-timeframe no M1. Sem emoção, sem hesitação.'},
-              {s:'02',t:'Alvo 1 → Parcial',d:'Realização parcial confirma a tese. Lucro imediato assegurado — stop passa a breakeven automaticamente.'},
-              {s:'03',t:'Breakeven Auto',d:'Stop movido para a entrada após T1. A operação passa a risco zero. O motor continua sem pressão.'},
-              {s:'04',t:'Trailing Stop',d:'O KRONEX COGNITIVE conduz a posição rastreando liquidez até o Alvo 4, maximizando o R com frieza cirúrgica.'},
-            ].map((s,i) => (
-              <div key={i} style={{padding:'20px',borderRadius:12,background:'rgba(201,168,76,.04)',border:'1px solid rgba(201,168,76,.1)',
-                opacity:chartVisible?1:0,transform:chartVisible?'none':'translateY(20px)',transition:`all .6s ease ${i*.15+.5}s`,position:'relative',overflow:'hidden'}}>
-                <div style={{position:'absolute',top:0,left:0,right:0,height:'1px',background:'linear-gradient(90deg,transparent,rgba(201,168,76,.22),transparent)'}}/>
-                <div style={{fontSize:9,fontWeight:900,color:T.gold,letterSpacing:'.2em',marginBottom:10,fontFamily:T.mono}}>PASSO {s.s}</div>
-                <div style={{fontSize:13,fontWeight:700,color:T.text,marginBottom:7}}>{s.t}</div>
-                <div style={{fontSize:12.5,color:T.sub,lineHeight:1.78}}>{s.d}</div>
-              </div>
-            ))}
-          </div>
-        </div>
-        <div style={{marginTop:18,padding:'11px 16px',borderRadius:10,border:'1px solid rgba(201,168,76,.08)',background:'rgba(255,255,255,.01)'}}>
-          <p style={{fontSize:10,color:T.muted,letterSpacing:'.02em',lineHeight:1.75,fontFamily:T.mono}}><strong style={{color:T.sub}}>AVISO LEGAL:</strong> Desempenho histórico não garante resultados futuros. Mercados financeiros envolvem risco de perda total do capital.</p>
-        </div>
-      </HoloReveal>
-    </section>
-  );
-};
-
-/* ─────────────────────────────────────────
-   TECHNOLOGY
-───────────────────────────────────────── */
-const Technology = () => {
-  const pillars = [
-    {icon:'🔬',t:'Análise de Performance',d:'Audita cada operação — drawdown, win rate por sessão, eficiência de entrada — e identifica padrões de degradação antes de afetar resultados.'},
-    {icon:'♻️',t:'Refatoração Autónoma',d:'Quando um padrão de mercado muda, o motor refatora a sua própria lógica, testa em backtesting acelerado e faz deploy da versão otimizada.'},
-    {icon:'📡',t:'Claude Code Integration',d:'O Claude Code atua como arquiteto de IA — interpretando dados de performance, gerando código de otimização e supervisionando a evolução.'},
-    {icon:'🌐',t:'Raciocínio Adaptativo',d:'Absorve dados de múltiplos mercados e condições macro, construindo uma biblioteca de padrões cognitivos que se expande 24/7.'},
-  ];
-  return (
-    <section id="tecnologia" style={{padding:'120px clamp(20px,5vw,60px)',maxWidth:1200,margin:'0 auto',fontFamily:T.font}}>
-      <HoloReveal>
-        <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(320px,1fr))',gap:60,alignItems:'center'}}>
-          <div>
-            <div className="section-label" style={{marginBottom:16}}>Inteligência Cognitiva Evolutiva</div>
-            <h2 className="h2" style={{marginBottom:24}}>O KRONEX COGNITIVE<br/>não é um produto.<br/><span style={{color:T.gold,textShadow:'0 0 30px rgba(201,168,76,.5)'}}>
-              <DecryptText text="É um organismo de raciocínio." delay={300}/>
-            </span></h2>
-            <p className="lead" style={{marginBottom:32}}>Enquanto o mercado dorme, o KRONEX COGNITIVE analisa a sua própria performance, refatora o código e otimiza estratégias. Não é um robô que repete padrões — é um sistema que os <strong style={{color:T.text}}>compreende e evolui</strong>.</p>
-            <div style={{display:'flex',flexDirection:'column',gap:14}}>
-              {[
-                'Análise de padrões históricos em milissegundos',
-                'Backtesting em tempo real com dados tick-by-tick',
-                'Deploy automático de versões cognitivamente otimizadas',
-                'Circuit breakers de IA para controle de drawdown',
-              ].map((f,i) => (
-                <div key={i} style={{display:'flex',alignItems:'center',gap:14}}>
-                  <div style={{width:20,height:20,borderRadius:'50%',background:'rgba(201,168,76,.08)',border:'1px solid rgba(201,168,76,.45)',display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0,boxShadow:'0 0 12px rgba(201,168,76,.2)'}}>
-                    <span style={{color:T.bright,fontSize:10,fontWeight:900}}>✓</span>
-                  </div>
-                  <span style={{fontSize:13,color:T.sub}}>{f}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-          <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:14}}>
-            {pillars.map((p,i) => (
-              <div key={i} className="glass" style={{borderRadius:16,padding:'22px 18px',position:'relative',overflow:'hidden'}}>
-                <div style={{position:'absolute',top:0,left:0,right:0,height:'1px',background:'linear-gradient(90deg,transparent,rgba(201,168,76,.2),transparent)'}}/>
-                <div style={{fontSize:22,marginBottom:12}}>{p.icon}</div>
-                <div style={{fontSize:13,fontWeight:700,color:T.text,marginBottom:8}}>{p.t}</div>
-                <div style={{fontSize:12.5,color:T.sub,lineHeight:1.78}}>{p.d}</div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </HoloReveal>
-      <HoloReveal delay={0.1}>
-        <div style={{marginTop:52,padding:'36px',borderRadius:20,background:'linear-gradient(135deg,rgba(201,168,76,.07) 0%,rgba(4,4,4,.97) 100%)',border:'1px solid rgba(201,168,76,.22)',boxShadow:'0 0 80px rgba(201,168,76,.07)',display:'flex',gap:36,alignItems:'flex-start',flexWrap:'wrap',position:'relative',overflow:'hidden'}}>
-          <div className="hud-grid" style={{borderRadius:20}}/>
-          <div style={{flex:'1 1 300px',position:'relative'}}>
-            <div style={{display:'flex',alignItems:'center',gap:10,marginBottom:18}}>
-              <div style={{padding:'6px 14px',borderRadius:8,background:'rgba(201,168,76,.08)',border:'1px solid rgba(201,168,76,.28)',fontSize:9,fontWeight:900,color:T.gold,letterSpacing:'.14em',fontFamily:T.mono}}>◈ POWERED BY CLAUDE CODE</div>
-            </div>
-            <h3 className="h3" style={{marginBottom:14}}>IA que escreve, testa e melhora<br/>o seu próprio raciocínio algorítmico.</h3>
-            <p style={{fontSize:14,color:T.sub,lineHeight:1.88}}>A arquitetura do KRONEX COGNITIVE integra o Claude Code como motor de meta-aprendizado: lê os logs de operações reais, gera hipóteses de melhoria, escreve e valida otimizações — tudo de forma autónoma e completamente auditável. Um sistema que pensa sobre si mesmo.</p>
-          </div>
-          <div style={{flex:'1 1 280px'}}>
-            <QuantumTerminal/>
-          </div>
-        </div>
-      </HoloReveal>
-    </section>
-  );
-};
-
-/* ─────────────────────────────────────────
-   SIMULATOR SECTION
-───────────────────────────────────────── */
-const SimulatorSection = () => (
-  <section id="simulador" style={{padding:'120px clamp(20px,5vw,60px)',maxWidth:1200,margin:'0 auto',fontFamily:T.font}}>
-    <HoloReveal>
-      <div style={{textAlign:'center',marginBottom:46}}>
-        <div className="section-label" style={{marginBottom:16}}>Modelos Probabilísticos Avançados</div>
-        <h2 className="h2" style={{marginBottom:20}}>A Matemática do<br/><span style={{color:T.gold,textShadow:'0 0 30px rgba(201,168,76,.5)'}}>Hedge Emocional.</span></h2>
-        <p className="lead" style={{maxWidth:640,margin:'0 auto'}}>
-          Simule o crescimento exponencial blindado pela Armadura Matemática Hard-Coded. Os resultados refletem modelos probabilísticos baseados nos R-multiples estritos da metodologia The Strategy — não promessas, mas equações.
-        </p>
-      </div>
-    </HoloReveal>
-    <HoloReveal delay={0.07}>
-      <Simulator/>
-      <div style={{marginTop:36,padding:'22px 28px',borderRadius:14,background:'rgba(201,168,76,.04)',border:'1px solid rgba(201,168,76,.1)',display:'flex',gap:18,alignItems:'flex-start',flexWrap:'wrap',position:'relative',overflow:'hidden'}}>
-        <div style={{position:'absolute',top:0,left:0,right:0,height:'1px',background:'linear-gradient(90deg,transparent,rgba(201,168,76,.28),transparent)'}}/>
-        <div style={{fontSize:20,opacity:.65,marginTop:2}}>💡</div>
-        <p style={{fontSize:13,color:T.sub,lineHeight:1.88,flex:1}}>
-          <strong style={{color:T.text}}>O objetivo do KRONEX COGNITIVE não é enriquecer ao primeiro mês.</strong> É criar uma renda base consistente que elimine a pressão financeira sobre as suas operações manuais. Quando a máquina absorve a pressão do mercado, você opera em estado de pura clareza.
-        </p>
-      </div>
-    </HoloReveal>
-  </section>
-);
-
-/* ─────────────────────────────────────────
-   ACESSO FOUNDER
-───────────────────────────────────────── */
-const AcessoFounder = () => {
-  const benefits = [
-    'Acesso irrestrito ao motor KRONEX COGNITIVE — uso ilimitado',
-    '3 licenças de distribuição para a sua rede de confiança',
-    'Retenção de 60% nas ativações realizadas via rede própria',
-    'Participação societária crescente com a expansão do ecossistema',
-    'Acesso antecipado a todas as versões e atualizações cognitivas',
-    'Convites para eventos exclusivos de LP e formação avançada',
-  ];
-  return (
-    <section id="oferta" style={{padding:'120px clamp(20px,5vw,60px)',maxWidth:1200,margin:'0 auto',fontFamily:T.font}}>
-      <HoloReveal>
-        <div style={{textAlign:'center',marginBottom:52}}>
-          <div className="section-label" style={{marginBottom:16}}>Acesso Exclusivo · DOM INVESTITORE</div>
-          <h2 className="h2" style={{marginBottom:20}}>Não é cliente.<br/><span style={{color:T.gold,textShadow:'0 0 30px rgba(201,168,76,.5)'}}>É sócio.</span></h2>
-          <p className="lead" style={{maxWidth:680,margin:'0 auto'}}>Os alunos ativos do DOM INVESTITORE não compram uma licença. Entram como Sócios Founder — com acesso proprietário ao KRONEX COGNITIVE, modelo de receita e crescimento conjunto com o ecossistema.</p>
-        </div>
-      </HoloReveal>
-      <HoloReveal delay={0.07}>
-        <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(320px,1fr))',gap:24,marginBottom:44}}>
-          {/* Access card */}
-          <div className="holo-panel" style={{borderRadius:20,padding:'40px 36px',position:'relative',overflow:'hidden',border:'1px solid rgba(201,168,76,.42)',boxShadow:'0 20px 100px rgba(201,168,76,.16),0 0 60px rgba(201,168,76,.07)'}}>
-            <div className="hud-grid" style={{borderRadius:20}}/>
-            <div style={{position:'absolute',top:0,right:0,background:'linear-gradient(135deg,#5C4208,#C9A84C,#FFD060)',padding:'9px 20px',fontSize:8,fontWeight:900,letterSpacing:'.14em',borderRadius:'0 0 0 14px',color:'#040404',fontFamily:T.mono}}>SÓCIO FOUNDER</div>
-            <div style={{position:'relative'}}>
-              <div style={{fontSize:10,fontWeight:900,color:T.gold,letterSpacing:'.16em',textTransform:'uppercase',marginBottom:20,fontFamily:T.mono}}>Estrutura de Acesso</div>
-              <div style={{display:'flex',flexDirection:'column',gap:14,marginBottom:36}}>
-                {benefits.map((b,i) => (
-                  <div key={i} style={{display:'flex',gap:12,alignItems:'flex-start'}}>
-                    <span style={{color:T.gold,fontSize:13,marginTop:1,flexShrink:0}}>→</span>
-                    <span style={{fontSize:13,color:T.sub,lineHeight:1.65}}>{b}</span>
-                  </div>
-                ))}
-              </div>
-              <div style={{padding:'14px 18px',borderRadius:10,background:'rgba(201,168,76,.06)',border:'1px solid rgba(201,168,76,.22)',textAlign:'center',position:'relative',overflow:'hidden'}}>
-                <div style={{position:'absolute',top:0,left:0,right:0,height:'1px',background:'linear-gradient(90deg,transparent,rgba(201,168,76,.4),transparent)'}}/>
-                <div style={{fontSize:10,fontFamily:T.mono,color:T.gold,letterSpacing:'.12em',fontWeight:800}}>ACESSO POR CONVITE — VAGAS LIMITADAS</div>
-                <div style={{fontSize:9,color:T.muted,marginTop:5,fontFamily:T.mono}}>Exclusivo ao núcleo ativo DOM INVESTITORE</div>
-              </div>
-            </div>
-          </div>
-          {/* Revenue model */}
-          <div className="glass" style={{borderRadius:20,padding:'40px 36px',display:'flex',flexDirection:'column',gap:28}}>
-            <div>
-              <div style={{fontSize:10,fontWeight:900,color:T.gold,letterSpacing:'.16em',textTransform:'uppercase',marginBottom:16,fontFamily:T.mono}}>Modelo Societário</div>
-              <h3 className="h3" style={{marginBottom:12}}>O caixa flui para os sócios.</h3>
-              <p style={{fontSize:13,color:T.sub,lineHeight:1.88}}>O Sócio Founder retém a maior parte das ativações realizadas dentro da sua rede. O repasse ao ecossistema KRONEX COGNITIVE é mínimo, fixo e previsível.</p>
-            </div>
-            <div style={{display:'flex',gap:16,justifyContent:'center',flexWrap:'wrap'}}>
-              {[{pct:'60%',label:'SÓCIO RETÉM',gold:true},{pct:'40%',label:'ROYALTIES KRONEX',gold:false}].map((item,i) => (
-                <div key={i} style={{textAlign:'center',padding:'24px 32px',borderRadius:16,background:item.gold?'rgba(201,168,76,.06)':'rgba(255,255,255,.02)',border:`1px solid ${item.gold?'rgba(201,168,76,.22)':T.border}`,boxShadow:item.gold?'0 0 40px rgba(201,168,76,.07)':'none',position:'relative',overflow:'hidden'}}>
-                  {item.gold && <div style={{position:'absolute',top:0,left:0,right:0,height:'1px',background:'linear-gradient(90deg,transparent,rgba(201,168,76,.4),transparent)'}}/>}
-                  <div style={{fontSize:'2.8rem',fontWeight:900,color:item.gold?T.gold:T.muted,lineHeight:1,textShadow:item.gold?'0 0 40px rgba(201,168,76,.5)':'none'}}>{item.pct}</div>
-                  <div style={{fontSize:9,color:item.gold?T.sub:T.muted,marginTop:8,letterSpacing:'.1em',fontFamily:T.mono}}>{item.label}</div>
-                </div>
-              ))}
-            </div>
-            <div style={{padding:'18px',borderRadius:12,background:'rgba(201,168,76,.04)',border:'1px solid rgba(201,168,76,.1)',display:'flex',gap:12,alignItems:'flex-start'}}>
-              <span style={{color:T.gold,fontSize:14}}>◈</span>
-              <p style={{fontSize:12.5,color:T.sub,lineHeight:1.85}}>Os Fundadores entram no piso histórico. Quando o KRONEX COGNITIVE for distribuído ao mercado público, as condições de entrada actuais são mantidas vitalíciamente para quem entrou nesta fase.</p>
-            </div>
-          </div>
-        </div>
-      </HoloReveal>
-    </section>
-  );
-};
-
-/* ─────────────────────────────────────────
-   GARANTIA — ARMADURA MATEMÁTICA
-───────────────────────────────────────── */
-const Garantia = () => (
-  <section style={{padding:'80px clamp(20px,5vw,60px)',maxWidth:900,margin:'0 auto',fontFamily:T.font}}>
-    <HoloReveal>
-      <div className="holo-panel" style={{borderRadius:24,padding:'clamp(32px,5vw,64px)',textAlign:'center',position:'relative',overflow:'hidden',border:'1px solid rgba(201,168,76,.28)',boxShadow:'0 0 100px rgba(201,168,76,.1),0 0 200px rgba(201,168,76,.05)'}}>
-        <div className="hud-grid" style={{borderRadius:24,animationDuration:'6s'}}/>
-        {/* Shield icon */}
-        <div style={{position:'relative',width:80,height:80,margin:'0 auto 28px'}}>
-          <div style={{position:'absolute',inset:-12,border:'1px dashed rgba(201,168,76,.2)',borderRadius:'50%',animation:'rot-cw 14s linear infinite'}}/>
-          <div style={{position:'absolute',inset:-4,border:'1px solid transparent',borderTopColor:'rgba(201,168,76,.48)',borderRadius:'50%',animation:'rot-cw 3.5s linear infinite',boxShadow:'0 0 10px rgba(201,168,76,.3)'}}/>
-          <div style={{width:80,height:80,borderRadius:'50%',background:'linear-gradient(135deg,rgba(201,168,76,.15),rgba(201,168,76,.04))',border:'1px solid rgba(201,168,76,.35)',display:'flex',alignItems:'center',justifyContent:'center',boxShadow:'0 0 40px rgba(201,168,76,.18)',fontSize:32}}>🛡</div>
-        </div>
-        <div className="section-label" style={{marginBottom:16}}>Blindagem Total de Capital</div>
-        <h2 className="h2" style={{marginBottom:28}}>Armadura Matemática <span style={{color:T.gold,textShadow:'0 0 30px rgba(201,168,76,.5)'}}>Hard-Coded</span></h2>
-        <p style={{fontSize:'clamp(.95rem,2vw,1.1rem)',color:T.sub,lineHeight:1.95,maxWidth:680,margin:'0 auto 40px'}}>
-          Não fazemos promessas de retorno. Quem faz isso está a vender ilusão.<br/><br/>
-          O KRONEX COGNITIVE opera sob uma <strong style={{color:T.text}}>Armadura Matemática Hard-Coded</strong> — uma trava inviolável de máximo <strong style={{color:T.text}}>1% de risco por operação</strong> sobre o capital alocado.
-          Não é uma configuração. Não é uma preferência do utilizador. É uma limitação inscrita no código fonte que não pode ser removida, alterada ou contornada — nem por nós. <strong style={{color:T.text}}>A máquina não tem permissão para quebrar esta regra.</strong>
-        </p>
-        <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(200px,1fr))',gap:16,marginBottom:40,textAlign:'left'}}>
-          {[
-            {icon:'🔒',t:'Hard-Coded',d:'Limitação inscrita diretamente no código fonte. Não existe painel, botão ou opção para remover.'},
-            {icon:'⚡',t:'Por Operação',d:'O risco é calculado e aplicado individualmente em cada boleta executada pelo sistema.'},
-            {icon:'🧮',t:'Sobre o Capital Real',d:'Calculado sobre o capital que você decidiu alocar — não sobre lucros, não sobre margem livre.'},
-          ].map((item,i) => (
-            <div key={i} style={{padding:'22px',borderRadius:12,background:'rgba(201,168,76,.045)',border:'1px solid rgba(201,168,76,.12)',position:'relative',overflow:'hidden'}}>
-              <div style={{position:'absolute',top:0,left:0,right:0,height:'1px',background:'linear-gradient(90deg,transparent,rgba(201,168,76,.2),transparent)'}}/>
-              <div style={{fontSize:24,marginBottom:10}}>{item.icon}</div>
-              <div style={{fontSize:13,fontWeight:700,color:T.text,marginBottom:7}}>{item.t}</div>
-              <div style={{fontSize:12.5,color:T.sub,lineHeight:1.78}}>{item.d}</div>
-            </div>
-          ))}
-        </div>
-        <p style={{fontSize:12,color:T.muted,lineHeight:1.95,maxWidth:560,margin:'0 auto',fontStyle:'italic',fontFamily:T.mono}}>
-          Isto não é uma garantia de lucro. É uma garantia de disciplina — que é, na prática, o que destrói 95% das contas de traders que já sabem o que estão a fazer.
-        </p>
-      </div>
-    </HoloReveal>
-  </section>
-);
-
-/* ─────────────────────────────────────────
-   ROADMAP
-───────────────────────────────────────── */
-const Roadmap = () => {
-  const [activeNode, setActiveNode] = useState(0);
-  const milestones = [
-    {date:'AGO 2026',t:'Lançamento Oficial',d:'Motor cognitivo em produção. Primeiros 50 Sócios Founder ativados. Painel de performance ao vivo.',status:'live',m:['50 Founders','Motor v1.0','100% auto']},
-    {date:'SET 2026',t:'Cognitive Layer 2',d:'Refinamento preditivo barra a barra com modelos de raciocínio de segunda geração. Claude Code integrado ao loop.',status:'next',m:['Reasoning v2','Auto-refactor','Target 90%']},
-    {date:'OUT 2026',t:'Multi-Asset Expansion',d:'Screening multi-asset otimizado: Forex, Índices, Cripto e Commodities. Raciocínio paralelo em múltiplos pares.',status:'future',m:['Forex+Cripto','+6 ativos','Multi-screen']},
-    {date:'NOV 2026',t:'Partner Ecosystem',d:'Painel avançado de royalties automatizados. Dashboard de sócios com rastreamento de receita em tempo real.',status:'future',m:['200 sócios','Dashboard 2.0','Royalties auto']},
-  ];
-  const sColor = {live:T.gold,next:T.amber,future:T.muted};
-  const sLabel  = {live:'AO VIVO',next:'PRÓXIMO',future:'PLANEADO'};
-  return (
-    <section style={{padding:'120px clamp(20px,5vw,60px)',maxWidth:1200,margin:'0 auto',fontFamily:T.font}}>
-      <HoloReveal>
-        <div style={{textAlign:'center',marginBottom:64}}>
-          <div className="section-label" style={{marginBottom:16}}>Roadmap de Execução</div>
-          <h2 className="h2" style={{marginBottom:20}}>Velocidade de Day Trade.<br/><span style={{color:T.gold,textShadow:'0 0 30px rgba(201,168,76,.5)'}}>Lançamentos mensais.</span></h2>
-          <p className="lead" style={{maxWidth:480,margin:'0 auto'}}>No mercado de Day Trade, velocidade é vantagem competitiva. Cada mês entregamos uma evolução concreta e mensurável do motor cognitivo.</p>
-        </div>
-        <div style={{position:'relative',marginBottom:44,padding:'0 20px'}}>
-          <div style={{height:1,background:'rgba(201,168,76,.1)',borderRadius:1}}>
-            <div style={{height:'100%',width:`${(activeNode/(milestones.length-1))*100}%`,background:'linear-gradient(90deg,#FFD060,#C9A84C,rgba(201,168,76,.4))',borderRadius:1,transition:'width .7s ease',boxShadow:'0 0 14px rgba(201,168,76,.6)'}}/>
-          </div>
-          <div style={{position:'absolute',top:-5,left:0,right:0,display:'flex',justifyContent:'space-between',padding:'0 20px'}}>
-            {milestones.map((_,i) => (
-              <div key={i} onClick={()=>setActiveNode(i)} style={{width:12,height:12,borderRadius:'50%',cursor:'none',background:i<=activeNode?T.gold:T.bg,border:`2px solid ${i<=activeNode?T.gold:'rgba(201,168,76,.2)'}`,boxShadow:i===activeNode?'0 0 24px rgba(201,168,76,.85)':i<activeNode?'0 0 10px rgba(201,168,76,.4)':'none',transition:'all .4s ease',position:'relative'}}>
-                {i===activeNode && <div style={{position:'absolute',top:-2,left:-2,width:16,height:16,borderRadius:'50%',border:'1px solid rgba(201,168,76,.5)',animation:'node-ping 1.5s infinite'}}/>}
-              </div>
-            ))}
-          </div>
-        </div>
-        <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(240px,1fr))',gap:16}}>
-          {milestones.map((m,i) => (
-            <div key={i} onClick={()=>setActiveNode(i)} style={{borderRadius:18,padding:'28px 24px',cursor:'none',
-              background:activeNode===i?'linear-gradient(135deg,rgba(201,168,76,.09) 0%,rgba(4,4,4,.98) 100%)':T.bgCard,
-              border:`1px solid ${activeNode===i?'rgba(201,168,76,.4)':T.border}`,
-              boxShadow:activeNode===i?'0 0 60px rgba(201,168,76,.11),inset 0 0 30px rgba(201,168,76,.04)':'none',
-              backdropFilter:'blur(24px)',transition:'all .5s ease',position:'relative',overflow:'hidden'}}>
-              {activeNode===i && <div style={{position:'absolute',top:0,left:0,right:0,height:'1px',background:'linear-gradient(90deg,transparent,rgba(201,168,76,.5),transparent)'}}/>}
-              <div style={{position:'absolute',top:0,left:0,width:36,height:36,borderTop:`2px solid ${sColor[m.status]}`,borderLeft:`2px solid ${sColor[m.status]}`,borderRadius:'18px 0 0 0',opacity:activeNode===i?.78:.2,transition:'opacity .4s'}}/>
-              <div style={{display:'flex',justifyContent:'space-between',alignItems:'flex-start',marginBottom:16}}>
-                <div>
-                  <div style={{fontSize:10,fontWeight:900,color:sColor[m.status],letterSpacing:'.14em',marginBottom:5,fontFamily:T.mono}}>{m.date}</div>
-                  <span style={{fontSize:8,padding:'2px 8px',borderRadius:100,background:`rgba(${m.status==='live'?'201,168,76':m.status==='next'?'245,158,11':'100,116,139'},.1)`,border:`1px solid ${sColor[m.status]}30`,color:sColor[m.status],fontWeight:900,letterSpacing:'.1em',fontFamily:T.mono}}>{sLabel[m.status]}</span>
-                </div>
-              </div>
-              <div style={{fontSize:14,fontWeight:700,color:T.text,marginBottom:10,lineHeight:1.3}}>{m.t}</div>
-              <div style={{fontSize:12.5,color:T.sub,lineHeight:1.8,marginBottom:18}}>{m.d}</div>
-              <div style={{display:'flex',gap:6,flexWrap:'wrap'}}>
-                {m.m.map((met,j) => (
-                  <span key={j} style={{fontSize:9,padding:'3px 8px',borderRadius:6,background:'rgba(201,168,76,.05)',border:'1px solid rgba(201,168,76,.13)',color:T.muted,fontWeight:700,letterSpacing:'.06em',fontFamily:T.mono}}>{met}</span>
-                ))}
-              </div>
-            </div>
-          ))}
-        </div>
-        <div style={{textAlign:'center',marginTop:64,padding:'56px clamp(20px,6vw,80px)',borderRadius:24,background:'linear-gradient(135deg,rgba(201,168,76,.07) 0%,rgba(4,4,4,.95) 100%)',border:'1px solid rgba(201,168,76,.2)',boxShadow:'0 0 100px rgba(201,168,76,.06)',position:'relative',overflow:'hidden'}}>
-          <div className="hud-grid" style={{borderRadius:24}}/>
-          <div style={{position:'absolute',top:0,left:0,right:0,height:'1px',background:'linear-gradient(90deg,transparent,rgba(201,168,76,.38),transparent)'}}/>
-          <div style={{position:'relative',fontSize:'clamp(1.1rem,2.8vw,1.85rem)',fontWeight:700,lineHeight:1.75,color:T.text,maxWidth:700,margin:'0 auto'}}>
-            "Não estamos construindo um robô. Estamos construindo{' '}
-            <span style={{color:T.gold,textShadow:'0 0 30px rgba(201,168,76,.6)'}}>um sistema com profundidade analítica</span>{' '}
-            que absorve a pressão do mercado para que a mente do trader opere em estado de pura clareza."
-          </div>
-          <div style={{marginTop:22,fontSize:10,color:T.muted,letterSpacing:'.14em',fontFamily:T.mono}}>— KRONEX COGNITIVE TEAM · 2026</div>
-        </div>
-      </HoloReveal>
-    </section>
-  );
-};
-
-/* ─────────────────────────────────────────
-   FOOTER
-───────────────────────────────────────── */
-const Footer = () => (
-  <footer style={{borderTop:'1px solid rgba(201,168,76,.08)',padding:'44px clamp(20px,5vw,60px)',fontFamily:T.font,position:'relative'}}>
-    <div style={{position:'absolute',top:0,left:0,right:0,height:'1px',background:'linear-gradient(90deg,transparent,rgba(201,168,76,.18),rgba(201,168,76,.38),rgba(201,168,76,.18),transparent)'}}/>
-    <div style={{maxWidth:1200,margin:'0 auto',display:'flex',justifyContent:'space-between',alignItems:'center',flexWrap:'wrap',gap:20}}>
-      <div style={{display:'flex',alignItems:'center',gap:10}}>
-        <div style={{width:26,height:26,background:'linear-gradient(135deg,#5C4208,#C9A84C,#FFD060)',borderRadius:6,display:'flex',alignItems:'center',justifyContent:'center',boxShadow:'0 0 16px rgba(201,168,76,.4)'}}>
-          <span style={{color:'#040404',fontSize:11,fontWeight:900}}>K</span>
-        </div>
-        <span style={{fontWeight:800,fontSize:13,letterSpacing:'.1em',color:T.text,textTransform:'uppercase'}}>KRONEX <span style={{color:T.gold}}>COGNITIVE</span></span>
-      </div>
-      <div style={{fontSize:10,color:T.muted,textAlign:'center',lineHeight:2.2,fontFamily:T.mono}}>
-        © 2026 Kronex Cognitive · Tecnologia Proprietária · Todos os direitos reservados<br/>
-        Instrumentos financeiros envolvem risco. Desempenho passado não garante resultados futuros.
-      </div>
-      <div style={{fontSize:10,color:T.muted,fontFamily:T.mono,letterSpacing:'.06em'}}>PÁGINA RESTRITA · DOM INVESTITORE</div>
-    </div>
-  </footer>
-);
-
-/* ─────────────────────────────────────────
-   ROOT
-───────────────────────────────────────── */
-function KronexPresentation() {
-  const [scrolled, setScrolled] = useState(false);
-  useEffect(() => {
-    const fn = () => setScrolled(window.scrollY > 60);
-    window.addEventListener('scroll', fn, { passive: true });
-    initCursor();
-    return () => window.removeEventListener('scroll', fn);
-  }, []);
-  return (
-    <div style={{ background:T.bg, minHeight:'100vh', fontFamily:T.font }}>
-      <GlobalStyles/>
-      <Navbar scrolled={scrolled}/>
-      <Hero/>
-      <Inimigo/>
-      <Solution/>
-      <Technology/>
-      <SimulatorSection/>
-      <AcessoFounder/>
-      <Garantia/>
-      <Roadmap/>
-      <SystemStatus/>
-      <Footer/>
-    </div>
+/* ─── Eyebrow ──────────────────────────────────────── */
+function Eyebrow({children,id}){
+  const ref=useRef(null);
+  const inView=useInView(ref,{once:true,margin:'0px 0px -80px 0px'});
+  const El = motion.span || 'span';
+  return(
+    <El ref={ref} id={id}
+      className="block font-mono text-[9px] font-semibold tracking-[.22em] uppercase text-champ opacity-0 mb-[clamp(18px,2.8vh,28px)]"
+      style={{opacity:0}}
+      animate={inView?{opacity:.65,y:0}:{opacity:0,y:12}}
+      transition={{duration:.9,ease:EASE_EXPO}}
+    >{children}</El>
   );
 }
 
-ReactDOM.createRoot(document.getElementById('root')).render(<KronexPresentation/>);
+/* ─── FadeUp helper ────────────────────────────────── */
+function FadeUp({children,delay=0,className='',once=true,id}){
+  const ref=useRef(null);
+  const inView=useInView(ref,{once,margin:'0px 0px -60px 0px'});
+  const El = motion.div || 'div';
+  return(
+    <El ref={ref} id={id} className={className}
+      animate={inView?{opacity:1,y:0,filter:'blur(0px)'}:{opacity:0,y:22,filter:'blur(4px)'}}
+      initial={{opacity:0,y:22,filter:'blur(4px)'}}
+      transition={{duration:.85,delay,ease:EASE_EXPO}}
+    >{children}</El>
+  );
+}
+
+/* ──────────────────────────────────────────────────────────
+   S1 — HERO
+────────────────────────────────────────────────────────── */
+function Hero(){
+  const logoRef = useRef(null);
+  const wrapRef = useRef(null);
+  const volRef  = useRef(null);
+  const [heroVisible, setHeroVisible] = useState(false);
+
+  /* parallax mouse */
+  useEffect(()=>{
+    let cx=0,cy=0,mx=0,my=0,raf;
+    const onMove=e=>{mx=(e.clientX/innerWidth-.5)*2;my=(e.clientY/innerHeight-.5)*2;};
+    function tick(){
+      cx+=(mx-cx)*.06;cy+=(my-cy)*.06;
+      if(wrapRef.current) wrapRef.current.style.transform=`translateX(${cx*12}px) translateY(${cy*9}px) translateZ(0)`;
+      if(volRef.current)  volRef.current.style.transform=`translate(calc(-50% + ${cx*22}px),calc(-50% + ${cy*17}px))`;
+      raf=requestAnimationFrame(tick);
+    }
+    addEventListener('mousemove',onMove,{passive:true});
+    tick();
+    return()=>{removeEventListener('mousemove',onMove);cancelAnimationFrame(raf);};
+  },[]);
+
+  /* partículas hero */
+  useEffect(()=>{
+    const cv=document.getElementById('hpc');
+    if(!cv)return;
+    const s1=document.getElementById('s1');
+    if(s1){s1.style.position='relative';if(!s1.contains(cv))s1.appendChild(cv);}
+    const ctx=cv.getContext('2d');
+    let W,H,parts=[];
+    function rs(){W=cv.width=s1?s1.offsetWidth:innerWidth;H=cv.height=s1?s1.offsetHeight:innerHeight;}
+    rs();
+    function mkp(){return{x:Math.random()*W,y:Math.random()*H,r:Math.random()*1.3+.3,vx:(Math.random()-.5)*.16,vy:-Math.random()*.2-.06,life:0,maxLife:220+Math.random()*320,rgb:Math.random()>.5?'201,168,106':'240,226,189'};}
+    for(let i=0;i<38;i++){const p=mkp();p.life=Math.random()*p.maxLife;parts.push(p);}
+    let rafId;
+    function draw(){
+      ctx.clearRect(0,0,W,H);
+      parts.forEach(p=>{
+        p.life++;if(p.life>p.maxLife){Object.assign(p,mkp());p.life=0;}
+        p.x+=p.vx;p.y+=p.vy;
+        const prog=p.life/p.maxLife,alpha=Math.sin(prog*Math.PI)*.5;
+        if(p.r>1.1){ctx.beginPath();ctx.arc(p.x,p.y,p.r*3.2,0,Math.PI*2);ctx.fillStyle=`rgba(${p.rgb},${alpha*.16})`;ctx.fill();}
+        ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);ctx.fillStyle=`rgba(${p.rgb},${alpha})`;ctx.fill();
+      });
+      rafId=requestAnimationFrame(draw);
+    }
+    draw();
+    addEventListener('resize',rs,{passive:true});
+    return()=>{cancelAnimationFrame(rafId);removeEventListener('resize',rs);};
+  },[]);
+
+  /* expor função para o loader acionar o reveal */
+  useEffect(()=>{
+    window._heroReveal=()=>{
+      setHeroVisible(true);
+      window._qi&&window._qi(1.5);
+      if(typeof gsap==='undefined')return;
+      const logo=logoRef.current;
+      if(!logo)return;
+      gsap.fromTo(logo,
+        {opacity:0,z:-200,scale:.78,filter:'blur(18px)'},
+        {opacity:1,z:0,scale:1,filter:'blur(0px)',duration:1.6,ease:'power4.out',
+         transformOrigin:'center center',
+         onComplete:()=>{
+           /* micro-glitches */
+           logo.classList.add('glitch');
+           setTimeout(()=>logo.classList.remove('glitch'),160);
+           setTimeout(()=>{logo.classList.add('glitch');setTimeout(()=>logo.classList.remove('glitch'),100);},700);
+         }
+        }
+      );
+    };
+    /* se loader já terminou */
+    if(window._loaderDone) window._heroReveal();
+  },[]);
+
+  /* telemetria ao vivo */
+  const [tel,setTel]=useState({xau:'——',nas:'——',cyc:'0847'});
+  useEffect(()=>{
+    function tick(){
+      setTel(prev=>({
+        xau:(2385+Math.random()*10-5).toFixed(2),
+        nas:(18340+Math.random()*70-35).toFixed(0),
+        cyc:String((parseInt(prev.cyc)||847)+Math.round(Math.random())).padStart(4,'0')
+      }));
+      setTimeout(tick,2000+Math.random()*1500);
+    }
+    const t=setTimeout(tick,3600);
+    return()=>clearTimeout(t);
+  },[]);
+
+  return(
+    <section id="s1"
+      className="relative min-h-screen flex items-center justify-center overflow-hidden"
+      style={{perspective:'1200px'}}
+    >
+      {/* luz volumétrica (camada 2) */}
+      <div ref={volRef} className="s1-vol pointer-events-none" aria-hidden="true"/>
+
+      {/* partículas (camada 3) */}
+      <canvas id="hpc" aria-hidden="true"/>
+
+      {/* strip telemetria */}
+      <div className="s1-strip" style={{opacity:heroVisible?1:0,transition:'opacity .8s ease 1.6s'}}>
+        <div className="flex items-center gap-1.5 font-mono text-[8px] tracking-[.09em] text-txt2 opacity-40">
+          <div className="w-[3px] h-[3px] rounded-full bg-champ animate-pulse-dot"/>
+          SMITH-CORE-01&nbsp;<span className="text-champ font-semibold opacity-90">ONLINE</span>
+        </div>
+        <div className="flex items-center gap-1.5 font-mono text-[8px] tracking-[.09em] text-txt2 opacity-40">
+          XAUUSD&nbsp;<span className="text-champ font-semibold opacity-90">{tel.xau}</span>
+        </div>
+        <div className="hidden sm:flex items-center gap-1.5 font-mono text-[8px] tracking-[.09em] text-txt2 opacity-40">
+          NASDAQ&nbsp;<span className="text-champ font-semibold opacity-90">{tel.nas}</span>
+        </div>
+        <div className="hidden md:flex items-center gap-1.5 font-mono text-[8px] tracking-[.09em] text-txt2 opacity-40">
+          Assertividade&nbsp;<span className="text-champ font-semibold opacity-90">76%</span>
+        </div>
+        <div className="hidden md:flex items-center gap-1.5 font-mono text-[8px] tracking-[.09em] text-txt2 opacity-40">
+          Ciclo&nbsp;<span className="text-champ font-semibold opacity-90">{tel.cyc}</span>
+        </div>
+      </div>
+
+      {/* conteúdo central (camada 4) */}
+      <div className="relative z-[4] flex flex-col items-center text-center px-[clamp(20px,5vw,52px)]">
+        {/* SMITH */}
+        <div ref={wrapRef} className="overflow-visible mb-[clamp(14px,2.2vh,20px)] relative" style={{transformStyle:'preserve-3d'}}>
+          <h1
+            ref={logoRef}
+            data-text="SMITH"
+            aria-label="SMITH"
+            className="smith-text smith-brushed font-display font-bold leading-[.88] tracking-[-0.065em] fm-will-change"
+            style={{
+              fontSize:'clamp(6rem,20vw,15rem)',
+              opacity:0,transform:'translateZ(-200px) scale(.78)',filter:'blur(18px)'
+            }}
+          >SMITH</h1>
+        </div>
+
+        {/* subtítulo */}
+        <p className="font-mono font-light tracking-[.36em] uppercase text-txt2 mb-[clamp(20px,3vh,32px)]"
+           style={{fontSize:'clamp(.62rem,1.1vw,.76rem)',opacity:heroVisible?.78:0,transition:'opacity 1s ease .85s'}}>
+          Operational Financial Intelligence
+        </p>
+
+        {/* divider */}
+        <div className="mb-[clamp(18px,2.8vh,28px)] h-px"
+          style={{
+            background:'linear-gradient(90deg,transparent,rgba(216,192,138,.35),transparent)',
+            width:heroVisible?'200px':'0px',transition:'width .9s cubic-bezier(.16,1,.3,1) 1.1s'
+          }}
+        />
+
+        {/* STATUS ONLINE */}
+        <div className="inline-flex items-center gap-2.5"
+          style={{opacity:heroVisible?1:0,transition:'opacity .7s ease 1.45s'}}>
+          <span className="font-mono text-[10px] text-muted opacity-30">[</span>
+          <div className="w-[5px] h-[5px] rounded-full bg-champ animate-pulse-dot" id="s1dot"/>
+          <span className="font-mono text-[10px] font-semibold tracking-[.24em] text-champ" style={{textShadow:'0 0 14px rgba(216,192,138,.55)'}}>
+            STATUS: ONLINE<span className="inline-block w-[5px] h-[10px] bg-champ ml-1 align-middle animate-blink" id="s1cur"/>
+          </span>
+          <span className="font-mono text-[10px] text-muted opacity-30">]</span>
+        </div>
+      </div>
+
+      {/* painel telemetria lateral */}
+      <div className="absolute bottom-[clamp(24px,4vh,44px)] right-[clamp(20px,3vw,48px)] flex-col gap-1.5 z-[5] hidden lg:flex"
+        style={{opacity:heroVisible?1:0,transition:'opacity .7s ease 1.75s'}}>
+        {[['UPTIME','99.97%',true],['LATENCY','0.3ms',false],['MEMORY','ACTIVE',true],['MT5','CONNECTED',false],['ENV','SOVEREIGN',false]].map(([k,v,hot])=>(
+          <div key={k} className="flex items-center gap-2 font-mono text-[8px] tracking-[.08em]">
+            <span className="text-muted opacity-35 min-w-[54px]">{k}</span>
+            <span className={hot?'text-champ opacity-90':'text-txt opacity-75 font-medium'}>{v}</span>
+          </div>
+        ))}
+      </div>
+
+      {/* scroll hint */}
+      <div className="absolute bottom-[clamp(18px,3vh,32px)] left-1/2 -translate-x-1/2 flex flex-col items-center gap-1.5 z-[5]"
+        style={{opacity:heroVisible?1:0,transition:'opacity .6s ease 2.4s'}}>
+        <div className="w-px h-6" style={{background:'linear-gradient(180deg,transparent,rgba(216,192,138,.38))'}}/>
+        <span className="font-mono text-[7px] tracking-[.2em] text-muted opacity-30 uppercase">Scroll</span>
+      </div>
+    </section>
+  );
+}
+
+/* ──────────────────────────────────────────────────────────
+   S2 — O QUE É SMITH
+────────────────────────────────────────────────────────── */
+function WhatIsSmith(){
+  const trackRef=useRef(null);
+  const secRef=useRef(null);
+  const inView=useInView(secRef,{once:true,margin:'0px 0px -100px 0px'});
+  useEffect(()=>{if(inView&&trackRef.current)trackRef.current.classList.add('run');},[inView]);
+  const LOGS=[
+    {t:'00:00:01',m:'[BOOT] SMITH COGNITIVE ENGINE INITIALIZING...',cls:'inf'},
+    {t:'00:00:02',m:'[SYS] OPERATIONAL PARAMETERS v2.0 LOADED',cls:''},
+    {t:'00:00:04',m:'[CORE] NEURAL WEIGHTS VERIFIED — CHECKSUM OK',cls:'ok'},
+    {t:'00:00:07',m:'[FEED] XAUUSD M1 CONNECTED // 0.3ms',cls:'gd'},
+    {t:'00:00:09',m:'[FEED] NASDAQ M1 CONNECTED // 0.4ms',cls:'gd'},
+    {t:'00:00:12',m:'[MEM] BACKTEST COMPRESSION ACTIVE',cls:'inf'},
+    {t:'00:00:15',m:'[COMP] 847,293 HISTORICAL BARS PROCESSED',cls:''},
+    {t:'00:00:19',m:'➔ SOVEREIGN CLOUD SYNC COMPLETE',cls:'ok'},
+    {t:'00:00:23',m:'[RR] ASYMMETRIC RATIO RECALIBRATING 7:1',cls:'inf'},
+    {t:'00:00:27',m:'[CTX] LIQUIDITY ZONES — 4,891 NODES',cls:''},
+    {t:'00:00:32',m:'➔ CALIBRATION DEPLOYED TO PRODUCTION',cls:'gd'},
+    {t:'00:00:37',m:'[EVO] SELF-AUDIT COMPLETE — 87.5%',cls:'gd'},
+    {t:'00:00:41',m:'[ALL] MODULES OPERATIONAL // SMITH ONLINE',cls:'ok'},
+    {t:'00:00:45',m:'[IDLE] MONITORING M1 — AWAITING CONFLUENCE...',cls:''},
+  ];
+  const renderLogs=prefix=>LOGS.map((l,i)=>(
+    <div key={`${prefix}-${i}`} className={`log-line ${l.cls}`}>
+      <span className="log-ts">{l.t}</span>
+      <span className="log-msg">{l.m}</span>
+    </div>
+  ));
+  return(
+    <section ref={secRef} id="s2" className="sec-s2 relative bg-void py-[clamp(80px,12vh,140px)]">
+      <div className="max-w-[1080px] mx-auto px-[clamp(20px,5vw,72px)] relative z-[1]">
+        <div className="hr-smith mb-[clamp(52px,8vh,84px)]"/>
+        <Eyebrow>O que é SMITH · Definição Operacional</Eyebrow>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-[clamp(32px,5vw,64px)] items-center mt-[clamp(32px,5vh,52px)]">
+          <FadeUp delay={0} className="flex flex-col gap-[clamp(16px,2.4vh,24px)]">
+            <h2 className="font-display text-[clamp(1.9rem,4.2vw,3.2rem)] font-bold tracking-[-0.034em] leading-[1.06] text-txt">
+              Um agente cognitivo<br/>de negociação.<br/>
+              <span className="text-champ">Não um robô.</span>
+            </h2>
+            <p className="font-body text-[clamp(.875rem,1.5vw,.98rem)] leading-[1.92] text-txt2 opacity-85">
+              SMITH é executado como Expert Advisor no MT5. Não opera por impulso, não replica indicadores atrasados, não depende de sinais genéricos.<br/><br/>
+              Sua lógica nasce da modelagem explícita da{' '}
+              <strong className="text-txt font-medium">metodologia Dom Investitore</strong>{' '}
+              — aplicada à leitura de mercado, execução técnica, memória operacional e avaliação estatística contínua.
+            </p>
+            <div className="flex flex-col gap-2">
+              {[
+                ['Memória Operacional','registra e aprende com cada ciclo'],
+                ['Autoavaliação Estatística','audita a própria performance'],
+                ['Gestão Autónoma','breakeven + trailing sem intervenção'],
+                ['Execução Disciplinada','zero desvio dos parâmetros definidos'],
+              ].map(([k,v])=>(
+                <div key={k} className="flex items-start gap-2.5 font-body text-[13px] leading-[1.7] text-txt2 opacity-75">
+                  <span className="text-champ opacity-60 flex-shrink-0">→</span>
+                  <span><strong className="text-txt font-medium">{k}</strong> · {v}</span>
+                </div>
+              ))}
+            </div>
+          </FadeUp>
+          <FadeUp delay={.18} className="term-wrap" role="log" aria-live="off">
+            <div className="flex items-center justify-between px-3.5 h-8 bg-[rgba(8,8,8,.98)] border-b border-[rgba(216,192,138,.06)] relative">
+              <div className="flex gap-1.5">
+                {['#282828','#343434','#404040'].map((c,i)=><div key={i} className="w-1.5 h-1.5 rounded-full" style={{background:c}}/>)}
+              </div>
+              <span className="absolute left-1/2 -translate-x-1/2 font-mono text-[8px] tracking-[.1em] text-txt2 opacity-30 whitespace-nowrap">SMITH · COGNITIVE ENGINE · LIVE</span>
+              <div className="flex items-center gap-1.5">
+                <div className="w-1 h-1 rounded-full bg-champ animate-pulse-dot" style={{boxShadow:'0 0 5px rgba(216,192,138,.7)'}}/>
+                <span className="font-mono text-[8px] tracking-[.1em] text-champ opacity-55">LIVE</span>
+              </div>
+            </div>
+            <div className="h-[clamp(200px,26vh,280px)] overflow-hidden relative bg-[rgba(4,4,4,.96)]"
+              style={{WebkitMaskImage:'linear-gradient(180deg,rgba(4,4,4,.96) 0,transparent 6%,transparent 94%,rgba(4,4,4,.96) 100%)'}}>
+              <div ref={trackRef} className="log-track">{renderLogs('a')}{renderLogs('b')}</div>
+            </div>
+            <div className="flex items-center justify-between px-3.5 py-2 bg-[rgba(5,5,5,.97)] border-t border-[rgba(216,192,138,.05)]">
+              <span className="font-mono text-[8px] text-muted opacity-20 tracking-[.05em]">CORE-9D4F · CYCLE 847 · DOM INVESTITORE</span>
+              <span className="flex items-center gap-1 font-mono text-[8px] text-champ opacity-45 tracking-[.07em]">
+                PROCESSING<span className="inline-block w-[5px] h-[9px] bg-champ ml-1 animate-blink"/>
+              </span>
+            </div>
+          </FadeUp>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ──────────────────────────────────────────────────────────
+   S3 — MOTOR DE DECISÃO
+────────────────────────────────────────────────────────── */
+function MotorDecisao(){
+  const [active,setActive]=useState(-1);
+  const secRef=useRef(null);
+  const inView=useInView(secRef,{once:true,margin:'0px 0px -120px 0px'});
+  useEffect(()=>{
+    if(!inView)return;
+    let step=-1;
+    const STEPS=[
+      {n:'01',name:'Leitura de Mercado',log:'[MARKET_SCAN] Liquidez monitorada · Sessão ativa'},
+      {n:'02',name:'Validação de Liquidez',log:'[LIQUIDITY_LAYER] Profundidade de mercado verificada'},
+      {n:'03',name:'Probabilidade Operacional',log:'[PROBABILITY_LAYER] Assimetria identificada · Score 87.4%'},
+      {n:'04',name:'Contexto Institucional',log:'[CONTEXT_ENGINE] Contexto validado · Sessão Londres/NY'},
+      {n:'05',name:'Execução',log:'[EXECUTION_ENGINE] Ordem autorizada · MT5 Bridge'},
+      {n:'06',name:'Gestão de Risco',log:'[RISK_PROTOCOL] Breakeven 2º alvo · Trailing ativo'},
+      {n:'07',name:'Memória Operacional',log:'[MEMORY_LAYER] Ciclo registrado · Parâmetros atualizados'},
+    ];
+    function advance(){step=(step+1)%STEPS.length;setActive(step);setTimeout(advance,920);}
+    const t=setTimeout(advance,400);
+    return()=>clearTimeout(t);
+  },[inView]);
+  const STEPS=[
+    {n:'01',name:'Leitura de Mercado',log:'[MARKET_SCAN] Liquidez monitorada · Sessão ativa'},
+    {n:'02',name:'Validação de Liquidez',log:'[LIQUIDITY_LAYER] Profundidade de mercado verificada'},
+    {n:'03',name:'Probabilidade Operacional',log:'[PROBABILITY_LAYER] Assimetria identificada · Score 87.4%'},
+    {n:'04',name:'Contexto Institucional',log:'[CONTEXT_ENGINE] Contexto validado · Sessão Londres/NY'},
+    {n:'05',name:'Execução',log:'[EXECUTION_ENGINE] Ordem autorizada · MT5 Bridge'},
+    {n:'06',name:'Gestão de Risco',log:'[RISK_PROTOCOL] Breakeven 2º alvo · Trailing ativo'},
+    {n:'07',name:'Memória Operacional',log:'[MEMORY_LAYER] Ciclo registrado · Parâmetros atualizados'},
+  ];
+  return(
+    <section ref={secRef} id="s3" className="sec-s3 relative bg-void py-[clamp(80px,12vh,140px)]">
+      <div className="max-w-[1080px] mx-auto px-[clamp(20px,5vw,72px)] relative z-[1]">
+        <div className="hr-smith mb-[clamp(52px,8vh,84px)]"/>
+        <Eyebrow>Motor de Decisão · Pipeline Cognitivo</Eyebrow>
+        <FadeUp className="max-w-[660px] mb-[clamp(40px,6vh,64px)]">
+          <h2 className="font-display text-[clamp(1.5rem,3.2vw,2.4rem)] font-bold tracking-[-0.03em] leading-[1.1] text-txt mb-3">
+            SMITH não reage ao mercado.
+          </h2>
+          <p className="font-body text-[clamp(.85rem,1.5vw,.95rem)] leading-[1.9] text-txt2 opacity-75">
+            SMITH filtra ruído, identifica contexto, valida probabilidade e executa apenas quando a metodologia Dom Investitore encontra assimetria operacional.
+          </p>
+        </FadeUp>
+        <FadeUp delay={.12} className="glass p-[clamp(20px,3vw,32px)]">
+          <div className="flex items-center justify-between mb-[clamp(20px,3vh,30px)]">
+            <span className="font-mono text-[8px] font-semibold tracking-[.2em] uppercase text-champ opacity-62">Motor de Decisão SMITH · Pipeline Ativo</span>
+            <div className="flex items-center gap-1.5">
+              <div className="w-[5px] h-[5px] rounded-full bg-champ animate-pulse-dot" style={{boxShadow:'0 0 8px rgba(216,192,138,.7)'}}/>
+              <span className="font-mono text-[8px] tracking-[.1em] text-champ opacity-55">PROCESSANDO</span>
+            </div>
+          </div>
+          <div className="flex flex-col">
+            {STEPS.map((step,i)=>(
+              <Fragment key={step.n}>
+                <div className={`s3-eline${i===0?' mt-0':''}`}/>
+                <div className={`s3-step${i<=active?' active':''}`}>
+                  <span className="font-mono text-[7px] tracking-[.16em] text-champ opacity-50 flex-shrink-0 min-w-[22px]">{step.n}</span>
+                  <div className="s3-step-dot"/>
+                  <div className="flex-1">
+                    <div className="font-mono text-[10px] font-semibold tracking-[.12em] uppercase text-txt mb-[3px]">{step.name}</div>
+                    <div className="s3-step-log-txt">{step.log}</div>
+                  </div>
+                  <span className="s3-step-status">ATIVO</span>
+                </div>
+              </Fragment>
+            ))}
+          </div>
+        </FadeUp>
+      </div>
+    </section>
+  );
+}
+
+/* ──────────────────────────────────────────────────────────
+   S4 — PERFORMANCE
+────────────────────────────────────────────────────────── */
+function Performance(){
+  const secRef=useRef(null);
+  const cvRef=useRef(null);
+  const [cnts,setCnts]=useState({a:0,t:0});
+  const [barsActive,setBarsActive]=useState(false);
+  const inView=useInView(secRef,{once:true,margin:'0px 0px -80px 0px'});
+
+  useEffect(()=>{
+    if(!inView)return;
+    window._qi&&window._qi(1.9);
+    /* counter A */
+    let startA=null;
+    const rafA=ts=>{if(!startA)startA=ts;const p=Math.min((ts-startA)/1500,1),ep=1-Math.pow(1-p,3);setCnts(prev=>({...prev,a:Math.round(ep*76)}));if(p<1)requestAnimationFrame(rafA);};
+    requestAnimationFrame(rafA);
+    /* counter T */
+    let startT=null;
+    const rafT=ts=>{if(!startT)startT=ts;const p=Math.min((ts-startT)/1200,1),ep=1-Math.pow(1-p,3);setCnts(prev=>({...prev,t:Math.round(ep*4)}));if(p<1)requestAnimationFrame(rafT);};
+    setTimeout(()=>requestAnimationFrame(rafT),200);
+    /* barras */
+    setTimeout(()=>setBarsActive(true),600);
+    /* perf chart */
+    setTimeout(drawPerf,800);
+  },[inView]);
+
+  function drawPerf(){
+    const cv=cvRef.current;if(!cv)return;
+    const dpr=devicePixelRatio,ctx=cv.getContext('2d');
+    cv.width=cv.offsetWidth*dpr;cv.height=110*dpr;cv.style.height='110px';
+    ctx.scale(dpr,dpr);const w=cv.offsetWidth,h=110;ctx.clearRect(0,0,w,h);
+    ctx.strokeStyle='rgba(255,255,255,.04)';ctx.lineWidth=1;
+    [.25,.5,.75].forEach(p=>{ctx.beginPath();ctx.moveTo(0,h*p);ctx.lineTo(w,h*p);ctx.stroke();});
+    const segs=[{v:76},{v:12},{v:12}];
+    const cols=[
+      (x,y,sw,sh)=>{const g=ctx.createLinearGradient(x,y,x+sw,y+sh);g.addColorStop(0,'rgba(141,116,71,.9)');g.addColorStop(.4,'rgba(201,168,106,.95)');g.addColorStop(.7,'rgba(216,192,138,.9)');g.addColorStop(1,'rgba(240,226,189,.8)');return g;},
+      (x,y,sw,sh)=>{const g=ctx.createLinearGradient(x,y,x+sw,y+sh);g.addColorStop(0,'rgba(216,192,138,.38)');g.addColorStop(1,'rgba(240,226,189,.25)');return g;},
+      ()=>'rgba(42,42,42,.85)'
+    ];
+    let x=0;
+    segs.forEach((s,i)=>{
+      const sw=w*s.v/100-2,bh=h*.78,by=h*.11;
+      ctx.shadowColor='rgba(0,0,0,.5)';ctx.shadowBlur=8;ctx.shadowOffsetY=4;
+      ctx.fillStyle=cols[i](x,by,sw,bh);
+      if(ctx.roundRect)ctx.roundRect(x,by,sw,bh,2);else ctx.rect(x,by,sw,bh);
+      ctx.fill();ctx.shadowColor='transparent';ctx.shadowBlur=0;ctx.shadowOffsetY=0;
+      if(i<2){const glw=ctx.createLinearGradient(x,by+bh-4,x,by+bh+8);glw.addColorStop(0,'rgba(201,168,106,.55)');glw.addColorStop(1,'rgba(201,168,106,0)');ctx.fillStyle=glw;ctx.fillRect(x,by+bh-4,sw,12);}
+      if(sw>28){ctx.textAlign='center';ctx.fillStyle='rgba(245,245,243,.85)';ctx.font=`600 ${Math.min(12,sw/4.5)}px 'JetBrains Mono',monospace`;ctx.fillText(s.v+'%',x+sw/2,by+bh/2+4);}
+      x+=sw+2;
+    });
+  }
+
+  const METRICS=[
+    {label:'Assertividade Média',value:<><span className="text-champ" style={{background:'linear-gradient(135deg,#F0E2BD,#D8C08A,#C9A86A)',WebkitBackgroundClip:'text',backgroundClip:'text',color:'transparent'}}>{cnts.a}</span><span className="text-champ" style={{background:'linear-gradient(135deg,#D8C08A,#C9A86A)',WebkitBackgroundClip:'text',backgroundClip:'text',color:'transparent'}}>%</span></>,sub:'Taxa histórica de acerto'},
+    {label:'Alvos por Operação',value:<>{cnts.t}<span className="text-[.4em] text-txt2 opacity-60"> alvos</span></>,sub:'Média em vencedoras'},
+    {label:'Gestão Automática',value:<span className="text-txt2 text-[clamp(1.2rem,2.6vw,2rem)]">BE 2º</span>,sub:'Breakeven no 2º alvo'},
+    {label:'Mercados',value:<span className="text-[clamp(1rem,2.2vw,1.65rem)]">XAU<span className="text-txt2 text-[.55em] opacity-55"> / </span>NAS</span>,sub:'XAUUSD · NASDAQ · MT5'},
+  ];
+
+  return(
+    <section ref={secRef} id="s4" className="sec-s4 relative bg-void py-[clamp(80px,12vh,140px)]">
+      <div className="max-w-[1080px] mx-auto px-[clamp(20px,5vw,72px)] relative z-[1]">
+        <div className="hr-smith mb-[clamp(52px,8vh,84px)]"/>
+        <Eyebrow>Performance Operacional · Dados Históricos</Eyebrow>
+        <FadeUp className="max-w-[600px] mb-[clamp(36px,5.5vh,56px)]">
+          <h2 className="font-display text-[clamp(1.7rem,3.6vw,2.6rem)] font-bold tracking-[-0.033em] leading-[1.08] text-txt mb-2.5">
+            A disciplina como vantagem operacional.
+          </h2>
+          <p className="font-body text-[clamp(.85rem,1.5vw,.95rem)] leading-[1.9] text-txt2 opacity-75">
+            A força da SMITH está na repetição disciplinada de cenários validados. Não se trata de prever o mercado. Trata-se de executar com precisão quando liquidez, contexto e probabilidade se alinham à metodologia Dom Investitore.
+          </p>
+        </FadeUp>
+        {/* big metrics */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5 mb-2.5">
+          {METRICS.map((m,i)=>(
+            <FadeUp key={i} delay={i*.09} className="glass p-[clamp(18px,2.5vw,26px)] flex flex-col gap-1.5">
+              <span className="font-mono text-[8px] tracking-[.18em] uppercase text-txt2 opacity-48">{m.label}</span>
+              <div className="font-display text-[clamp(2rem,5vw,3.6rem)] font-bold tracking-[-0.05em] leading-none text-txt">{m.value}</div>
+              <span className="font-mono text-[8px] tracking-[.1em] text-txt2 opacity-40 uppercase">{m.sub}</span>
+            </FadeUp>
+          ))}
+        </div>
+        {/* row charts */}
+        <div className="grid grid-cols-1 md:grid-cols-[1.4fr_1fr] gap-2.5">
+          <FadeUp delay={.18} className="glass p-[clamp(16px,2.2vw,24px)]">
+            <p className="font-mono text-[8px] tracking-[.16em] uppercase text-txt2 opacity-38 mb-3">Distribuição de Resultados · Operações Monitorizadas</p>
+            <canvas ref={cvRef} aria-label="Gráfico distribuição" style={{width:'100%',height:'110px',display:'block'}}/>
+            <div className="flex gap-3.5 mt-2.5 flex-wrap">
+              {[['#C9A86A','Vencedoras 76%'],['rgba(216,192,138,.5)','Breakeven 12%'],['#2A2A2A','Stops 12%']].map(([c,l])=>(
+                <span key={l} className="flex items-center gap-1.5 font-mono text-[8px] tracking-[.09em] text-txt2 opacity-48">
+                  <span className="w-[7px] h-[7px] rounded-full flex-shrink-0" style={{background:c}}/>
+                  {l}
+                </span>
+              ))}
+            </div>
+          </FadeUp>
+          <FadeUp delay={.26} className="glass p-[clamp(16px,2.2vw,22px)] flex flex-col gap-3.5">
+            <p className="font-mono text-[8px] tracking-[.18em] uppercase text-txt2 opacity-38">Assertividade por Instrumento</p>
+            {[['XAUUSD · Ouro',78,'M1 · Alta Liquidez'],['NASDAQ 100',74,'M1 · Sessão Americana']].map(([name,pct,det])=>(
+              <div key={name} className="flex flex-col gap-1.5">
+                <span className="font-display text-[clamp(.9rem,1.7vw,1.08rem)] font-semibold tracking-[-0.02em] text-txt">{name}</span>
+                <div className="h-[3px] bg-[rgba(255,255,255,.055)] rounded-sm overflow-hidden">
+                  <div className="assert-bar" style={{width:barsActive?pct+'%':'0%'}}/>
+                </div>
+                <div className="flex justify-between">
+                  <span className="font-mono text-[9px] font-semibold"
+                    style={{background:'linear-gradient(90deg,#D8C08A,#F0E2BD)',WebkitBackgroundClip:'text',backgroundClip:'text',color:'transparent'}}>
+                    {pct}%
+                  </span>
+                  <span className="font-mono text-[8px] text-txt2 opacity-36 tracking-[.07em]">{det}</span>
+                </div>
+              </div>
+            ))}
+            <div className="mt-1 pt-3 border-t border-[rgba(216,192,138,.06)]">
+              <p className="font-mono text-[8px] tracking-[.18em] uppercase text-txt2 opacity-38 mb-2">Modo de Operação</p>
+              {['Sessões definidas por contexto','Breakeven automático no 2º alvo','Trailing a partir do 3º alvo','Risco máximo 1% por operação'].map(v=>(
+                <div key={v} className="font-mono text-[9px] text-txt2 opacity-55 tracking-[.07em] mb-1">→ {v}</div>
+              ))}
+            </div>
+          </FadeUp>
+        </div>
+        {/* gestão */}
+        <FadeUp delay={.3} className="glass mt-2.5 p-[clamp(16px,2.2vw,24px)] flex flex-wrap gap-[clamp(16px,3vw,36px)]">
+          {[['Risco / Op.','1.0%','Hard coded'],['RR Médio','1 : 3','Assimétrico'],['Breakeven','2º Alvo','Automático'],['Trailing','3º Alvo+','Movimento estendido']].map(([l,v,s])=>(
+            <div key={l} className="flex flex-col gap-1 flex-1 min-w-[110px]">
+              <span className="font-mono text-[8px] tracking-[.14em] uppercase text-txt2 opacity-35">{l}</span>
+              <span className="font-display text-[clamp(1rem,2vw,1.4rem)] font-semibold tracking-[-0.03em] text-txt">{v}</span>
+              <span className="font-mono text-[8px] tracking-[.09em] text-txt2 opacity-4">{s}</span>
+            </div>
+          ))}
+        </FadeUp>
+        <p className="font-mono text-[8px] tracking-[.07em] text-muted opacity-22 text-center mt-[clamp(14px,2vh,22px)] leading-[1.7]">
+          Dados baseados em backtesting e operações monitorizadas com parâmetros da metodologia Dom Investitore. Resultados passados não garantem resultados futuros.
+        </p>
+      </div>
+    </section>
+  );
+}
+
+/* ──────────────────────────────────────────────────────────
+   S5 — SIMULADOR
+────────────────────────────────────────────────────────── */
+function Simulator(){
+  const secRef=useRef(null);
+  const cvRef=useRef(null);
+  const inView=useInView(secRef,{once:true,margin:'0px 0px -80px 0px'});
+  const [params,setParams]=useState({cap:2000,ops:8,ass:76,rk:1,mo:6});
+  const [results,setResults]=useState({fin:0,profit:0,pct:'0',mult:'1.00'});
+
+  useEffect(()=>{
+    if(inView){window._qi&&window._qi(1.2);compute();}
+  },[inView]);
+
+  useEffect(()=>{compute();},[params]);
+
+  function compute(){
+    const {cap,ops,ass,rk,mo}=params;
+    const a=ass/100,r=rk/100;
+    const wks=mo*4.33,tot=ops*wks,w=tot*a,l=tot*(1-a);
+    const wkR=w/wks*(r*3)-l/wks*r,mR=wkR*4.33;
+    let cur=cap;const monthly=[cap];
+    for(let m=0;m<mo;m++){cur*=(1+mR);monthly.push(Math.round(cur));}
+    const fin=monthly[mo],profit=fin-cap,pct=(profit/cap*100).toFixed(1);
+    setResults({fin,profit,pct,mult:(fin/cap).toFixed(2)});
+    setTimeout(()=>drawSim(monthly,cap),50);
+  }
+
+  function drawSim(data,base){
+    const cv=cvRef.current;if(!cv)return;
+    const dpr=devicePixelRatio,ctx=cv.getContext('2d');
+    cv.width=cv.offsetWidth*dpr;cv.height=128*dpr;cv.style.height='128px';
+    ctx.scale(dpr,dpr);const w=cv.offsetWidth,h=128;ctx.clearRect(0,0,w,h);
+    if(data.length<2)return;
+    const mn=Math.min(...data)*.97,mx=Math.max(...data)*1.03;
+    const px=i=>(i/(data.length-1))*w,py=v=>h-((v-mn)/(mx-mn))*(h*.84)-h*.08;
+    ctx.strokeStyle='rgba(255,255,255,.04)';ctx.lineWidth=1;
+    [.33,.66].forEach(p=>{ctx.beginPath();ctx.moveTo(0,py(mn+(mx-mn)*p));ctx.lineTo(w,py(mn+(mx-mn)*p));ctx.stroke();});
+    const gr=ctx.createLinearGradient(0,0,0,h);
+    gr.addColorStop(0,'rgba(216,192,138,.22)');gr.addColorStop(.5,'rgba(201,168,106,.1)');gr.addColorStop(1,'rgba(141,116,71,0)');
+    ctx.beginPath();ctx.moveTo(px(0),py(data[0]));data.forEach((v,i)=>ctx.lineTo(px(i),py(v)));
+    ctx.lineTo(px(data.length-1),h);ctx.lineTo(0,h);ctx.closePath();ctx.fillStyle=gr;ctx.fill();
+    const lg=ctx.createLinearGradient(0,0,w,0);
+    lg.addColorStop(0,'rgba(141,116,71,.7)');lg.addColorStop(.4,'rgba(201,168,106,.88)');lg.addColorStop(1,'rgba(240,226,189,.75)');
+    ctx.beginPath();ctx.moveTo(px(0),py(data[0]));data.forEach((v,i)=>ctx.lineTo(px(i),py(v)));
+    ctx.strokeStyle=lg;ctx.lineWidth=1.6;ctx.stroke();
+    ctx.beginPath();ctx.moveTo(px(0),py(data[0]));data.forEach((v,i)=>ctx.lineTo(px(i),py(v)));
+    ctx.strokeStyle='rgba(216,192,138,.18)';ctx.lineWidth=5;ctx.stroke();
+    if(base>=mn&&base<=mx){ctx.beginPath();ctx.moveTo(0,py(base));ctx.lineTo(w,py(base));ctx.strokeStyle='rgba(255,255,255,.08)';ctx.lineWidth=1;ctx.setLineDash([3,4]);ctx.stroke();ctx.setLineDash([]);}
+    data.forEach((v,i)=>{
+      ctx.beginPath();ctx.arc(px(i),py(v),2.5,0,Math.PI*2);
+      if(v>=base){ctx.shadowColor='rgba(216,192,138,.6)';ctx.shadowBlur=6;}
+      ctx.fillStyle=v>=base?'rgba(240,226,189,.92)':'rgba(142,142,147,.45)';ctx.fill();
+      ctx.shadowColor='transparent';ctx.shadowBlur=0;
+    });
+  }
+
+  const SLIDERS=[
+    {key:'cap',label:'Capital Inicial (€)',min:200,max:50000,step:200,fmt:v=>fmt(v)},
+    {key:'ops',label:'Operações por Semana',min:2,max:20,step:1,fmt:v=>v+' / sem'},
+    {key:'ass',label:'Assertividade (%)',min:55,max:85,step:1,fmt:v=>v+'%'},
+    {key:'rk', label:'Risco por Operação (%)',min:.5,max:3,step:.25,fmt:v=>v.toFixed(2)+'%'},
+    {key:'mo', label:'Horizonte (meses)',min:1,max:24,step:1,fmt:v=>v+(v===1?' mês':' meses')},
+  ];
+
+  const metaGrad={background:'linear-gradient(135deg,#D8C08A,#F0E2BD)',WebkitBackgroundClip:'text',backgroundClip:'text',color:'transparent'};
+
+  return(
+    <section ref={secRef} id="s5" className="sec-s5 relative bg-void py-[clamp(80px,12vh,140px)]">
+      <div className="max-w-[1080px] mx-auto px-[clamp(20px,5vw,72px)] relative z-[1]">
+        <div className="hr-smith mb-[clamp(52px,8vh,84px)]"/>
+        <Eyebrow>Simulador Operacional · Projeção de Capital</Eyebrow>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-[clamp(22px,3.5vw,44px)] items-start mt-[clamp(28px,4.5vh,48px)]">
+          <FadeUp className="flex flex-col gap-[clamp(13px,1.9vh,19px)]">
+            <h2 className="font-display text-[clamp(1.6rem,3.4vw,2.5rem)] font-bold tracking-[-0.033em] leading-[1.08] text-txt">
+              Projete seu potencial<br/>operacional com SMITH.
+            </h2>
+            <p className="font-body text-[clamp(.84rem,1.4vw,.94rem)] leading-[1.88] text-txt2 opacity-74">
+              Ajuste os parâmetros com base no seu perfil. O modelo aplica a gestão de risco e assertividade histórica da SMITH na projeção mês a mês.
+            </p>
+            <div className="flex flex-col gap-2.5">
+              {SLIDERS.map(s=>(
+                <div key={s.key} className="flex flex-col gap-1">
+                  <label className="font-mono text-[8px] tracking-[.18em] uppercase text-txt2 opacity-44">{s.label}</label>
+                  <div className="flex items-center gap-3">
+                    <input type="range" className="smith-slider"
+                      min={s.min} max={s.max} step={s.step} value={params[s.key]}
+                      onChange={e=>setParams(prev=>({...prev,[s.key]:+e.target.value}))}
+                    />
+                    <span className="font-mono text-[11px] font-semibold min-w-[58px] text-right tracking-[.04em]" style={metaGrad}>
+                      {s.fmt(params[s.key])}
+                    </span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </FadeUp>
+          <div className="flex flex-col gap-2">
+            {[
+              {label:'Capital Projetado',value:fmt(results.fin),gd:true,sub:'ao final do período'},
+              {label:'Lucro Estimado',value:(results.profit>=0?'+':'')+fmt(results.profit),gd:false,sub:'sobre capital inicial'},
+              {label:'Multiplicador',value:results.mult+'x',gd:false,sub:'fator de crescimento'},
+            ].map((r)=>(
+              <div key={r.label} className="glass p-[clamp(14px,2vw,20px)] flex flex-col gap-1">
+                <span className="font-mono text-[8px] tracking-[.18em] uppercase text-txt2 opacity-38">{r.label}</span>
+                <span className="font-display text-[clamp(1.5rem,3.3vw,2.2rem)] font-bold tracking-[-0.044em] text-txt"
+                  style={r.gd?metaGrad:{}}>{r.value}</span>
+                <span className="font-mono text-[8px] tracking-[.09em] text-txt2 opacity-34 uppercase">{r.sub}</span>
+              </div>
+            ))}
+            <div className="glass p-[clamp(12px,1.8vw,18px)]">
+              <p className="font-mono text-[8px] tracking-[.14em] uppercase text-txt2 opacity-32 mb-1.5">Evolução Mês a Mês</p>
+              <canvas ref={cvRef} aria-label="Gráfico evolução de capital" style={{width:'100%',height:'128px',display:'block'}}/>
+            </div>
+          </div>
+        </div>
+        <p className="font-mono text-[8px] tracking-[.07em] text-muted opacity-20 text-center mt-[clamp(12px,2vh,18px)] leading-[1.7]">
+          Projeção baseada em parâmetros históricos e gestão operacional SMITH. Resultados futuros dependem de condições de mercado, execução e gerenciamento individual de risco. Não constitui promessa de rendimento.
+        </p>
+      </div>
+    </section>
+  );
+}
+
+/* ──────────────────────────────────────────────────────────
+   S6 — PROCESSAMENTO LOCAL / NÚCLEO
+────────────────────────────────────────────────────────── */
+function Core(){
+  const secRef=useRef(null);
+  const inView=useInView(secRef,{once:true,margin:'0px 0px -100px 0px'});
+  useEffect(()=>{
+    if(!inView)return;
+    ['sr1','sr2','sr3','s6core'].forEach(id=>{const el=document.getElementById(id);if(el)el.classList.add('go');});
+    window._qi&&window._qi(2.0);
+  },[inView]);
+  const LAYERS=[
+    {label:'Operational Core',status:'ACTIVE',active:true},
+    {label:'Memory Layer',status:'RECORDING',active:false},
+    {label:'Execution Engine',status:'STANDBY',active:true},
+    {label:'Risk Protocol',status:'MONITORING',active:false},
+    {label:'MT5 Bridge',status:'CONNECTED',active:true},
+    {label:'M5 Ultra Apple',status:'SOVEREIGN',active:true},
+  ];
+  const SPECS=[['Processador','M5 Ultra Apple'],['Execução','Local · Soberana'],['Latência','0.3ms'],['Uptime','99.97%'],['Ambiente','MT5 Expert Advisor']];
+  return(
+    <section ref={secRef} id="s6" className="sec-s6 relative bg-void py-[clamp(80px,12vh,140px)]">
+      <div className="max-w-[1080px] mx-auto px-[clamp(20px,5vw,72px)] relative z-[1]">
+        <div className="hr-smith mb-[clamp(52px,8vh,84px)]"/>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-[clamp(28px,4.5vw,60px)] items-center">
+          <FadeUp className="flex flex-col gap-[clamp(16px,2.4vh,24px)]">
+            <Eyebrow>Infraestrutura · M5 Ultra Apple</Eyebrow>
+            <h2 className="font-display text-[clamp(1.7rem,3.6vw,2.6rem)] font-bold tracking-[-0.033em] leading-[1.08] text-txt">
+              Um núcleo que{' '}<span className="text-champ">nunca para.</span>
+            </h2>
+            <p className="font-body text-[clamp(.84rem,1.4vw,.95rem)] leading-[1.9] text-txt2 opacity-74">
+              SMITH opera em ambiente dedicado de processamento local de alta performance. Arquitetura M5 Ultra Apple. Execução contínua, baixa latência, processamento cognitivo soberano. Integrado ao MT5. Infraestrutura preparada para evolução operacional futura.
+            </p>
+            <div className="flex flex-col gap-1.5">
+              {LAYERS.map(l=>(
+                <div key={l.label}
+                  className="flex items-center gap-2.5 px-[clamp(12px,1.8vw,18px)] py-[clamp(9px,1.4vw,13px)] rounded-sm border transition-all duration-300 cursor-default group"
+                  style={{background:'rgba(255,255,255,.018)',borderColor:'rgba(216,192,138,.08)'}}
+                  onMouseEnter={e=>{e.currentTarget.style.borderColor='rgba(216,192,138,.18)';e.currentTarget.style.background='rgba(201,168,106,.03)';e.currentTarget.style.boxShadow='0 0 20px rgba(201,168,106,.06)';}}
+                  onMouseLeave={e=>{e.currentTarget.style.borderColor='rgba(216,192,138,.08)';e.currentTarget.style.background='rgba(255,255,255,.018)';e.currentTarget.style.boxShadow='none';}}
+                >
+                  <div className={`w-[5px] h-[5px] rounded-full flex-shrink-0 ${l.active?'bg-champ animate-pulse-dot':'bg-txt2'}`}
+                    style={l.active?{boxShadow:'0 0 5px rgba(216,192,138,.55)'}:{}}/>
+                  <span className="font-mono text-[10px] font-semibold tracking-[.1em] uppercase text-txt flex-1">{l.label}</span>
+                  <span className={`font-mono text-[8px] tracking-[.09em] uppercase ${l.active?'text-champ opacity-52':'text-txt2'}`}>{l.status}</span>
+                </div>
+              ))}
+            </div>
+            <div className="flex flex-col gap-1">
+              {SPECS.map(([k,v])=>(
+                <div key={k} className="flex justify-between items-center font-mono text-[9px] py-1.5 border-b border-[rgba(216,192,138,.06)]">
+                  <span className="text-txt2 opacity-40 tracking-[.08em]">{k}</span>
+                  <span className="text-txt opacity-75 tracking-[.07em]">{v}</span>
+                </div>
+              ))}
+            </div>
+          </FadeUp>
+          <FadeUp delay={.2} className="flex items-center justify-center">
+            <div className="s6-stage">
+              <div className="s6-gyro">
+                <div id="sr1" className="s6-ring r1"/>
+                <div id="sr2" className="s6-ring r2"/>
+                <div id="sr3" className="s6-ring r3"/>
+                <div id="s6core" className="s6-orb" role="img" aria-label="Núcleo operacional SMITH"/>
+              </div>
+            </div>
+          </FadeUp>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ──────────────────────────────────────────────────────────
+   S7 — DIFERENCIAL
+────────────────────────────────────────────────────────── */
+function Diferencial(){
+  const COMUNS=['Executam regras fixas sem contexto','Dependem de indicadores atrasados','Sem memória operacional entre ciclos','Não adaptam parâmetros ao histórico','Quebram em mudanças de regime','Gestão de risco estática'];
+  const SMITH=['Opera sobre metodologia modelada com contexto real','Leitura operacional contínua e contextualizada','Memória ativa em todos os ciclos de operação','Calibração autónoma dentro dos parâmetros','Disciplina independente de condições emocionais','Breakeven + Trailing dinâmicos e automáticos'];
+  return(
+    <section id="s7" className="sec-s7 relative bg-void py-[clamp(80px,12vh,140px)]">
+      <div className="max-w-[1080px] mx-auto px-[clamp(20px,5vw,72px)] relative z-[1]">
+        <div className="hr-smith mb-[clamp(52px,8vh,84px)]"/>
+        <Eyebrow>Diferencial · SMITH vs Automação Comum</Eyebrow>
+        <FadeUp>
+          <h2 className="font-display text-[clamp(1.7rem,3.6vw,2.6rem)] font-bold tracking-[-0.033em] leading-[1.08] text-txt mb-3">
+            Não é automação.<br/>É inteligência operacional.
+          </h2>
+          <p className="font-body text-[clamp(.85rem,1.4vw,.95rem)] text-txt2 opacity-62 mb-[clamp(28px,4.5vh,46px)] max-w-[500px]">
+            A diferença não está na velocidade de execução. Está na qualidade do julgamento por trás de cada operação.
+          </p>
+        </FadeUp>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-2.5">
+          <FadeUp delay={0} className="glass p-[clamp(20px,2.8vw,32px)] flex flex-col gap-[clamp(11px,1.8vh,16px)]">
+            <div className="font-mono text-[9px] font-semibold tracking-[.18em] uppercase text-muted opacity-48 flex items-center gap-1.5 mb-1">
+              <div className="w-[5px] h-[5px] rounded-full bg-muted opacity-48"/>Robôs Comuns
+            </div>
+            {COMUNS.map(v=>(
+              <div key={v} className="flex items-start gap-2.5 font-body text-[clamp(.82rem,1.4vw,.92rem)] leading-[1.68] text-txt2 opacity-60">
+                <span className="opacity-45 mt-0.5 flex-shrink-0">×</span>{v}
+              </div>
+            ))}
+          </FadeUp>
+          <FadeUp delay={.18} className="glass p-[clamp(20px,2.8vw,32px)] flex flex-col gap-[clamp(11px,1.8vh,16px)]"
+            style={{borderColor:'rgba(216,192,138,.22)'}}>
+            <div className="font-mono text-[9px] font-semibold tracking-[.18em] uppercase text-champ flex items-center gap-1.5 mb-1">
+              <div className="w-[5px] h-[5px] rounded-full bg-champ"/>SMITH · Dom Investitore
+            </div>
+            {SMITH.map(v=>(
+              <div key={v} className="flex items-start gap-2.5 font-body text-[clamp(.82rem,1.4vw,.92rem)] leading-[1.68] text-txt2 opacity-88">
+                <span className="text-champ opacity-78 mt-0.5 flex-shrink-0">→</span>{v}
+              </div>
+            ))}
+          </FadeUp>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ──────────────────────────────────────────────────────────
+   S8 — CONDIÇÃO EXCLUSIVA
+────────────────────────────────────────────────────────── */
+function Exclusiva(){
+  const metaGrad={background:'linear-gradient(135deg,#F0E2BD,#D8C08A,#C9A86A)',WebkitBackgroundClip:'text',backgroundClip:'text',color:'transparent',filter:'drop-shadow(0 0 20px rgba(201,168,106,.3))'};
+  return(
+    <section id="s8" className="sec-s8 relative bg-void py-[clamp(80px,12vh,140px)]">
+      <div className="max-w-[1080px] mx-auto px-[clamp(20px,5vw,72px)] relative z-[1] text-center">
+        <div className="hr-smith mb-[clamp(52px,8vh,84px)]"/>
+        <Eyebrow>Acesso Interno · Mentorados Dom Investitore</Eyebrow>
+        <FadeUp>
+          <h2 className="font-display text-[clamp(1.7rem,3.6vw,2.6rem)] font-bold tracking-[-0.033em] text-txt mb-3">
+            Licença operacional exclusiva.
+          </h2>
+          <p className="font-body text-[clamp(.85rem,1.4vw,.95rem)] text-txt2 opacity-62 mb-[clamp(28px,4.5vh,48px)] max-w-[520px] mx-auto">
+            SMITH não é vendido ao público. O acesso é reservado para mentorados com vínculo ativo Dom Investitore. Condição interna — não replicada externamente.
+          </p>
+        </FadeUp>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-[clamp(16px,2.5vw,28px)] max-w-[700px] mx-auto mb-[clamp(28px,4vh,44px)]">
+          <FadeUp delay={0} className="glass p-[clamp(24px,3.5vw,40px)] flex flex-col gap-2.5">
+            <span className="font-mono text-[8px] tracking-[.2em] uppercase text-muted opacity-48">Valor de Revenda</span>
+            <span className="font-display text-[clamp(1.4rem,3.2vw,2.2rem)] font-bold tracking-[-0.05em] leading-none text-muted opacity-20 line-through" style={{textDecorationColor:'rgba(142,142,147,.15)'}}>€500</span>
+            <span className="font-mono text-[9px] tracking-[.1em] text-txt2 opacity-38 uppercase">Licença pública de mercado</span>
+            <p className="font-body text-[12px] text-txt2 opacity-38 leading-[1.6] mt-1">Valor de referência institucional. Não disponível externamente.</p>
+          </FadeUp>
+          <FadeUp delay={.2} className="glass p-[clamp(24px,3.5vw,40px)] flex flex-col gap-2.5"
+            style={{borderColor:'rgba(216,192,138,.24)'}}>
+            <span className="font-mono text-[8px] tracking-[.2em] uppercase text-muted opacity-48">Condição Reservada · Mentorado</span>
+            <span className="font-display text-[clamp(2rem,5.5vw,4rem)] font-bold tracking-[-0.05em] leading-none" style={metaGrad}>€250</span>
+            <span className="font-mono text-[9px] tracking-[.1em] text-txt2 opacity-38 uppercase">Licença operacional · Acesso anual</span>
+            <div className="flex flex-col gap-1.5 mt-1">
+              {['Expert Advisor SMITH MT5 licenciado','Suporte de configuração e ativação','Atualizações do motor cognitivo','Acesso ao grupo fechado operacional'].map(v=>(
+                <div key={v} className="flex items-center gap-1.5 font-body text-[12px] text-txt2 opacity-68">
+                  <span className="text-champ opacity-65 flex-shrink-0">→</span>{v}
+                </div>
+              ))}
+            </div>
+          </FadeUp>
+        </div>
+        <FadeUp>
+          <div className="inline-flex items-center gap-1.5 px-3.5 py-1.5 border rounded-sm mx-auto"
+            style={{borderColor:'rgba(216,192,138,.2)',background:'rgba(201,168,106,.04)',boxShadow:'0 0 20px rgba(201,168,106,.05)'}}>
+            <div className="w-1 h-1 rounded-full bg-champ opacity-68 animate-pulse-dot" style={{boxShadow:'0 0 5px rgba(216,192,138,.5)'}}/>
+            <span className="font-mono text-[8px] tracking-[.14em] uppercase text-champ opacity-62">Grupo Fechado · Mentorados Dom Investitore Apenas</span>
+          </div>
+        </FadeUp>
+      </div>
+    </section>
+  );
+}
+
+/* ──────────────────────────────────────────────────────────
+   S9 — FECHAMENTO
+────────────────────────────────────────────────────────── */
+function Fechamento(){
+  const secRef=useRef(null);
+  const [darkOp,setDarkOp]=useState(0);
+  const inView=useInView(secRef,{margin:'0px 0px -80px 0px'});
+  const smithRef=useRef(null);
+  const smithInView=useInView(smithRef,{once:true,margin:'0px 0px -60px 0px'});
+
+  useEffect(()=>{
+    if(!inView)return;
+    window._qi&&window._qi(.25);
+    let prog=0;
+    const raf=()=>{prog=Math.min(prog+.004,.78);setDarkOp(prog);if(prog<.78)requestAnimationFrame(raf);};
+    requestAnimationFrame(raf);
+  },[inView]);
+
+  const metaGrad={background:'linear-gradient(135deg,#F0E2BD 0%,#D8C08A 25%,#C9A86A 55%,#8D7447 78%,#F0E2BD 100%)',backgroundSize:'220% 220%',WebkitBackgroundClip:'text',backgroundClip:'text',color:'transparent',animation:'smithMetal 6s ease-in-out infinite',filter:'drop-shadow(0 2px 0 rgba(141,116,71,.4)) drop-shadow(0 0 60px rgba(201,168,106,.25))'};
+
+  return(
+    <>
+      <div className="s9-dark" id="s9dark" aria-hidden="true" style={{opacity:darkOp}}/>
+      <section ref={secRef} id="s9" className="relative bg-void pt-0 pb-0">
+        <div className="max-w-[1080px] mx-auto px-[clamp(20px,5vw,72px)]">
+          <div className="hr-smith mb-0"/>
+        </div>
+        <div className="max-w-[600px] mx-auto text-center flex flex-col items-center gap-[clamp(16px,2.5vh,24px)] px-[clamp(20px,5vw,52px)] relative z-[2] pt-[clamp(80px,12vh,140px)]">
+          <div ref={smithRef}>
+            <h2
+              className="font-display font-bold leading-[.88] tracking-[-0.065em]"
+              style={{
+                fontSize:'clamp(4rem,12vw,9rem)',
+                ...metaGrad,
+                opacity:smithInView?1:0,
+                transform:smithInView?'translateY(0) scale(1)':'translateY(28px) scale(.96)',
+                filter:(smithInView?'blur(0px)':'blur(8px)')+' drop-shadow(0 2px 0 rgba(141,116,71,.4)) drop-shadow(0 0 60px rgba(201,168,106,.25))',
+                transition:'opacity 1.6s cubic-bezier(.16,1,.3,1),transform 1.6s cubic-bezier(.16,1,.3,1),filter 1.6s cubic-bezier(.16,1,.3,1)',
+              }}
+            >SMITH</h2>
+          </div>
+          <p className="font-mono font-light tracking-[.34em] uppercase text-txt opacity-58 mt-1"
+            style={{fontSize:'clamp(.6rem,1.1vw,.74rem)',
+              opacity:smithInView?.58:0,letterSpacing:smithInView?'.34em':'.18em',
+              transition:'opacity 1.4s ease .3s,letter-spacing 1.4s ease .3s'}}>
+            Operational Financial Intelligence
+          </p>
+          <div className="h-px max-w-[220px] w-full"
+            style={{background:'linear-gradient(90deg,transparent,rgba(216,192,138,.28),transparent)',
+              opacity:smithInView?1:0,transform:smithInView?'scaleX(1)':'scaleX(0)',
+              transition:'opacity 1s ease .5s,transform 1s cubic-bezier(.16,1,.3,1) .5s'}}/>
+          <p className="font-mono font-semibold tracking-[.22em] uppercase text-champ"
+            style={{fontSize:'clamp(.62rem,1.1vw,.76rem)',
+              textShadow:'0 0 20px rgba(216,192,138,.45)',
+              opacity:smithInView?.88:0,transform:smithInView?'translateY(0)':'translateY(8px)',
+              transition:'opacity 1.2s ease .6s,transform 1.2s cubic-bezier(.16,1,.3,1) .6s'}}>
+            Acesso Fechado · Mentorados Dom Investitore
+          </p>
+          <p className="font-mono font-light tracking-[.18em] uppercase text-txt2"
+            style={{fontSize:'clamp(.58rem,.95vw,.7rem)',
+              opacity:smithInView?.42:0,transform:smithInView?'translateY(0)':'translateY(6px)',
+              transition:'opacity 1s ease .7s,transform 1s cubic-bezier(.16,1,.3,1) .7s'}}>
+            Grupo interno · Licença operacional restrita · Dom Investitore © 2026
+          </p>
+        </div>
+        <footer className="relative z-[2] mt-[clamp(56px,9vh,100px)] pt-[clamp(24px,4vh,40px)] px-[clamp(20px,5vw,52px)] pb-[clamp(24px,4vh,40px)]"
+          style={{borderTop:'1px solid rgba(216,192,138,.08)',
+            opacity:smithInView?1:0,transition:'opacity 1.8s ease .9s'}}>
+          <div className="flex flex-col items-center gap-3">
+            <p className="s9-sig">Dom Investitore — Creating the Next Generation<br/>of Operational Financial Intelligence</p>
+            <div className="w-3.5 h-px" style={{background:'rgba(216,192,138,.16)'}}/>
+            <span className="font-mono text-[7px] tracking-[.12em] text-muted opacity-10 uppercase">SMITH v2.0 · Dom Investitore © 2026</span>
+            <div className="flex items-center gap-1.5" role="status">
+              <div className="w-[3px] h-[3px] rounded-full bg-champ opacity-30 animate-pulse-dot"/>
+              <span className="font-mono text-[7px] tracking-[.12em] uppercase text-muted opacity-16">Smith · Operational · Monitoring Active</span>
+            </div>
+          </div>
+        </footer>
+      </section>
+    </>
+  );
+}
+
+/* ──────────────────────────────────────────────────────────
+   APP ROOT
+────────────────────────────────────────────────────────── */
+function App(){
+  return(
+    <>
+      <Hero/>
+      <WhatIsSmith/>
+      <MotorDecisao/>
+      <Performance/>
+      <Simulator/>
+      <Core/>
+      <Diferencial/>
+      <Exclusiva/>
+      <Fechamento/>
+    </>
+  );
+}
+
+const root = ReactDOM.createRoot(document.getElementById('root'));
+root.render(React.createElement(App));
 </script>
 </body>
 </html>
