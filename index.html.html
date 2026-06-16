@@ -3,1827 +3,1417 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>SMITH — Operational Financial Intelligence · Dom Investitore</title>
+<title>SMITH — Operational Financial Intelligence</title>
 
+<!-- Fonts: editorial display + mono institucional -->
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-<!-- Editorial + Mono premium — referência arqui9 -->
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet"/>
 
+<!-- CDNs -->
+<script src="https://cdn.tailwindcss.com"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+<!-- ═══════════════════════════════════════════════════
+     TAILWIND DESIGN SYSTEM — paleta institucional SMITH
+     Quiet Luxury · Atlas tier · Preto absoluto + Ouro champanhe
+═══════════════════════════════════════════════════ -->
+<script>
+tailwind.config = {
+  theme: {
+    extend: {
+      colors: {
+        // FOUNDATION
+        "bg-core":     "#000000",   // preto absoluto
+        "bg-elevated": "#121212",   // grafite profundo
+        "bg-panel":    "#0A0A0A",   // panel base
+        "bg-hover":    "#161616",   // hover state
+        // ACCENTS
+        "silver":      "#A1A1AA",   // prata fosco (bordas, texto secundário)
+        "silver-dim":  "#52525B",   // prata escuro
+        "gold":        "#D4AF37",   // ouro champanhe (EXCLUSIVO dados críticos)
+        "gold-dark":   "#8B6914",   // ouro sombra
+        "gold-hi":     "#F0D060",   // ouro highlight
+        // TYPOGRAPHY
+        "white-pure":  "#FFFFFF",
+        "white-90":    "#F5F5F7",   // alabaster
+        "white-55":    "#8E8E93",   // texto muted
+        "white-20":    "rgba(255,255,255,0.20)",
+        "white-08":    "rgba(255,255,255,0.08)",
+        "white-04":    "rgba(255,255,255,0.04)",
+      },
+      fontFamily: {
+        display: ["'Syne'", "system-ui", "sans-serif"],
+        body:    ["'Inter'", "'SF Pro Display'", "system-ui", "sans-serif"],
+        mono:    ["'JetBrains Mono'", "'SF Mono'", "monospace"],
+      },
+      letterSpacing: {
+        tighter:   "-0.04em",   // editorial display
+        tight:     "-0.02em",
+        normal:    "0",
+        wide:      "0.1em",
+        wider:     "0.2em",
+        widest:    "0.32em",
+      },
+      animation: {
+        "gold-pulse":   "goldPulse 2.6s ease-in-out infinite",
+        "surface-glow": "surfaceGlow 9s ease-in-out infinite",
+        "atmo-drift":   "atmoDrift 20s ease-in-out infinite",
+        "scan-line":    "scanLine 11s linear infinite",
+        "log-scroll":   "logScroll 48s linear infinite",
+        "titan-spin":   "titanSpin 7s ease-in-out infinite",
+        "orb-float":    "orbFloat 8s ease-in-out infinite",
+        "blink":        "blink 1s step-end infinite",
+      },
+      keyframes: {
+        goldPulse:  {"0%,100%":{opacity:".4","box-shadow":"0 0 0 0 rgba(212,175,55,0)"},"50%":{opacity:"1","box-shadow":"0 0 0 4px rgba(212,175,55,.1),0 0 14px rgba(212,175,55,.35)"}},
+        surfaceGlow:{"0%,100%":{opacity:".3",transform:"scale(1)"},"50%":{opacity:".55",transform:"scale(1.07)"}},
+        atmoDrift:  {"0%":{transform:"translate(0,0) scale(1)",opacity:".4"},"33%":{transform:"translate(20px,-14px) scale(1.06)",opacity:".6"},"66%":{transform:"translate(-14px,10px) scale(.97)",opacity:".45"},"100%":{transform:"translate(0,0) scale(1)",opacity:".4"}},
+        scanLine:   {"0%":{top:"-1px",opacity:"0"},"4%":{opacity:".7"},"96%":{opacity:".35"},"100%":{top:"100%",opacity:"0"}},
+        logScroll:  {"from":{transform:"translateY(0)"},"to":{transform:"translateY(-50%)"}},
+        titanSpin:  {"0%":{"background-position":"0% 50%"},"50%":{"background-position":"100% 50%"},"100%":{"background-position":"0% 50%"}},
+        orbFloat:   {"0%,100%":{transform:"translateY(0)"},"50%":{transform:"translateY(-10px)"}},
+        blink:      {"0%,100%":{opacity:"1"},"50%":{opacity:"0"}},
+      },
+      boxShadow: {
+        // painéis bento
+        "bento":      "0 8px 32px rgba(0,0,0,.5), inset 0 1px 0 rgba(255,255,255,.05)",
+        "bento-hover":"0 12px 48px rgba(0,0,0,.65), inset 0 1px 0 rgba(255,255,255,.07), 0 0 0 1px rgba(161,161,170,.12)",
+        "gold-outer": "0 0 24px rgba(212,175,55,.18), 0 0 60px rgba(212,175,55,.06)",
+        "gold-inner": "inset 0 0 20px rgba(212,175,55,.06)",
+        "surface":    "0 20px 60px rgba(0,0,0,.55), inset 0 1px 0 rgba(255,255,255,.04)",
+      },
+      backdropBlur: { "bento": "24px" },
+    }
+  }
+}
+</script>
 
 <style>
-/* ══════════════════════════════════════════════════════
-   SMITH × ARQUI9
-   Paleta: off-white, stone, charcoal, bronze polido
-   Inspiração: editorial de luxo + laboratório tecnológico
-══════════════════════════════════════════════════════ */
-:root {
-  /* Fundos — quase brancos e pedra */
-  --bg:       #F8F6F2;   /* off-white quente */
-  --bg2:      #F2EFE9;   /* pedra clara */
-  --bg-dark:  #0E0D0B;   /* charcoal profundo */
-  --bg-mid:   #1A1814;   /* charcoal médio */
-
-  /* Texto */
-  --ink:      #0E0D0B;   /* preto quase total */
-  --ink2:     #3A3832;   /* charcoal texto */
-  --ink3:     #7A7670;   /* stone médio */
-  --ink4:     #B0ACA5;   /* stone claro */
-
-  /* Bronze polido — acento SMITH */
-  --bronze:   #9B7B4A;   /* bronze principal */
-  --bronze2:  #C4A06A;   /* bronze claro / champagne */
-  --bronze3:  #6B5230;   /* bronze escuro / shadow */
-  --bronze-hi:#E8D4A8;   /* highlight metálico */
-
-  /* Linhas e bordas */
-  --line:     rgba(14,13,11,.1);
-  --line2:    rgba(14,13,11,.06);
-  --line-b:   rgba(155,123,74,.22);
-
-  /* Glass (dark sections) */
-  --glass:    rgba(255,255,255,.04);
-  --glass-b:  rgba(255,255,255,.08);
-
-  /* Fontes */
-  --serif:  'Cormorant Garamond', Georgia, serif;
-  --sans:   'Inter', system-ui, sans-serif;
-  --mono:   'JetBrains Mono', monospace;
-
-  /* Easing */
-  --ease:   cubic-bezier(.16,1,.3,1);
-  --ease2:  cubic-bezier(.4,0,.2,1);
-}
-
+/* ════════════════════════════════════════════════════════
+   GLOBAL + RESET
+════════════════════════════════════════════════════════ */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
 html {
-  background: var(--bg);
-  color: var(--ink);
-  font-family: var(--sans);
+  background: #000000;
+  color: #F5F5F7;
+  font-family: 'Inter', 'SF Pro Display', system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
   overflow-x: hidden;
-  scroll-behavior: smooth;
+  scroll-behavior: auto;
 }
 body { min-height: 100vh; overflow-x: hidden; }
-
 ::-webkit-scrollbar { width: 1px; }
-::-webkit-scrollbar-track { background: var(--bg); }
-::-webkit-scrollbar-thumb { background: var(--bronze); opacity: .3; }
-
-/* ── KEYFRAMES ─────────────────────────────────────── */
-@keyframes fadeUp {
-  from { opacity: 0; transform: translateY(28px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-@keyframes fadeIn {
-  from { opacity: 0; } to { opacity: 1; }
-}
-@keyframes bronzePulse {
-  0%,100% { box-shadow: 0 0 0 0 rgba(155,123,74,0); }
-  50%      { box-shadow: 0 0 0 4px rgba(155,123,74,.12); }
-}
-@keyframes bronzeGlow {
-  0%,100% {
-    text-shadow:
-      0 0 20px rgba(196,160,106,.12),
-      0 0 60px rgba(155,123,74,.06);
-  }
-  50% {
-    text-shadow:
-      0 0 35px rgba(196,160,106,.22),
-      0 0 90px rgba(155,123,74,.1),
-      0 0 180px rgba(155,123,74,.04);
-  }
-}
-@keyframes shimmer {
-  from { background-position: -300% center; }
-  to   { background-position:  300% center; }
-}
-@keyframes dotPulse {
-  0%,100% { opacity: .5; transform: scale(1); }
-  50%      { opacity: 1;  transform: scale(1.3); }
-}
-@keyframes scanLine {
-  from { top: -1px; }
-  to   { top: 101%; }
-}
-@keyframes logScroll {
-  from { transform: translateY(0); }
-  to   { transform: translateY(-50%); }
-}
-@keyframes borderFlow {
-  0%   { background-position: 0% 50%; }
-  50%  { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
-}
-@keyframes floatY {
-  0%,100% { transform: translateY(0); }
-  50%      { transform: translateY(-8px); }
+::-webkit-scrollbar-track { background: #000; }
+::-webkit-scrollbar-thumb { background: #1a1a1a; }
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
 }
 
-/* ── LAYOUT BASE ────────────────────────────────────── */
-.container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 clamp(24px, 5vw, 80px);
+/* ── THREE.JS CANVAS ──────────────────────────────── */
+#qc {
+  position: fixed; inset: 0; z-index: 0;
+  pointer-events: none; opacity: 0;
+  transition: opacity 2.5s ease;
 }
 
-/* ── DIVISORES ──────────────────────────────────────── */
-.rule {
-  height: 1px;
-  background: var(--line);
-}
-.rule-bronze {
-  height: 1px;
-  background: linear-gradient(90deg, transparent, var(--bronze) 30%, var(--bronze) 70%, transparent);
-  opacity: .35;
+/* ── CAMPO COGNITIVO ─────────────────────────────── */
+#hero-cv {
+  position: absolute; inset: 0; z-index: 2;
+  pointer-events: none; opacity: 0;
+  transition: opacity 2s ease .8s;
 }
 
-/* ── EYEBROW label ──────────────────────────────────── */
-.label {
-  font-family: var(--mono);
-  font-size: 10px;
-  font-weight: 400;
-  letter-spacing: .2em;
-  text-transform: uppercase;
-  color: var(--bronze);
-  opacity: .75;
+/* ── LOADER ──────────────────────────────────────── */
+#loader {
+  position: fixed; inset: 0; z-index: 9999;
+  background: #000;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  gap: 18px; pointer-events: none;
+}
+.ld-logo {
+  font-family: 'Syne', sans-serif;
+  font-size: clamp(3rem, 8vw, 5rem);
+  font-weight: 800;
+  letter-spacing: -0.045em;
+  background: linear-gradient(135deg,
+    #F0D060 0%, #D4AF37 28%, #8B6914 52%,
+    #D4AF37 68%, #F0D060 100%
+  );
+  background-size: 280% 280%;
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+  animation: titanSpin 4s ease-in-out infinite;
+  opacity: 0;
+}
+.ld-track {
+  width: clamp(140px, 22vw, 210px); height: 1px;
+  background: rgba(255,255,255,.06); border-radius: 1px; overflow: hidden;
+}
+.ld-fill {
+  height: 100%; width: 0;
+  background: linear-gradient(90deg, transparent, #D4AF37, rgba(212,175,55,.4));
+}
+.ld-pct {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px; font-weight: 400;
+  letter-spacing: .28em; color: #D4AF37; opacity: .65;
+}
+.ld-msg {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 7px; letter-spacing: .18em; text-transform: uppercase;
+  color: rgba(255,255,255,.22); margin-top: -12px;
 }
 
-/* ── GLASS CARD (dark sections) ─────────────────────── */
-.glass-card {
-  background: rgba(255,255,255,.03);
+/* ── BENTO GLASS PANELS ─────────────────────────── */
+.bento {
+  background: rgba(255,255,255,.02);
   backdrop-filter: blur(24px) saturate(140%);
   -webkit-backdrop-filter: blur(24px) saturate(140%);
-  border: 1px solid rgba(255,255,255,.07);
-  border-radius: 2px;
-  position: relative;
+  border: 1px solid rgba(255,255,255,.05);
+  border-radius: 24px;
+  box-shadow: 0 8px 32px rgba(0,0,0,.5), inset 0 1px 0 rgba(255,255,255,.05);
+  position: relative; overflow: hidden;
+  transition: all 500ms cubic-bezier(.4,0,.2,1);
 }
-.glass-card::before {
+.bento::before {
   content: '';
-  position: absolute;
-  top: 0; left: 0; right: 0; height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(196,160,106,.25), transparent);
+  position: absolute; top: 0; left: 0; right: 0; height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,.07) 30%, rgba(255,255,255,.07) 70%, transparent);
+}
+.bento:hover {
+  background: rgba(255,255,255,.04);
+  border-color: rgba(161,161,170,.3);
+  box-shadow: 0 12px 48px rgba(0,0,0,.65), inset 0 1px 0 rgba(255,255,255,.07), 0 0 0 1px rgba(161,161,170,.12);
+  transform: translateY(-1px);
+}
+/* bento com acento dourado */
+.bento-gold {
+  border-color: rgba(212,175,55,.18);
+}
+.bento-gold::before {
+  background: linear-gradient(90deg, transparent, rgba(212,175,55,.2) 30%, rgba(212,175,55,.2) 70%, transparent);
+}
+.bento-gold:hover {
+  border-color: rgba(212,175,55,.35);
+  box-shadow: 0 12px 48px rgba(0,0,0,.65), 0 0 24px rgba(212,175,55,.08), inset 0 1px 0 rgba(212,175,55,.08);
 }
 
-/* ── STONE CARD (light sections) ────────────────────── */
-.stone-card {
-  background: var(--bg2);
-  border: 1px solid var(--line);
-  border-radius: 2px;
-  position: relative;
-}
-.stone-card::before {
-  content: '';
-  position: absolute;
-  top: 0; left: 0; right: 0; height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(155,123,74,.3), transparent);
-}
-
-/* ══════════════════════════════════════════════════════
-   NAV
-══════════════════════════════════════════════════════ */
-nav {
-  position: fixed; top: 0; left: 0; right: 0;
-  z-index: 100;
-  height: 56px;
-  display: flex; align-items: center; justify-content: space-between;
-  padding: 0 clamp(24px, 5vw, 80px);
-  background: rgba(248,246,242,.92);
-  backdrop-filter: blur(20px);
-  border-bottom: 1px solid var(--line);
-  opacity: 0;
-  transition: opacity .6s var(--ease);
-}
-nav.visible { opacity: 1; }
-.nav-logo {
-  font-family: var(--serif);
-  font-size: 1.1rem;
-  font-weight: 500;
-  letter-spacing: .08em;
-  color: var(--ink);
-}
-.nav-status {
-  display: flex; align-items: center; gap: 7px;
-  font-family: var(--mono);
-  font-size: 9px;
-  letter-spacing: .16em;
-  color: var(--ink3);
-}
-.nav-dot {
-  width: 5px; height: 5px;
-  border-radius: 50%;
-  background: var(--bronze);
-  animation: dotPulse 2.8s ease-in-out infinite;
-}
-
-/* ══════════════════════════════════════════════════════
-   HERO — dark, editorial, espacial
-══════════════════════════════════════════════════════ */
+/* ── HERO ──────────────────────────────────────── */
 #hero {
   min-height: 100vh;
-  background: var(--bg-dark);
+  background:
+    radial-gradient(ellipse 58% 48% at 50% 50%, rgba(212,175,55,.055) 0%, rgba(212,175,55,.015) 42%, transparent 65%),
+    radial-gradient(ellipse 32% 55% at 88% 38%, rgba(255,255,255,.018) 0%, transparent 58%),
+    radial-gradient(ellipse 25% 45% at 10% 65%, rgba(212,175,55,.012) 0%, transparent 55%),
+    linear-gradient(180deg, rgba(18,18,18,.9) 0%, #000 20%, #000 80%, rgba(10,10,10,.95) 100%),
+    #000;
   display: flex; flex-direction: column;
   justify-content: flex-end;
-  padding-bottom: clamp(60px, 10vh, 100px);
-  position: relative;
-  overflow: hidden;
+  position: relative; overflow: hidden;
 }
-/* canvas partículas */
-#hero-cv {
-  position: absolute; inset: 0;
-  pointer-events: none; z-index: 0; opacity: .55;
-}
-/* scanline sutil */
-#hero::after {
+/* vinheta */
+#hero::before {
   content: '';
+  position: absolute; inset: 0; z-index: 1;
+  background: radial-gradient(ellipse 88% 88% at 50% 50%, transparent 28%, rgba(0,0,0,.6) 65%, rgba(0,0,0,.9) 100%);
+  pointer-events: none;
+}
+/* scanline */
+.hero-scan {
   position: absolute; left: 0; right: 0; height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(196,160,106,.15) 30%, rgba(196,160,106,.25) 50%, rgba(196,160,106,.15) 70%, transparent);
+  background: linear-gradient(90deg, transparent, rgba(212,175,55,.06) 20%, rgba(255,255,255,.18) 50%, rgba(212,175,55,.06) 80%, transparent);
   animation: scanLine 11s linear infinite;
-  pointer-events: none; z-index: 2; opacity: .6;
+  z-index: 3; pointer-events: none;
 }
-.hero-content {
-  position: relative; z-index: 3;
-  padding: 0 clamp(24px, 5vw, 80px);
+/* vol */
+.hero-vol {
+  position: absolute; border-radius: 50%;
+  pointer-events: none; z-index: 2;
 }
-/* linha topo hero */
-.hero-top {
+.hv1 {
+  width: clamp(500px, 72vw, 960px);
+  height: clamp(220px, 34vw, 480px);
+  background: radial-gradient(ellipse, rgba(212,175,55,.06) 0%, rgba(212,175,55,.02) 38%, transparent 65%);
+  filter: blur(3px);
+  animation: surfaceGlow 11s ease-in-out infinite;
+  top: 50%; left: 50%; transform: translate(-50%, -50%);
+}
+.hv2 {
+  width: clamp(700px, 96vw, 1400px);
+  height: clamp(340px, 52vw, 720px);
+  background: radial-gradient(ellipse, rgba(212,175,55,.025) 0%, transparent 65%);
+  filter: blur(50px);
+  animation: atmoDrift 22s ease-in-out infinite;
+  top: 50%; left: 50%; transform: translate(-50%, -50%);
+}
+
+/* strip topo */
+.hero-strip {
   position: absolute; top: 0; left: 0; right: 0;
+  height: 44px; z-index: 8;
   display: flex; align-items: center; justify-content: space-between;
-  padding: 20px clamp(24px, 5vw, 80px);
-  border-bottom: 1px solid rgba(255,255,255,.06);
-  z-index: 4;
+  padding: 0 clamp(24px, 5.5vw, 80px);
+  background: rgba(0,0,0,.88);
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid rgba(255,255,255,.04);
 }
-.hero-top-label {
-  font-family: var(--mono);
-  font-size: 9px; letter-spacing: .16em; text-transform: uppercase;
-  color: rgba(255,255,255,.32);
+.strip-item {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 8px; letter-spacing: .12em;
+  color: rgba(255,255,255,.25);
+  display: flex; align-items: center; gap: 7px;
 }
-/* SMITH — tipografia editorial com bronze */
-.smith-hero {
-  font-family: var(--serif);
-  font-size: clamp(5rem, 16vw, 14rem);
-  font-weight: 300;
-  line-height: .9;
-  letter-spacing: -.02em;
-  /* bronze polido metálico */
+.strip-dot {
+  width: 4px; height: 4px; border-radius: 50%;
+  background: #D4AF37;
+  animation: goldPulse 2.6s ease-in-out infinite;
+}
+.strip-val { color: rgba(212,175,55,.6); }
+
+/* SMITH — objeto de titanium escovado */
+.smith-wrap {
+  position: relative; display: inline-block;
+  transform-style: preserve-3d;
+}
+.smith-title {
+  font-family: 'Syne', sans-serif;
+  font-size: clamp(7rem, 22vw, 16rem);
+  font-weight: 800;
+  line-height: .88;
+  letter-spacing: -0.045em;
+  /* TITANIUM — 60% branco/prata, 3% champanhe */
   background: linear-gradient(
     135deg,
-    #E8D4A8 0%,
-    #C4A06A 20%,
-    #9B7B4A 42%,
-    #C4A06A 58%,
-    #E8D4A8 74%,
-    #C4A06A 88%,
-    #9B7B4A 100%
+    rgba(255,255,255,.88)   0%,
+    rgba(195,195,193,.9)   12%,
+    rgba(145,142,138,.84)  26%,
+    rgba(218,215,210,.88)  38%,
+    rgba(212,175,55,.7)    50%,  /* champanhe: 3% do espectro */
+    rgba(218,215,210,.88)  62%,
+    rgba(138,135,130,.8)   74%,
+    rgba(195,193,190,.84)  86%,
+    rgba(255,255,255,.82)  100%
   );
-  background-size: 300% 300%;
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  animation: shimmer 8s ease-in-out infinite, bronzeGlow 9s ease-in-out infinite;
+  background-size: 280% 280%;
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+  animation: titanSpin 7s ease-in-out infinite;
   will-change: filter;
+  filter:
+    drop-shadow(0 2px 0 rgba(100,95,90,.5))
+    drop-shadow(0 4px 4px rgba(0,0,0,.6))
+    drop-shadow(0 0 40px rgba(212,175,55,.12))
+    drop-shadow(0 0 90px rgba(212,175,55,.05));
+}
+/* light sweep — reflexo físico */
+.smith-title::before {
+  content: 'SMITH';
+  position: absolute; inset: 0;
+  background: linear-gradient(
+    108deg,
+    transparent 28%,
+    rgba(255,255,255,.18) 48%,
+    rgba(255,255,255,.28) 50%,
+    rgba(255,255,255,.18) 52%,
+    transparent 72%
+  );
+  background-size: 300% 100%;
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+  animation: titanSpin 5s ease-in-out infinite;
+  pointer-events: none; z-index: 2;
+}
+/* escovado — micro-linhas fisicas */
+.smith-title::after {
+  content: 'SMITH';
+  position: absolute; inset: 0;
+  background: repeating-linear-gradient(
+    88.5deg,
+    transparent          0px,
+    rgba(255,255,255,.02) 1px,
+    transparent          2px,
+    transparent          6px
+  );
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+  mix-blend-mode: overlay; opacity: .8;
+  pointer-events: none; z-index: 3;
+}
+/* glitch */
+@keyframes glitch {
+  0%,100%  { clip-path: none; transform: translateX(0); }
+  18%      { clip-path: inset(28% 0 44% 0); transform: translateX(-5px); }
+  19%      { clip-path: inset(8% 0 82% 0);  transform: translateX(5px); }
+  20%      { clip-path: none; transform: translateX(0); }
+  62%      { clip-path: inset(64% 0 18% 0); transform: translateX(3px); }
+  63%      { clip-path: none; transform: translateX(0); }
+}
+.smith-glitch { animation: glitch .18s steps(1) forwards, titanSpin 7s ease-in-out infinite !important; }
+
+/* hero body */
+.hero-body {
+  position: relative; z-index: 5;
+  padding: 0 clamp(24px, 5.5vw, 80px) clamp(60px, 10vh, 100px);
 }
 .hero-sub {
-  font-family: var(--mono);
-  font-size: clamp(.62rem, 1vw, .78rem);
-  letter-spacing: .32em; text-transform: uppercase;
-  color: rgba(255,255,255,.4);
-  margin-top: clamp(12px, 2vh, 20px);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: clamp(.6rem, 1.05vw, .72rem);
+  font-weight: 300; letter-spacing: .38em; text-transform: uppercase;
+  color: rgba(255,255,255,.35);
+  margin-top: clamp(10px, 1.6vh, 16px);
+  margin-bottom: clamp(18px, 2.8vh, 26px);
 }
-.hero-divider {
-  width: 48px; height: 1px;
-  background: var(--bronze);
-  opacity: .5;
-  margin: clamp(20px, 3vh, 32px) 0;
-}
+.hero-rule { width: 40px; height: 1px; background: rgba(212,175,55,.3); margin-bottom: clamp(14px, 2.2vh, 20px); }
 .hero-phrase {
-  font-family: var(--serif);
-  font-size: clamp(1rem, 2.2vw, 1.5rem);
-  font-weight: 300; font-style: italic;
-  color: rgba(255,255,255,.45);
-  line-height: 1.6;
-  max-width: 520px;
+  font-family: 'Syne', sans-serif;
+  font-size: clamp(.9rem, 1.9vw, 1.25rem);
+  font-weight: 300; line-height: 1.72;
+  color: rgba(255,255,255,.32); max-width: 460px;
 }
+.hero-phrase em { font-style: normal; color: rgba(255,255,255,.55); }
 .hero-status {
-  position: absolute;
-  bottom: clamp(60px, 10vh, 100px);
-  right: clamp(24px, 5vw, 80px);
-  display: flex; flex-direction: column; gap: 5px;
-  z-index: 3;
-}
-.hero-status-row {
-  display: flex; align-items: center; gap: 8px;
-  font-family: var(--mono);
-  font-size: 8px; letter-spacing: .12em;
-  color: rgba(255,255,255,.28);
-}
-.hero-status-row.live {
-  color: rgba(196,160,106,.65);
-}
-.hero-status-dot {
-  width: 4px; height: 4px; border-radius: 50%;
-  background: var(--bronze2);
-  animation: dotPulse 2.4s ease-in-out infinite;
-}
-/* telemetria top-right no hero */
-.hero-tel {
-  font-family: var(--mono);
-  font-size: 8px; letter-spacing: .1em;
-  color: rgba(255,255,255,.25);
-  text-align: right;
-}
-.hero-tel span { color: rgba(196,160,106,.6); }
-
-/* scroll indicator */
-.scroll-hint {
-  position: absolute; bottom: 24px; left: 50%;
-  transform: translateX(-50%);
-  display: flex; flex-direction: column; align-items: center; gap: 6px;
-  z-index: 4; opacity: 0;
-  animation: fadeIn .8s ease 3.5s forwards;
-}
-.scroll-line {
-  width: 1px; height: 28px;
-  background: linear-gradient(180deg, transparent, rgba(196,160,106,.4));
-}
-.scroll-label {
-  font-family: var(--mono);
-  font-size: 7px; letter-spacing: .2em;
-  color: rgba(255,255,255,.22); text-transform: uppercase;
-}
-
-/* ══════════════════════════════════════════════════════
-   S — O QUE É SMITH (fundo claro)
-══════════════════════════════════════════════════════ */
-#what {
-  background: var(--bg);
-  padding: clamp(80px, 14vh, 140px) 0;
-}
-.what-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: clamp(48px, 6vw, 96px);
-  align-items: start;
-}
-@media (max-width: 768px) { .what-grid { grid-template-columns: 1fr; } }
-.what-num {
-  font-family: var(--serif);
-  font-size: clamp(5rem, 10vw, 8rem);
-  font-weight: 300;
-  color: var(--bg2);
-  line-height: 1;
-  letter-spacing: -.04em;
-  user-select: none;
-  margin-bottom: 16px;
-}
-.what-h {
-  font-family: var(--serif);
-  font-size: clamp(1.8rem, 3.5vw, 2.8rem);
-  font-weight: 400;
-  line-height: 1.18;
-  letter-spacing: -.01em;
-  color: var(--ink);
-}
-.what-h em { font-style: italic; color: var(--bronze); }
-.what-body {
-  font-family: var(--sans);
-  font-size: clamp(.88rem, 1.5vw, 1rem);
-  line-height: 1.96;
-  color: var(--ink3);
-  margin-top: clamp(16px, 2.5vh, 24px);
-}
-.attr-list {
-  list-style: none;
-  display: flex; flex-direction: column; gap: 12px;
-  margin-top: clamp(24px, 3.5vh, 36px);
-}
-.attr-item {
-  display: flex; align-items: flex-start; gap: 12px;
-  font-family: var(--sans);
-  font-size: .9rem; line-height: 1.7;
-  color: var(--ink2);
-  padding-bottom: 12px;
-  border-bottom: 1px solid var(--line2);
-}
-.attr-item:last-child { border-bottom: none; }
-.attr-arrow { color: var(--bronze); opacity: .65; flex-shrink: 0; }
-.attr-item strong { color: var(--ink); font-weight: 500; }
-
-/* conceito */
-.concept-block {
-  margin-top: clamp(32px, 5vh, 52px);
-  padding: clamp(24px, 3.5vw, 40px);
-  background: var(--bg-dark);
-  border-radius: 2px;
-  position: relative; overflow: hidden;
-}
-.concept-block::before {
-  content: '';
-  position: absolute; top: 0; left: 0; right: 0; height: 1px;
-  background: linear-gradient(90deg, transparent, var(--bronze2), transparent);
-  opacity: .4;
-}
-.concept-label {
-  font-family: var(--mono);
-  font-size: 9px; letter-spacing: .2em; text-transform: uppercase;
-  color: var(--bronze2); opacity: .6;
-  margin-bottom: 16px;
-}
-.concept-lines {
+  position: absolute; right: clamp(24px, 5.5vw, 80px);
+  bottom: clamp(60px, 10vh, 100px); z-index: 5;
   display: flex; flex-direction: column; gap: 6px;
 }
-.concept-line {
-  font-family: var(--serif);
-  font-size: clamp(.95rem, 1.8vw, 1.2rem);
-  color: rgba(255,255,255,.6);
-  line-height: 1.5;
-}
-.concept-line.strong {
-  color: rgba(255,255,255,.88);
-  font-style: italic;
-}
-
-/* ══════════════════════════════════════════════════════
-   S — PIPELINE (fundo escuro)
-══════════════════════════════════════════════════════ */
-#pipeline {
-  background: var(--bg-mid);
-  padding: clamp(80px, 14vh, 140px) 0;
-}
-.pipeline-intro {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: clamp(48px, 6vw, 96px);
-  margin-bottom: clamp(48px, 7vh, 72px);
-}
-@media (max-width: 768px) { .pipeline-intro { grid-template-columns: 1fr; } }
-.pipeline-h {
-  font-family: var(--serif);
-  font-size: clamp(2rem, 4.5vw, 3.5rem);
-  font-weight: 300; line-height: 1.15;
-  color: rgba(255,255,255,.88);
-}
-.pipeline-h em { font-style: italic; color: var(--bronze2); }
-.pipeline-body {
-  font-size: clamp(.88rem, 1.4vw, .98rem);
-  line-height: 1.92; color: rgba(255,255,255,.42);
-  padding-top: 8px;
-}
-/* steps */
-.pipeline-steps {
-  display: flex; flex-direction: column;
-  border-top: 1px solid rgba(255,255,255,.06);
-}
-.pipeline-step {
-  display: flex; align-items: center; gap: 20px;
-  padding: clamp(14px, 2vh, 20px) 0;
-  border-bottom: 1px solid rgba(255,255,255,.05);
-  opacity: .22;
-  transition: opacity .7s var(--ease), background .5s ease, padding-left .5s var(--ease);
-  border-radius: 2px;
-  cursor: default;
-}
-.pipeline-step.active {
-  opacity: 1;
-  background: rgba(155,123,74,.06);
-  padding-left: 12px;
-}
-.pipeline-step-n {
-  font-family: var(--mono);
-  font-size: 8px; letter-spacing: .14em;
-  color: var(--bronze2); opacity: .5;
-  flex-shrink: 0; min-width: 20px;
-}
-.pipeline-step-dot {
-  width: 8px; height: 8px; border-radius: 50%;
-  border: 1px solid rgba(196,160,106,.25);
-  flex-shrink: 0;
-  transition: all .6s var(--ease);
-}
-.pipeline-step.active .pipeline-step-dot {
-  background: var(--bronze2);
-  border-color: var(--bronze2);
-  box-shadow: 0 0 10px rgba(196,160,106,.55), 0 0 24px rgba(155,123,74,.25);
-}
-.pipeline-step-content { flex: 1; }
-.pipeline-step-name {
-  font-family: var(--mono);
-  font-size: 10px; font-weight: 500;
-  letter-spacing: .12em; text-transform: uppercase;
-  color: rgba(255,255,255,.8);
-  margin-bottom: 3px;
-}
-.pipeline-step-log {
-  font-family: var(--mono);
-  font-size: 9px; color: rgba(255,255,255,.3);
-  letter-spacing: .04em;
-}
-.pipeline-step.active .pipeline-step-log {
-  color: var(--bronze2); opacity: .8;
-}
-.pipeline-step-st {
-  font-family: var(--mono);
-  font-size: 8px; letter-spacing: .1em; text-transform: uppercase;
-  color: var(--bronze2); opacity: 0;
-  transition: opacity .4s ease;
-}
-.pipeline-step.active .pipeline-step-st { opacity: .6; }
-
-/* ══════════════════════════════════════════════════════
-   S — PERFORMANCE (fundo claro, editorial)
-══════════════════════════════════════════════════════ */
-#perf {
-  background: var(--bg);
-  padding: clamp(80px, 14vh, 140px) 0;
-}
-.perf-header {
-  display: grid;
-  grid-template-columns: 1.2fr 1fr;
-  gap: clamp(48px, 6vw, 96px);
-  align-items: end;
-  margin-bottom: clamp(48px, 7vh, 72px);
-}
-@media (max-width: 768px) { .perf-header { grid-template-columns: 1fr; } }
-.perf-h {
-  font-family: var(--serif);
-  font-size: clamp(2rem, 4vw, 3.2rem);
-  font-weight: 400; line-height: 1.18;
-  color: var(--ink);
-}
-.perf-h em { font-style: italic; color: var(--bronze); }
-.perf-desc {
-  font-size: clamp(.86rem, 1.4vw, .96rem);
-  line-height: 1.92; color: var(--ink3);
-}
-
-/* big number cards */
-.perf-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 1px;
-  border: 1px solid var(--line);
-  border-radius: 2px;
-  overflow: hidden;
-  margin-bottom: clamp(32px, 5vh, 52px);
-}
-@media (max-width: 860px) { .perf-grid { grid-template-columns: repeat(2, 1fr); } }
-@media (max-width: 480px) { .perf-grid { grid-template-columns: 1fr; } }
-.perf-card {
-  padding: clamp(24px, 3vw, 36px);
-  background: var(--bg);
-  position: relative; overflow: hidden;
-}
-.perf-card::after {
-  content: '';
-  position: absolute; top: 0; left: 0; right: 0; height: 2px;
-  background: linear-gradient(90deg, transparent, var(--bronze), transparent);
-  opacity: 0;
-  transition: opacity .4s ease;
-}
-.perf-card:hover::after { opacity: .4; }
-.perf-card-label {
-  font-family: var(--mono);
-  font-size: 8px; letter-spacing: .18em; text-transform: uppercase;
-  color: var(--ink4); margin-bottom: 12px;
-}
-.perf-card-val {
-  font-family: var(--serif);
-  font-size: clamp(2.2rem, 5vw, 3.8rem);
-  font-weight: 300; line-height: 1;
-  letter-spacing: -.03em;
-  color: var(--ink);
-}
-.perf-card-val .accent {
-  background: linear-gradient(135deg, var(--bronze-hi), var(--bronze2), var(--bronze));
-  -webkit-background-clip: text; background-clip: text; color: transparent;
-}
-.perf-card-sub {
-  font-family: var(--mono);
-  font-size: 8px; letter-spacing: .1em; text-transform: uppercase;
-  color: var(--ink4); margin-top: 8px;
-}
-
-/* barras */
-.perf-bars {
-  display: grid;
-  grid-template-columns: 1.5fr 1fr;
-  gap: clamp(20px, 3vw, 36px);
-}
-@media (max-width: 768px) { .perf-bars { grid-template-columns: 1fr; } }
-.perf-bar-card {
-  padding: clamp(20px, 2.5vw, 32px);
-  background: var(--bg);
-  border: 1px solid var(--line);
-  border-radius: 2px;
-}
-.perf-bar-title {
-  font-family: var(--mono);
-  font-size: 9px; letter-spacing: .16em; text-transform: uppercase;
-  color: var(--ink3); margin-bottom: clamp(16px, 2.5vh, 24px);
-}
-.perf-bar-item { margin-bottom: clamp(16px, 2.5vh, 22px); }
-.perf-bar-item:last-child { margin-bottom: 0; }
-.perf-bar-row {
-  display: flex; justify-content: space-between;
-  align-items: baseline; margin-bottom: 8px;
-}
-.perf-bar-name {
-  font-family: var(--sans);
-  font-size: clamp(.88rem, 1.4vw, 1rem);
-  font-weight: 500; color: var(--ink);
-}
-.perf-bar-pct {
-  font-family: var(--serif);
-  font-size: clamp(1.1rem, 2vw, 1.5rem);
-  font-weight: 300; color: var(--bronze);
-}
-.perf-bar-track {
-  height: 2px; background: var(--line); border-radius: 1px; overflow: visible;
-}
-.perf-bar-fill {
-  height: 100%; border-radius: 1px;
-  background: linear-gradient(90deg, var(--bronze3), var(--bronze2), var(--bronze-hi));
-  width: 0; transition: width 1.6s var(--ease);
-  position: relative;
-  box-shadow: 0 0 6px rgba(196,160,106,.4);
-}
-.perf-bar-fill::after {
-  content: '';
-  position: absolute; right: -1px; top: -3px;
-  width: 8px; height: 8px; border-radius: 50%;
-  background: var(--bronze2);
-  box-shadow: 0 0 8px rgba(196,160,106,.6);
-}
-
-/* gestão */
-.perf-mgmt {
-  padding: clamp(20px, 2.5vw, 32px);
-  background: var(--bg2);
-  border: 1px solid var(--line);
-  border-radius: 2px;
-  display: flex; flex-direction: column; gap: 12px;
-}
-.perf-mgmt-title {
-  font-family: var(--mono);
-  font-size: 9px; letter-spacing: .16em; text-transform: uppercase;
-  color: var(--ink3); margin-bottom: 4px;
-}
-.mgmt-row {
-  display: flex; justify-content: space-between; align-items: center;
-  padding: 10px 0; border-bottom: 1px solid var(--line2);
-}
-.mgmt-row:last-child { border-bottom: none; }
-.mgmt-k { font-family: var(--mono); font-size: 9px; letter-spacing: .1em; color: var(--ink3); }
-.mgmt-v { font-family: var(--serif); font-size: 1.1rem; font-weight: 300; color: var(--ink); }
-
-/* disclaimer */
-.perf-disc {
-  margin-top: clamp(20px, 3vh, 32px);
-  font-family: var(--mono);
-  font-size: 8px; letter-spacing: .07em;
-  color: var(--ink4); opacity: .7;
-  text-align: center; line-height: 1.8;
-}
-
-/* ══════════════════════════════════════════════════════
-   S — SIMULADOR (fundo escuro — painel institucional)
-══════════════════════════════════════════════════════ */
-#sim {
-  background: var(--bg-dark);
-  padding: clamp(80px, 14vh, 140px) 0;
-}
-.sim-header {
-  margin-bottom: clamp(40px, 6vh, 60px);
-}
-.sim-h {
-  font-family: var(--serif);
-  font-size: clamp(2rem, 4vw, 3rem);
-  font-weight: 300; color: rgba(255,255,255,.85);
-  margin-top: 12px;
-}
-.sim-h em { font-style: italic; color: var(--bronze2); }
-.sim-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: clamp(24px, 3.5vw, 48px);
-  align-items: start;
-}
-@media (max-width: 768px) { .sim-grid { grid-template-columns: 1fr; } }
-
-/* sliders */
-.sim-controls {
-  display: flex; flex-direction: column; gap: 20px;
-}
-.sim-field { display: flex; flex-direction: column; gap: 8px; }
-.sim-lbl {
-  font-family: var(--mono);
-  font-size: 8px; letter-spacing: .16em; text-transform: uppercase;
-  color: rgba(255,255,255,.32);
-}
-.sim-row { display: flex; align-items: center; gap: 14px; }
-.sim-slider {
-  -webkit-appearance: none; appearance: none;
-  flex: 1; height: 1px;
-  background: rgba(255,255,255,.1);
-  border-radius: 1px; outline: none; cursor: pointer;
-}
-.sim-slider::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  width: 14px; height: 14px; border-radius: 50%;
-  background: var(--bg-dark);
-  border: 1.5px solid var(--bronze2);
-  box-shadow: 0 0 10px rgba(196,160,106,.4);
-  cursor: pointer;
-}
-.sim-slider::-moz-range-thumb {
-  width: 14px; height: 14px; border-radius: 50%;
-  background: var(--bg-dark);
-  border: 1.5px solid var(--bronze2);
-  cursor: pointer;
-}
-.sim-val {
-  font-family: var(--serif);
-  font-size: 1.1rem; font-weight: 300;
-  color: var(--bronze2); min-width: 64px; text-align: right;
-}
-.sim-intro {
-  font-size: clamp(.86rem, 1.3vw, .94rem);
-  line-height: 1.88; color: rgba(255,255,255,.38);
-  margin-bottom: 24px;
-}
-
-/* resultados */
-.sim-results { display: flex; flex-direction: column; gap: 10px; }
-.sim-res-card {
-  padding: clamp(16px, 2vw, 22px);
-  border: 1px solid rgba(255,255,255,.06);
-  border-radius: 2px;
-  background: rgba(255,255,255,.025);
-  position: relative;
-}
-.sim-res-card::before {
-  content: '';
-  position: absolute; top: 0; left: 0; right: 0; height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(196,160,106,.2), transparent);
-}
-.sim-res-l {
-  font-family: var(--mono);
-  font-size: 8px; letter-spacing: .16em; text-transform: uppercase;
-  color: rgba(255,255,255,.28); margin-bottom: 6px;
-}
-.sim-res-v {
-  font-family: var(--serif);
-  font-size: clamp(1.5rem, 3vw, 2.2rem);
-  font-weight: 300; color: rgba(255,255,255,.88);
-}
-.sim-res-v.profit {
-  background: linear-gradient(135deg, var(--bronze-hi), var(--bronze2));
-  -webkit-background-clip: text; background-clip: text; color: transparent;
-}
-.sim-res-s {
-  font-family: var(--mono);
-  font-size: 8px; letter-spacing: .08em;
-  color: rgba(255,255,255,.22); text-transform: uppercase; margin-top: 4px;
-}
-.sim-chart-wrap {
-  padding: clamp(14px, 1.8vw, 20px);
-  border: 1px solid rgba(255,255,255,.06);
-  border-radius: 2px;
-  background: rgba(255,255,255,.018);
-}
-.sim-chart-label {
-  font-family: var(--mono);
-  font-size: 8px; letter-spacing: .14em; text-transform: uppercase;
-  color: rgba(255,255,255,.24); margin-bottom: 10px;
-}
-#cv-sim { width: 100%; height: 120px; display: block; }
-.sim-disc {
-  font-family: var(--mono);
-  font-size: 8px; letter-spacing: .07em;
-  color: rgba(255,255,255,.18);
-  text-align: center; margin-top: 20px; line-height: 1.8;
-}
-
-/* ══════════════════════════════════════════════════════
-   S — INFRAESTRUTURA
-══════════════════════════════════════════════════════ */
-#infra {
-  background: var(--bg);
-  padding: clamp(80px, 14vh, 140px) 0;
-}
-.infra-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: clamp(48px, 6vw, 96px);
-  align-items: center;
-}
-@media (max-width: 768px) { .infra-grid { grid-template-columns: 1fr; } }
-.infra-h {
-  font-family: var(--serif);
-  font-size: clamp(1.8rem, 3.5vw, 2.8rem);
-  font-weight: 400; line-height: 1.2;
-  color: var(--ink); margin-top: 12px;
-}
-.infra-h em { font-style: italic; color: var(--bronze); }
-.infra-body {
-  font-size: clamp(.86rem, 1.4vw, .96rem);
-  line-height: 1.9; color: var(--ink3);
-  margin-top: clamp(16px, 2.5vh, 24px);
-}
-.infra-layers { margin-top: clamp(24px, 3.5vh, 36px); }
-.infra-layer {
-  display: flex; align-items: center; gap: 12px;
-  padding: clamp(10px, 1.5vh, 14px) 0;
-  border-bottom: 1px solid var(--line2);
-  transition: background .3s ease, padding-left .3s ease;
-}
-.infra-layer:hover { background: var(--bg2); padding-left: 8px; }
-.infra-layer:last-child { border-bottom: none; }
-.infra-dot {
-  width: 5px; height: 5px; border-radius: 50%;
-  background: var(--bronze); flex-shrink: 0;
-  box-shadow: 0 0 6px rgba(155,123,74,.5);
-  animation: dotPulse 3s ease-in-out infinite;
-}
-.infra-dot.idle { background: var(--ink4); box-shadow: none; animation: none; }
-.infra-name {
-  font-family: var(--mono);
-  font-size: 10px; font-weight: 500;
-  letter-spacing: .1em; text-transform: uppercase;
-  color: var(--ink2); flex: 1;
-}
-.infra-st {
-  font-family: var(--mono);
+@media (max-width: 640px) { .hero-status { display: none; } }
+.hst {
+  font-family: 'JetBrains Mono', monospace;
   font-size: 8px; letter-spacing: .1em;
-  color: var(--bronze); text-transform: uppercase;
+  color: rgba(255,255,255,.2);
+  display: flex; align-items: center; gap: 7px;
 }
-.infra-st.idle { color: var(--ink4); }
-.infra-specs {
-  margin-top: clamp(20px, 3vh, 30px);
+.hst.live { color: rgba(212,175,55,.55); }
+.hst-dot { width: 4px; height: 4px; border-radius: 50%; background: #D4AF37; animation: goldPulse 2.6s ease-in-out infinite; }
+.hero-scroll {
+  position: absolute; bottom: 22px; left: 50%; transform: translateX(-50%);
+  display: flex; flex-direction: column; align-items: center; gap: 5px;
+  z-index: 5; opacity: 0;
 }
-.infra-spec {
-  display: flex; justify-content: space-between;
-  padding: 9px 0; border-bottom: 1px solid var(--line2);
+.hs-l { width: 1px; height: 26px; background: linear-gradient(180deg, transparent, rgba(212,175,55,.28)); }
+.hs-t { font-family: 'JetBrains Mono', monospace; font-size: 7px; letter-spacing: .2em; text-transform: uppercase; color: rgba(255,255,255,.18); }
+
+/* ── PIPELINE STEPS ───────────────────────────── */
+.p-step {
+  display: flex; align-items: center; gap: 16px;
+  padding: clamp(11px, 1.7vh, 16px) clamp(8px, 1.2vw, 14px);
+  border-bottom: 1px solid rgba(255,255,255,.04);
+  opacity: .18; border-radius: 12px;
+  transition: opacity .7s cubic-bezier(.16,1,.3,1),
+              background .5s ease,
+              padding-left .5s cubic-bezier(.16,1,.3,1);
 }
-.infra-spec:last-child { border-bottom: none; }
-.infra-spec-k { font-family: var(--mono); font-size: 9px; letter-spacing: .1em; color: var(--ink3); }
-.infra-spec-v { font-family: var(--mono); font-size: 9px; letter-spacing: .08em; color: var(--ink); font-weight: 500; }
-/* orb abstrato */
-.infra-orb-wrap {
-  display: flex; align-items: center; justify-content: center;
-  padding: clamp(40px, 6vw, 80px);
-}
-.infra-orb-ring {
-  width: clamp(200px, 28vw, 280px);
-  height: clamp(200px, 28vw, 280px);
-  border-radius: 50%;
-  border: 1px solid var(--line);
-  display: flex; align-items: center; justify-content: center;
+.p-step:last-child { border-bottom: none; }
+.p-step.active { opacity: 1; background: rgba(212,175,55,.03); padding-left: clamp(14px, 2vw, 22px); }
+.p-step-n { font-family: 'JetBrains Mono', monospace; font-size: 7px; letter-spacing: .16em; color: rgba(212,175,55,.38); flex-shrink: 0; min-width: 20px; }
+.p-dot { width: 8px; height: 8px; border-radius: 50%; border: 1px solid rgba(212,175,55,.2); flex-shrink: 0; transition: all .6s cubic-bezier(.16,1,.3,1); }
+.p-step.active .p-dot { background: radial-gradient(circle at 36% 34%, rgba(255,255,255,.5) 0%, #D4AF37 60%); border-color: #D4AF37; animation: goldPulse 2.2s ease-in-out infinite; }
+.p-name { font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 500; letter-spacing: .1em; text-transform: uppercase; color: rgba(255,255,255,.7); margin-bottom: 3px; }
+.p-log  { font-family: 'JetBrains Mono', monospace; font-size: 8px; letter-spacing: .04em; color: rgba(255,255,255,.22); }
+.p-step.active .p-log { color: rgba(212,175,55,.7); }
+.p-st   { font-family: 'JetBrains Mono', monospace; font-size: 8px; letter-spacing: .1em; text-transform: uppercase; color: rgba(212,175,55,.5); opacity: 0; transition: opacity .4s ease; }
+.p-step.active .p-st { opacity: 1; }
+.p-line { width: 1px; height: clamp(8px, 1.3vh, 13px); background: linear-gradient(180deg, rgba(212,175,55,.04), rgba(212,175,55,.18), rgba(212,175,55,.04)); margin-left: clamp(34px, 5vw, 52px); }
+
+/* ── BARRA DE ALVOS (Design System Spec §4) ─────── */
+.target-bar-wrap { background: rgba(255,255,255,.04); border-radius: 6px; height: 6px; overflow: visible; position: relative; }
+.target-bar-fill {
+  height: 100%; border-radius: 6px; width: 0;
+  background: #A1A1AA; /* prata fosco — travada */
+  transition: width 1.7s cubic-bezier(.16,1,.3,1);
   position: relative;
-  animation: floatY 7s ease-in-out infinite;
 }
-.infra-orb-ring::before {
-  content: '';
-  position: absolute; inset: -12px; border-radius: 50%;
-  border: 1px solid rgba(155,123,74,.12);
+.target-bar-fill.triggered {
+  background: linear-gradient(90deg, #8B6914, #D4AF37, #F0D060); /* ilumina com ouro */
+  box-shadow: 0 0 10px rgba(212,175,55,.45), 0 0 24px rgba(212,175,55,.18);
 }
-.infra-orb-ring::after {
-  content: '';
-  position: absolute; inset: -24px; border-radius: 50%;
-  border: 1px solid rgba(155,123,74,.06);
+.target-bar-fill::after {
+  content: ''; position: absolute; right: -1px; top: -4px;
+  width: 14px; height: 14px; border-radius: 50%;
+  background: #A1A1AA;
+  box-shadow: 0 0 8px rgba(161,161,170,.4);
+  transition: all .5s ease;
 }
-.infra-orb-core {
-  width: clamp(80px, 11vw, 110px);
-  height: clamp(80px, 11vw, 110px);
-  border-radius: 50%;
-  background: radial-gradient(circle at 38% 34%,
-    rgba(232,212,168,.06) 0%,
-    rgba(196,160,106,.08) 35%,
-    rgba(155,123,74,.04) 65%,
-    rgba(14,13,11,.98) 100%
-  );
-  border: 1px solid rgba(196,160,106,.2);
-  display: flex; align-items: center; justify-content: center;
-}
-.infra-orb-label {
-  font-family: var(--mono);
-  font-size: 8px; letter-spacing: .14em; text-transform: uppercase;
-  color: rgba(196,160,106,.5);
+.target-bar-fill.triggered::after {
+  background: #D4AF37;
+  box-shadow: 0 0 12px rgba(212,175,55,.7), 0 0 28px rgba(212,175,55,.3);
 }
 
-/* ══════════════════════════════════════════════════════
-   S — DIFERENCIAL
-══════════════════════════════════════════════════════ */
-#diff {
-  background: var(--bg2);
-  padding: clamp(80px, 14vh, 140px) 0;
-}
-.diff-h {
-  font-family: var(--serif);
-  font-size: clamp(2rem, 4vw, 3.2rem);
-  font-weight: 400; line-height: 1.18;
-  color: var(--ink); margin-top: 12px;
-  max-width: 640px;
-}
-.diff-h em { font-style: italic; color: var(--bronze); }
-.diff-sub {
-  font-size: clamp(.86rem, 1.4vw, .96rem);
-  line-height: 1.9; color: var(--ink3);
-  margin-top: 12px; max-width: 480px;
-  margin-bottom: clamp(40px, 6vh, 60px);
-}
-.diff-cols {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1px;
-  border: 1px solid var(--line);
-  border-radius: 2px; overflow: hidden;
-}
-@media (max-width: 640px) { .diff-cols { grid-template-columns: 1fr; } }
-.diff-col {
-  padding: clamp(24px, 3vw, 40px);
-  background: var(--bg);
-}
-.diff-col.smith-col { background: var(--ink); }
-.diff-col-label {
-  font-family: var(--mono);
-  font-size: 9px; letter-spacing: .18em; text-transform: uppercase;
-  display: flex; align-items: center; gap: 8px;
-  margin-bottom: clamp(16px, 2.5vh, 24px);
-}
-.diff-col-label.gray { color: var(--ink3); }
-.diff-col-label.gold { color: var(--bronze2); }
-.diff-col-dot { width: 5px; height: 5px; border-radius: 50%; background: currentColor; }
-.diff-row {
-  display: flex; align-items: flex-start; gap: 10px;
-  font-size: clamp(.84rem, 1.3vw, .92rem);
-  line-height: 1.7;
-  padding: 8px 0; border-bottom: 1px solid var(--line2);
-  color: var(--ink2);
-}
-.diff-row:last-child { border-bottom: none; }
-.diff-col.smith-col .diff-row { border-color: rgba(255,255,255,.06); color: rgba(255,255,255,.6); }
-.diff-row.s { color: rgba(255,255,255,.82); }
-.diff-sym { flex-shrink: 0; opacity: .45; margin-top: 2px; }
-.diff-sym.g { color: var(--bronze2); opacity: .75; }
+/* ── SLIDER PREMIUM ──────────────────────────── */
+.sim-slider { -webkit-appearance: none; appearance: none; flex: 1; height: 1px; background: rgba(255,255,255,.08); border-radius: 1px; outline: none; cursor: pointer; }
+.sim-slider::-webkit-slider-thumb { -webkit-appearance: none; width: 14px; height: 14px; border-radius: 50%; background: #000; border: 1.5px solid #D4AF37; box-shadow: 0 0 10px rgba(212,175,55,.4); cursor: pointer; }
+.sim-slider::-moz-range-thumb { width: 14px; height: 14px; border-radius: 50%; background: #000; border: 1.5px solid #D4AF37; cursor: pointer; }
 
-/* ══════════════════════════════════════════════════════
-   S — CONDIÇÃO EXCLUSIVA
-══════════════════════════════════════════════════════ */
-#access {
-  background: var(--bg-dark);
-  padding: clamp(80px, 14vh, 140px) 0;
-}
-.access-h {
-  font-family: var(--serif);
-  font-size: clamp(2rem, 4vw, 3rem);
-  font-weight: 300; color: rgba(255,255,255,.85);
-  margin-top: 12px;
-}
-.access-sub {
-  font-size: clamp(.86rem, 1.4vw, .96rem);
-  line-height: 1.9; color: rgba(255,255,255,.35);
-  margin-top: 12px; max-width: 520px;
-  margin-bottom: clamp(40px, 6vh, 60px);
-}
-.access-cards {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: clamp(16px, 2.5vw, 28px);
-  max-width: 760px;
-  margin-bottom: clamp(32px, 5vh, 48px);
-}
-@media (max-width: 600px) { .access-cards { grid-template-columns: 1fr; } }
-.access-card {
-  padding: clamp(28px, 4vw, 44px);
-  border: 1px solid rgba(255,255,255,.07);
-  border-radius: 2px;
-  position: relative;
-  background: rgba(255,255,255,.02);
-}
-.access-card.featured {
-  border-color: rgba(196,160,106,.25);
-  background: rgba(155,123,74,.04);
-}
-.access-card.featured::before {
-  content: '';
-  position: absolute; top: 0; left: 0; right: 0; height: 1px;
-  background: linear-gradient(90deg, transparent, var(--bronze2), transparent);
-  opacity: .5;
-}
-.access-card-label {
-  font-family: var(--mono);
-  font-size: 8px; letter-spacing: .2em; text-transform: uppercase;
-  color: rgba(255,255,255,.28); margin-bottom: 16px;
-}
-.access-card-price {
-  font-family: var(--serif);
-  font-size: clamp(2.4rem, 6vw, 4rem);
-  font-weight: 300; line-height: 1;
-  color: rgba(255,255,255,.18);
-  text-decoration: line-through;
-  text-decoration-color: rgba(255,255,255,.06);
-}
-.access-card-price.featured-price {
-  background: linear-gradient(135deg, var(--bronze-hi), var(--bronze2), var(--bronze));
-  -webkit-background-clip: text; background-clip: text; color: transparent;
-  text-decoration: none;
-}
-.access-card-ps {
-  font-family: var(--mono);
-  font-size: 9px; letter-spacing: .1em; text-transform: uppercase;
-  color: rgba(255,255,255,.22); margin-top: 8px;
-}
-.access-card-inc {
-  margin-top: clamp(16px, 2.5vh, 24px);
-  display: flex; flex-direction: column; gap: 8px;
-}
-.access-inc-row {
-  display: flex; align-items: center; gap: 8px;
-  font-size: 12px; color: rgba(255,255,255,.45);
-}
-.access-inc-row::before { content: '—'; color: var(--bronze2); opacity: .55; }
-.access-badge {
-  display: inline-flex; align-items: center; gap: 8px;
-  padding: 7px 16px;
-  border: 1px solid rgba(196,160,106,.18);
-  border-radius: 1px;
-  background: rgba(155,123,74,.04);
-}
-.access-badge-dot {
-  width: 4px; height: 4px; border-radius: 50%;
-  background: var(--bronze2);
-  animation: dotPulse 3s ease-in-out infinite;
-  box-shadow: 0 0 5px rgba(196,160,106,.5);
-}
-.access-badge-txt {
-  font-family: var(--mono);
-  font-size: 8px; letter-spacing: .14em; text-transform: uppercase;
-  color: rgba(196,160,106,.55);
-}
+/* ── ORB 3D NÚCLEO ───────────────────────────── */
+.orb-outer { border-radius: 50%; border: 1px solid rgba(255,255,255,.04); display: flex; align-items: center; justify-content: center; position: relative; animation: orbFloat 8s ease-in-out infinite; }
+.orb-outer::before { content: ''; position: absolute; inset: -14px; border-radius: 50%; border: 1px solid rgba(212,175,55,.06); }
+.orb-outer::after  { content: ''; position: absolute; inset: -28px; border-radius: 50%; border: 1px solid rgba(212,175,55,.03); }
+.orb-inner { border-radius: 50%; background: radial-gradient(circle at 38% 34%, rgba(255,255,255,.07) 0%, rgba(212,175,55,.1) 30%, rgba(70,55,20,.12) 60%, rgba(0,0,0,.98) 100%); border: 1px solid rgba(212,175,55,.14); display: flex; align-items: center; justify-content: center; animation: surfaceGlow 6.5s ease-in-out infinite; box-shadow: 0 0 30px rgba(212,175,55,.05), 0 0 70px rgba(212,175,55,.02); }
 
-/* ══════════════════════════════════════════════════════
-   S — FECHAMENTO (fundo escuro, editorial)
-══════════════════════════════════════════════════════ */
-#closing {
-  background: var(--bg-dark);
-  padding: clamp(100px, 18vh, 180px) 0 clamp(60px, 10vh, 100px);
-  text-align: center;
-}
-.closing-smith {
-  font-family: var(--serif);
-  font-size: clamp(5rem, 16vw, 13rem);
-  font-weight: 300; line-height: .88;
-  letter-spacing: -.02em;
-  background: linear-gradient(
-    135deg,
-    #E8D4A8 0%,
-    #C4A06A 20%,
-    #9B7B4A 42%,
-    #C4A06A 58%,
-    #E8D4A8 74%,
-    #C4A06A 88%,
-    #9B7B4A 100%
-  );
-  background-size: 300% 300%;
-  -webkit-background-clip: text; background-clip: text; color: transparent;
-  animation: shimmer 10s ease-in-out infinite;
-}
-.closing-ofi {
-  font-family: var(--mono);
-  font-size: clamp(.6rem, 1vw, .74rem);
-  letter-spacing: .32em; text-transform: uppercase;
-  color: rgba(255,255,255,.28); margin-top: 16px;
-}
-.closing-rule {
-  width: 40px; height: 1px;
-  background: var(--bronze); opacity: .4;
-  margin: clamp(24px, 4vh, 40px) auto;
-}
-.closing-lines {
-  display: flex; flex-direction: column; gap: 6px;
-  margin-bottom: clamp(28px, 4vh, 40px);
-}
-.closing-line {
-  font-family: var(--serif);
-  font-size: clamp(.95rem, 1.8vw, 1.2rem);
-  font-style: italic; font-weight: 300;
-  color: rgba(255,255,255,.4);
-}
-.closing-acc {
-  font-family: var(--mono);
-  font-size: clamp(.6rem, 1.1vw, .76rem);
-  letter-spacing: .22em; text-transform: uppercase;
-  color: var(--bronze2);
-  text-shadow: 0 0 16px rgba(196,160,106,.35);
-}
-footer {
-  margin-top: clamp(56px, 9vh, 96px);
-  padding-top: clamp(24px, 4vh, 40px);
-  border-top: 1px solid rgba(255,255,255,.05);
-  display: flex; flex-direction: column; align-items: center; gap: 10px;
-}
-.footer-sig {
-  font-family: var(--mono);
-  font-size: 8px; letter-spacing: .26em; text-transform: uppercase;
-  color: rgba(255,255,255,.15); text-align: center; line-height: 2;
-}
-.footer-hash {
-  font-family: var(--mono);
-  font-size: 7px; letter-spacing: .1em;
-  color: rgba(255,255,255,.08); text-transform: uppercase;
-}
-.footer-live {
-  display: flex; align-items: center; gap: 6px;
-  font-family: var(--mono);
-  font-size: 7px; letter-spacing: .12em;
-  color: rgba(255,255,255,.12); text-transform: uppercase;
-}
-.footer-dot {
-  width: 3px; height: 3px; border-radius: 50%;
-  background: var(--bronze); opacity: .3;
-  animation: dotPulse 6s ease-in-out infinite;
-}
+/* ── REVEAL CLASSES ──────────────────────────── */
+.rv { opacity: 0; transform: translateY(28px); filter: blur(3px); transition: opacity .9s cubic-bezier(.16,1,.3,1), transform .9s cubic-bezier(.16,1,.3,1), filter .9s cubic-bezier(.16,1,.3,1); }
+.rv.vis { opacity: 1; transform: translateY(0); filter: blur(0); }
+.rv.d1 { transition-delay: .12s; } .rv.d2 { transition-delay: .22s; } .rv.d3 { transition-delay: .34s; } .rv.d4 { transition-delay: .46s; }
 
-/* ── REVEAL ANIMAÇÕES ───────────────────────────────── */
-.reveal {
-  opacity: 0; transform: translateY(24px);
-  transition: opacity .9s var(--ease), transform .9s var(--ease);
-}
-.reveal.visible {
-  opacity: 1; transform: translateY(0);
-}
-.reveal-delay-1 { transition-delay: .1s; }
-.reveal-delay-2 { transition-delay: .2s; }
-.reveal-delay-3 { transition-delay: .32s; }
-.reveal-delay-4 { transition-delay: .44s; }
+/* ── ORB RINGS 3D ─────────────────────────────── */
+@keyframes ring1 { from { transform: rotateX(68deg) rotateZ(0deg); }   to { transform: rotateX(68deg) rotateZ(360deg); }  }
+@keyframes ring2 { from { transform: rotateY(68deg) rotateZ(20deg); }  to { transform: rotateY(68deg) rotateZ(-340deg); } }
+@keyframes ring3 { from { transform: rotateX(20deg) rotateZ(55deg); }  to { transform: rotateX(20deg) rotateZ(415deg); }  }
+.ring { position: absolute; inset: 0; border-radius: 50%; transform-style: preserve-3d; animation-play-state: paused; }
+.ring.r1 { animation: ring1 14s linear infinite; border: 1px solid rgba(212,175,55,.28); box-shadow: 0 0 12px rgba(212,175,55,.05); }
+.ring.r2 { inset: 18px; transform: rotateY(68deg) rotateZ(20deg); animation: ring2 20s linear infinite; border: 1px solid rgba(255,255,255,.045); }
+.ring.r3 { inset: 36px; transform: rotateX(20deg) rotateZ(55deg); animation: ring3 28s linear infinite; border: 1px solid rgba(212,175,55,.1); }
+.ring.go { animation-play-state: running; }
+
+/* ── LOG TERMINAL ────────────────────────────── */
+.log-track { animation: logScroll 48s linear infinite; animation-play-state: paused; }
+.log-track.run { animation-play-state: running; }
+.log-line .log-msg { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: rgba(255,255,255,.35); letter-spacing: .02em; }
+.log-line.ok .log-msg  { color: rgba(255,255,255,.75); }
+.log-line.gd .log-msg  { color: #D4AF37; }
+.log-line.inf .log-msg { color: rgba(255,255,255,.55); }
+@keyframes logOk { 0%,100% { opacity: .08; } 50% { opacity: .82; } }
+@keyframes logGd { 0%,100% { opacity: .12; } 50% { opacity: 1; text-shadow: 0 0 10px rgba(212,175,55,.5); } }
+.log-line.ok .log-msg  { animation: logOk 4.2s ease-in-out infinite; }
+.log-line.gd .log-msg  { animation: logGd 3.8s ease-in-out infinite; }
 </style>
 </head>
 <body>
 
-<!-- NAV -->
-<nav id="nav">
-  <span class="nav-logo">SMITH</span>
-  <div class="nav-status">
-    <div class="nav-dot"></div>
-    STATUS: ONLINE
-  </div>
-</nav>
+<!-- THREE.JS QUANTUM SMOKE -->
+<canvas id="qc" aria-hidden="true"></canvas>
 
-<!-- ══ HERO ══════════════════════════════════════════ -->
-<section id="hero">
-  <canvas id="hero-cv" aria-hidden="true"></canvas>
-  <!-- topo editorial -->
-  <div class="hero-top">
-    <span class="hero-top-label">Dom Investitore · Inteligência Operacional</span>
-    <div class="hero-tel">
-      XAUUSD <span id="dxau">——</span> &nbsp;·&nbsp; NASDAQ <span id="dnas">——</span>
-    </div>
-  </div>
-  <!-- conteúdo principal -->
-  <div class="hero-content">
-    <p class="label reveal">Consciência Operacional Financeira · MT5</p>
-    <h1 class="smith-hero reveal reveal-delay-1">SMITH</h1>
-    <p class="hero-sub reveal reveal-delay-2">Operational Financial Intelligence</p>
-    <div class="hero-divider reveal reveal-delay-3"></div>
-    <p class="hero-phrase reveal reveal-delay-4">
-      A inteligência nasce da metodologia.<br/>
-      A execução pertence à máquina.
-    </p>
-  </div>
-  <!-- status lateral -->
-  <div class="hero-status">
-    <div class="hero-status-row live">
-      <div class="hero-status-dot"></div>
-      STATUS: ONLINE
-    </div>
-    <div class="hero-status-row">UPTIME 99.97%</div>
-    <div class="hero-status-row">LATENCY 0.3ms</div>
-    <div class="hero-status-row">MT5 CONNECTED</div>
-    <div class="hero-status-row">ENV SOVEREIGN</div>
-  </div>
-  <!-- scroll -->
-  <div class="scroll-hint">
-    <div class="scroll-line"></div>
-    <span class="scroll-label">Scroll</span>
-  </div>
-</section>
+<!-- LOADER -->
+<div id="loader">
+  <div class="ld-logo" id="ld-logo">SMITH</div>
+  <div class="ld-track"><div class="ld-fill" id="ld-fill"></div></div>
+  <span class="ld-pct" id="ld-pct">0%</span>
+  <span class="ld-msg" id="ld-msg">Inicializando consciência operacional</span>
+</div>
 
-<!-- ══ O QUE É SMITH ══════════════════════════════════ -->
-<section id="what">
-  <div class="container">
-    <div class="rule" style="margin-bottom:clamp(52px,8vh,84px)"></div>
-    <p class="label reveal">O que é SMITH · Definição Operacional</p>
-    <div class="what-grid" style="margin-top:clamp(24px,4vh,40px)">
-      <div>
-        <div class="what-num reveal">01</div>
-        <h2 class="what-h reveal">
-          Um agente cognitivo<br/>de negociação.<br/><em>Não um robô.</em>
-        </h2>
-        <p class="what-body reveal">
-          SMITH é executado como Expert Advisor no MT5. Não opera por impulso, não replica indicadores atrasados, não depende de sinais genéricos.<br/><br/>
-          Sua lógica nasce da modelagem explícita da <strong>metodologia Dom Investitore</strong> — aplicada à leitura de mercado, execução técnica, memória operacional e avaliação estatística contínua.
-        </p>
-      </div>
-      <div>
-        <ul class="attr-list">
-          <li class="attr-item reveal reveal-delay-1">
-            <span class="attr-arrow">→</span>
-            <span><strong>Memória Operacional</strong> · registra e aprende com cada ciclo</span>
-          </li>
-          <li class="attr-item reveal reveal-delay-2">
-            <span class="attr-arrow">→</span>
-            <span><strong>Autoavaliação Estatística</strong> · audita a própria performance</span>
-          </li>
-          <li class="attr-item reveal reveal-delay-3">
-            <span class="attr-arrow">→</span>
-            <span><strong>Gestão Autónoma</strong> · breakeven + trailing sem intervenção</span>
-          </li>
-          <li class="attr-item reveal reveal-delay-4">
-            <span class="attr-arrow">→</span>
-            <span><strong>Execução Disciplinada</strong> · zero desvio dos parâmetros definidos</span>
-          </li>
-        </ul>
-        <div class="concept-block reveal" style="margin-top:clamp(24px,3.5vh,36px)">
-          <p class="concept-label">Conceito Central</p>
-          <div class="concept-lines">
-            <p class="concept-line">O mercado não recompensa emoção.</p>
-            <p class="concept-line">Recompensa repetição correta.</p>
-            <p class="concept-line strong">Ele observa. Filtra. Valida.</p>
-            <p class="concept-line strong">Executa. Gerencia. Permanece.</p>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
+<!-- React Root -->
+<div id="root" style="position:relative;z-index:1;min-height:100vh;"></div>
 
-<!-- ══ PIPELINE ════════════════════════════════════════ -->
-<section id="pipeline">
-  <div class="container">
-    <div class="rule-bronze" style="margin-bottom:clamp(52px,8vh,84px)"></div>
-    <p class="label reveal" style="color:rgba(196,160,106,.6)">Motor de Decisão · Pipeline Cognitivo</p>
-    <div class="pipeline-intro" style="margin-top:clamp(20px,3vh,32px)">
-      <h2 class="pipeline-h reveal">
-        SMITH não<br/><em>reage ao mercado.</em>
-      </h2>
-      <p class="pipeline-body reveal">
-        SMITH filtra ruído, identifica contexto, valida probabilidade e executa apenas quando a metodologia Dom Investitore encontra assimetria operacional. Cada operação percorre sete etapas cognitivas antes da execução.
-      </p>
-    </div>
-    <div class="pipeline-steps" id="pipeline-steps">
-      <div class="pipeline-step" data-step="0">
-        <span class="pipeline-step-n">01</span>
-        <div class="pipeline-step-dot"></div>
-        <div class="pipeline-step-content">
-          <div class="pipeline-step-name">Leitura de Mercado</div>
-          <div class="pipeline-step-log">[MARKET_SCAN] Liquidez monitorada · Sessão ativa</div>
-        </div>
-        <span class="pipeline-step-st">ATIVO</span>
-      </div>
-      <div class="pipeline-step" data-step="1">
-        <span class="pipeline-step-n">02</span>
-        <div class="pipeline-step-dot"></div>
-        <div class="pipeline-step-content">
-          <div class="pipeline-step-name">Validação de Liquidez</div>
-          <div class="pipeline-step-log">[LIQUIDITY_LAYER] Profundidade verificada</div>
-        </div>
-        <span class="pipeline-step-st">ATIVO</span>
-      </div>
-      <div class="pipeline-step" data-step="2">
-        <span class="pipeline-step-n">03</span>
-        <div class="pipeline-step-dot"></div>
-        <div class="pipeline-step-content">
-          <div class="pipeline-step-name">Probabilidade Operacional</div>
-          <div class="pipeline-step-log">[PROBABILITY_LAYER] Assimetria identificada · 87.4%</div>
-        </div>
-        <span class="pipeline-step-st">ATIVO</span>
-      </div>
-      <div class="pipeline-step" data-step="3">
-        <span class="pipeline-step-n">04</span>
-        <div class="pipeline-step-dot"></div>
-        <div class="pipeline-step-content">
-          <div class="pipeline-step-name">Contexto Institucional</div>
-          <div class="pipeline-step-log">[CONTEXT_ENGINE] Sessão Londres/NY validada</div>
-        </div>
-        <span class="pipeline-step-st">ATIVO</span>
-      </div>
-      <div class="pipeline-step" data-step="4">
-        <span class="pipeline-step-n">05</span>
-        <div class="pipeline-step-dot"></div>
-        <div class="pipeline-step-content">
-          <div class="pipeline-step-name">Execução</div>
-          <div class="pipeline-step-log">[EXECUTION_ENGINE] Ordem autorizada · MT5</div>
-        </div>
-        <span class="pipeline-step-st">ATIVO</span>
-      </div>
-      <div class="pipeline-step" data-step="5">
-        <span class="pipeline-step-n">06</span>
-        <div class="pipeline-step-dot"></div>
-        <div class="pipeline-step-content">
-          <div class="pipeline-step-name">Gestão de Risco</div>
-          <div class="pipeline-step-log">[RISK_PROTOCOL] Breakeven 2º alvo · Trailing</div>
-        </div>
-        <span class="pipeline-step-st">ATIVO</span>
-      </div>
-      <div class="pipeline-step" data-step="6">
-        <span class="pipeline-step-n">07</span>
-        <div class="pipeline-step-dot"></div>
-        <div class="pipeline-step-content">
-          <div class="pipeline-step-name">Memória Operacional</div>
-          <div class="pipeline-step-log">[MEMORY_LAYER] Ciclo registrado · Parâmetros atualizados</div>
-        </div>
-        <span class="pipeline-step-st">ATIVO</span>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ══ PERFORMANCE ══════════════════════════════════════ -->
-<section id="perf">
-  <div class="container">
-    <div class="rule" style="margin-bottom:clamp(52px,8vh,84px)"></div>
-    <div class="perf-header">
-      <div>
-        <p class="label reveal">Performance Operacional · Dados Históricos</p>
-        <h2 class="perf-h reveal" style="margin-top:12px">
-          A disciplina como<br/><em>vantagem operacional.</em>
-        </h2>
-      </div>
-      <p class="perf-desc reveal">
-        A força da SMITH está na repetição disciplinada de cenários validados. Não se trata de prever o mercado. Trata-se de executar com precisão quando liquidez, contexto e probabilidade se alinham à metodologia Dom Investitore.
-      </p>
-    </div>
-    <!-- métricas grandes -->
-    <div class="perf-grid reveal">
-      <div class="perf-card">
-        <p class="perf-card-label">Assertividade Média</p>
-        <div class="perf-card-val"><span class="accent" id="cnt-a">0</span><span class="accent">%</span></div>
-        <p class="perf-card-sub">Taxa histórica de acerto</p>
-      </div>
-      <div class="perf-card">
-        <p class="perf-card-label">Alvos por Operação</p>
-        <div class="perf-card-val"><span id="cnt-t">0</span></div>
-        <p class="perf-card-sub">Média em vencedoras</p>
-      </div>
-      <div class="perf-card">
-        <p class="perf-card-label">Gestão Automática</p>
-        <div class="perf-card-val" style="font-size:clamp(1.4rem,3vw,2.2rem)"><span style="color:var(--ink3)">BE 2º</span></div>
-        <p class="perf-card-sub">Breakeven no 2º alvo</p>
-      </div>
-      <div class="perf-card">
-        <p class="perf-card-label">Mercados</p>
-        <div class="perf-card-val" style="font-size:clamp(1.1rem,2.2vw,1.8rem)">XAU<span style="color:var(--ink4);font-size:.55em"> / </span>NAS</div>
-        <p class="perf-card-sub">XAUUSD · NASDAQ · MT5</p>
-      </div>
-    </div>
-    <!-- barras -->
-    <div class="perf-bars">
-      <div class="perf-bar-card reveal">
-        <p class="perf-bar-title">Assertividade por Instrumento</p>
-        <div class="perf-bar-item">
-          <div class="perf-bar-row">
-            <span class="perf-bar-name">XAUUSD · Ouro</span>
-            <span class="perf-bar-pct">78%</span>
-          </div>
-          <div class="perf-bar-track"><div class="perf-bar-fill" id="bar-g" style="--tw:78%"></div></div>
-          <div style="margin-top:6px;font-family:var(--mono);font-size:8px;color:var(--ink4);letter-spacing:.07em">M1 · Alta Liquidez · Sessão Londres/NY</div>
-        </div>
-        <div class="perf-bar-item">
-          <div class="perf-bar-row">
-            <span class="perf-bar-name">NASDAQ 100</span>
-            <span class="perf-bar-pct">74%</span>
-          </div>
-          <div class="perf-bar-track"><div class="perf-bar-fill" id="bar-n" style="--tw:74%"></div></div>
-          <div style="margin-top:6px;font-family:var(--mono);font-size:8px;color:var(--ink4);letter-spacing:.07em">M1 · Sessão Americana</div>
-        </div>
-      </div>
-      <div class="perf-mgmt reveal reveal-delay-2">
-        <p class="perf-mgmt-title">Parâmetros de Gestão</p>
-        <div class="mgmt-row"><span class="mgmt-k">Risco / Operação</span><span class="mgmt-v">1.0%</span></div>
-        <div class="mgmt-row"><span class="mgmt-k">RR Médio</span><span class="mgmt-v">1 : 3</span></div>
-        <div class="mgmt-row"><span class="mgmt-k">Breakeven</span><span class="mgmt-v">2º Alvo</span></div>
-        <div class="mgmt-row"><span class="mgmt-k">Trailing</span><span class="mgmt-v">3º Alvo+</span></div>
-        <div class="mgmt-row"><span class="mgmt-k">Ambiente</span><span class="mgmt-v">MT5 EA</span></div>
-      </div>
-    </div>
-    <p class="perf-disc reveal">Dados baseados em parâmetros históricos e gestão operacional. Resultados futuros dependem de mercado, execução e gerenciamento de risco.</p>
-  </div>
-</section>
-
-<!-- ══ SIMULADOR ════════════════════════════════════════ -->
-<section id="sim">
-  <div class="container">
-    <div class="rule-bronze" style="margin-bottom:clamp(52px,8vh,84px)"></div>
-    <div class="sim-header">
-      <p class="label reveal" style="color:rgba(196,160,106,.6)">Simulador Operacional · Projeção de Capital</p>
-      <h2 class="sim-h reveal">
-        Projete seu potencial<br/><em>operacional com SMITH.</em>
-      </h2>
-    </div>
-    <div class="sim-grid">
-      <div class="sim-controls reveal">
-        <p class="sim-intro">Ajuste os parâmetros com base no seu perfil. O modelo aplica a gestão de risco e assertividade histórica da SMITH na projeção mês a mês.</p>
-        <div class="sim-field">
-          <label class="sim-lbl" for="sl-cap">Capital Inicial (€)</label>
-          <div class="sim-row">
-            <input type="range" class="sim-slider" id="sl-cap" min="200" max="50000" step="200" value="2000" oninput="simRun()"/>
-            <span class="sim-val" id="v-cap">2.000€</span>
-          </div>
-        </div>
-        <div class="sim-field">
-          <label class="sim-lbl" for="sl-ops">Operações por Semana</label>
-          <div class="sim-row">
-            <input type="range" class="sim-slider" id="sl-ops" min="2" max="20" step="1" value="8" oninput="simRun()"/>
-            <span class="sim-val" id="v-ops">8 / sem</span>
-          </div>
-        </div>
-        <div class="sim-field">
-          <label class="sim-lbl" for="sl-ass">Assertividade (%)</label>
-          <div class="sim-row">
-            <input type="range" class="sim-slider" id="sl-ass" min="55" max="85" step="1" value="76" oninput="simRun()"/>
-            <span class="sim-val" id="v-ass">76%</span>
-          </div>
-        </div>
-        <div class="sim-field">
-          <label class="sim-lbl" for="sl-rk">Risco por Operação (%)</label>
-          <div class="sim-row">
-            <input type="range" class="sim-slider" id="sl-rk" min="0.5" max="3" step="0.25" value="1" oninput="simRun()"/>
-            <span class="sim-val" id="v-rk">1.0%</span>
-          </div>
-        </div>
-        <div class="sim-field">
-          <label class="sim-lbl" for="sl-mo">Horizonte (meses)</label>
-          <div class="sim-row">
-            <input type="range" class="sim-slider" id="sl-mo" min="1" max="24" step="1" value="6" oninput="simRun()"/>
-            <span class="sim-val" id="v-mo">6 meses</span>
-          </div>
-        </div>
-      </div>
-      <div class="sim-results reveal reveal-delay-2">
-        <div class="sim-res-card">
-          <p class="sim-res-l">Capital Projetado</p>
-          <p class="sim-res-v profit" id="r-cap">—</p>
-          <p class="sim-res-s">ao final do período</p>
-        </div>
-        <div class="sim-res-card">
-          <p class="sim-res-l">Lucro Estimado</p>
-          <p class="sim-res-v" id="r-luc">—</p>
-          <p class="sim-res-s">sobre capital inicial</p>
-        </div>
-        <div class="sim-res-card">
-          <p class="sim-res-l">Multiplicador</p>
-          <p class="sim-res-v" id="r-mult">—</p>
-          <p class="sim-res-s">fator de crescimento</p>
-        </div>
-        <div class="sim-chart-wrap">
-          <p class="sim-chart-label">Evolução Mês a Mês</p>
-          <canvas id="cv-sim" aria-label="Gráfico evolução de capital"></canvas>
-        </div>
-      </div>
-    </div>
-    <p class="sim-disc">Projeção baseada em parâmetros históricos e gestão operacional SMITH. Resultados futuros dependem de condições de mercado, execução e gerenciamento individual de risco. Não constitui promessa de rendimento.</p>
-  </div>
-</section>
-
-<!-- ══ INFRAESTRUTURA ════════════════════════════════════ -->
-<section id="infra">
-  <div class="container">
-    <div class="rule" style="margin-bottom:clamp(52px,8vh,84px)"></div>
-    <div class="infra-grid">
-      <div>
-        <p class="label reveal">Infraestrutura · M5 Ultra Apple</p>
-        <h2 class="infra-h reveal">
-          Um núcleo que<br/><em>nunca para.</em>
-        </h2>
-        <p class="infra-body reveal">SMITH opera em ambiente dedicado de processamento local de alta performance. Arquitetura M5 Ultra Apple. Execução contínua, baixa latência, processamento cognitivo soberano. Integrado ao MT5.</p>
-        <div class="infra-layers reveal">
-          <div class="infra-layer"><div class="infra-dot"></div><span class="infra-name">Operational Core</span><span class="infra-st">ACTIVE</span></div>
-          <div class="infra-layer"><div class="infra-dot idle"></div><span class="infra-name">Memory Layer</span><span class="infra-st idle">RECORDING</span></div>
-          <div class="infra-layer"><div class="infra-dot"></div><span class="infra-name">Execution Engine</span><span class="infra-st">STANDBY</span></div>
-          <div class="infra-layer"><div class="infra-dot idle"></div><span class="infra-name">Risk Protocol</span><span class="infra-st idle">MONITORING</span></div>
-          <div class="infra-layer"><div class="infra-dot"></div><span class="infra-name">MT5 Bridge</span><span class="infra-st">CONNECTED</span></div>
-          <div class="infra-layer"><div class="infra-dot"></div><span class="infra-name">M5 Ultra Apple</span><span class="infra-st">SOVEREIGN</span></div>
-        </div>
-        <div class="infra-specs reveal reveal-delay-2">
-          <div class="infra-spec"><span class="infra-spec-k">Processador</span><span class="infra-spec-v">M5 Ultra Apple</span></div>
-          <div class="infra-spec"><span class="infra-spec-k">Execução</span><span class="infra-spec-v">Local · Soberana</span></div>
-          <div class="infra-spec"><span class="infra-spec-k">Latência</span><span class="infra-spec-v">0.3ms</span></div>
-          <div class="infra-spec"><span class="infra-spec-k">Uptime</span><span class="infra-spec-v">99.97%</span></div>
-          <div class="infra-spec"><span class="infra-spec-k">Ambiente</span><span class="infra-spec-v">MT5 Expert Advisor</span></div>
-        </div>
-      </div>
-      <div class="infra-orb-wrap reveal">
-        <div class="infra-orb-ring">
-          <div class="infra-orb-core">
-            <span class="infra-orb-label">CORE</span>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ══ DIFERENCIAL ════════════════════════════════════════ -->
-<section id="diff">
-  <div class="container">
-    <div class="rule" style="margin-bottom:clamp(52px,8vh,84px)"></div>
-    <p class="label reveal">Diferencial · SMITH vs Automação Comum</p>
-    <h2 class="diff-h reveal">Não é automação.<br/><em>É inteligência operacional.</em></h2>
-    <p class="diff-sub reveal">A diferença não está na velocidade de execução. Está na qualidade do julgamento por trás de cada operação.</p>
-    <div class="diff-cols reveal">
-      <div class="diff-col">
-        <div class="diff-col-label gray"><div class="diff-col-dot"></div>Robôs Comuns</div>
-        <div class="diff-row"><span class="diff-sym">×</span>Executam regras fixas sem contexto</div>
-        <div class="diff-row"><span class="diff-sym">×</span>Dependem de indicadores atrasados</div>
-        <div class="diff-row"><span class="diff-sym">×</span>Sem memória operacional entre ciclos</div>
-        <div class="diff-row"><span class="diff-sym">×</span>Não adaptam parâmetros ao histórico</div>
-        <div class="diff-row"><span class="diff-sym">×</span>Quebram em mudanças de regime</div>
-        <div class="diff-row"><span class="diff-sym">×</span>Gestão de risco estática</div>
-      </div>
-      <div class="diff-col smith-col">
-        <div class="diff-col-label gold"><div class="diff-col-dot"></div>SMITH · Dom Investitore</div>
-        <div class="diff-row s"><span class="diff-sym g">→</span>Metodologia modelada com contexto real</div>
-        <div class="diff-row s"><span class="diff-sym g">→</span>Leitura operacional contínua e contextualizada</div>
-        <div class="diff-row s"><span class="diff-sym g">→</span>Memória ativa em todos os ciclos</div>
-        <div class="diff-row s"><span class="diff-sym g">→</span>Calibração autónoma dentro dos parâmetros</div>
-        <div class="diff-row s"><span class="diff-sym g">→</span>Disciplina independente de condições emocionais</div>
-        <div class="diff-row s"><span class="diff-sym g">→</span>Breakeven + Trailing dinâmicos e automáticos</div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ══ CONDIÇÃO EXCLUSIVA ══════════════════════════════════ -->
-<section id="access">
-  <div class="container">
-    <div class="rule-bronze" style="margin-bottom:clamp(52px,8vh,84px)"></div>
-    <p class="label reveal" style="color:rgba(196,160,106,.6)">Acesso Interno · Mentorados Dom Investitore</p>
-    <h2 class="access-h reveal">Licença operacional exclusiva.</h2>
-    <p class="access-sub reveal">SMITH não é vendido ao público. O acesso é reservado para mentorados com vínculo ativo Dom Investitore. Condição interna — não replicada externamente.</p>
-    <div class="access-cards">
-      <div class="access-card reveal">
-        <p class="access-card-label">Valor de Revenda</p>
-        <p class="access-card-price">€500</p>
-        <p class="access-card-ps">Licença pública de mercado</p>
-        <p style="font-size:12px;color:rgba(255,255,255,.25);margin-top:12px;line-height:1.6">Valor de referência institucional. Não disponível externamente.</p>
-      </div>
-      <div class="access-card featured reveal reveal-delay-2">
-        <p class="access-card-label">Condição Reservada · Mentorado</p>
-        <p class="access-card-price featured-price">€250</p>
-        <p class="access-card-ps">Licença operacional · Acesso anual</p>
-        <div class="access-card-inc">
-          <div class="access-inc-row">Expert Advisor SMITH MT5 licenciado</div>
-          <div class="access-inc-row">Suporte de configuração e ativação</div>
-          <div class="access-inc-row">Atualizações do motor cognitivo</div>
-          <div class="access-inc-row">Acesso ao grupo fechado operacional</div>
-        </div>
-      </div>
-    </div>
-    <div class="access-badge reveal">
-      <div class="access-badge-dot"></div>
-      <span class="access-badge-txt">Grupo Fechado · Mentorados Dom Investitore Apenas</span>
-    </div>
-  </div>
-</section>
-
-<!-- ══ FECHAMENTO ══════════════════════════════════════════ -->
-<section id="closing">
-  <div class="container">
-    <div class="rule-bronze" style="margin-bottom:0"></div>
-    <div style="padding-top:clamp(80px,14vh,140px);text-align:center">
-      <h2 class="closing-smith reveal">SMITH</h2>
-      <p class="closing-ofi reveal">Operational Financial Intelligence</p>
-      <div class="closing-rule reveal"></div>
-      <div class="closing-lines reveal">
-        <p class="closing-line">A inteligência nasce da metodologia.</p>
-        <p class="closing-line">A execução pertence à máquina.</p>
-        <p class="closing-line">O acesso pertence aos mentorados.</p>
-      </div>
-      <p class="closing-acc reveal">ACESSO FECHADO AOS MENTORADOS DOM INVESTITORE</p>
-    </div>
-    <footer>
-      <p class="footer-sig">Dom Investitore — Creating the Next Generation<br/>of Operational Financial Intelligence</p>
-      <p class="footer-hash">SMITH v2.0 · Dom Investitore © 2026</p>
-      <div class="footer-live">
-        <div class="footer-dot"></div>
-        Smith · Operational · Monitoring Active
-      </div>
-    </footer>
-  </div>
-</section>
-
-<!-- ══════════════════════════════════════════════════════
-     JAVASCRIPT
-══════════════════════════════════════════════════════ -->
+<!-- ══════════════════════════════════════════════════
+     THREE.JS — QUANTUM SMOKE
+     Titanium escuro com 3% champanhe
+══════════════════════════════════════════════════ -->
 <script>
-/* ── PARTÍCULAS HERO ──────────────────────────────── */
 (function(){
-  const cv = document.getElementById('hero-cv');
-  if(!cv) return;
-  const ctx = cv.getContext('2d');
-  let W, H, parts = [];
+  if(typeof THREE==='undefined')return;
+  const cv=document.getElementById('qc');
+  const rdr=new THREE.WebGLRenderer({canvas:cv,alpha:true,antialias:false,powerPreference:'low-power'});
+  rdr.setPixelRatio(Math.min(devicePixelRatio,1.5));
+  rdr.setClearColor(0,0);
+  const scene=new THREE.Scene(), cam=new THREE.OrthographicCamera(-1,1,1,-1,0,1);
+  const frag=`
+    precision mediump float;
+    uniform float uT; uniform vec2 uR; uniform float uI;
+    vec2 h(vec2 p){p=vec2(dot(p,vec2(127.1,311.7)),dot(p,vec2(269.5,183.3)));return-1.+2.*fract(sin(p)*43758.5);}
+    float g(vec2 p){vec2 i=floor(p),f=fract(p),u=f*f*(3.-2.*f);return mix(mix(dot(h(i),f),dot(h(i+vec2(1,0)),f-vec2(1,0)),u.x),mix(dot(h(i+vec2(0,1)),f-vec2(0,1)),dot(h(i+vec2(1)),f-vec2(1)),u.x),u.y);}
+    float fbm(vec2 p){float v=0.,a=.5;mat2 r=mat2(cos(.5),sin(.5),-sin(.5),cos(.5));for(int i=0;i<6;i++){v+=a*g(p);p=r*p*2.1+vec2(.3,.2)*uT*.028;a*=.48;}return v;}
+    void main(){
+      vec2 uv=(gl_FragCoord.xy/uR)*2.-1.;uv.x*=uR.x/uR.y;
+      float t=uT*.035;
+      vec2 q=vec2(fbm(uv+t),fbm(uv+vec2(5.2,1.3)+t));
+      vec2 r=vec2(fbm(uv+3.8*q+vec2(1.7,9.2)+t*.72),fbm(uv+3.8*q+vec2(8.3,2.8)+t*.72));
+      vec2 s=vec2(fbm(uv+2.4*r+vec2(3.1,4.6)+t*.5),fbm(uv+2.4*r+vec2(6.4,1.2)+t*.5));
+      float f=fbm(uv+2.8*s);float sm=(f*.5+.5);
+      /* 97% titanium + 3% champanhe */
+      vec3 ti=vec3(.11,.11,.1);
+      vec3 ch=vec3(.83,.69,.22);
+      float cp=abs(sin(uT*.018));
+      vec3 col=mix(vec3(.022,.02,.016),mix(ti*.06,ch*.04,cp*.08),sm*sm*uI);
+      float v=1.-dot(uv*.5,uv*.5);v=pow(max(0.,v),1.65);col*=v;
+      gl_FragColor=vec4(col,sm*sm*.11*uI*v);
+    }`;
+  const mat=new THREE.ShaderMaterial({
+    vertexShader:'void main(){gl_Position=vec4(position,1.);}',
+    fragmentShader:frag,
+    uniforms:{uT:{value:0},uR:{value:new THREE.Vector2()},uI:{value:0}},
+    transparent:true,depthWrite:false
+  });
+  scene.add(new THREE.Mesh(new THREE.PlaneGeometry(2,2),mat));
+  let tgt=0,cur=0;
+  function rs(){const W=innerWidth,H=innerHeight;rdr.setSize(W,H);mat.uniforms.uR.value.set(W,H);}
+  rs();
+  window._qi=v=>{tgt=Math.max(0,Math.min(3,v));};
+  (function loop(t){requestAnimationFrame(loop);mat.uniforms.uT.value=t*.001;cur+=(tgt-cur)*.012;mat.uniforms.uI.value=cur;rdr.render(scene,cam);})(0);
+  addEventListener('resize',rs,{passive:true});
+})();
+</script>
 
-  function resize(){ W=cv.width=innerWidth; H=cv.height=innerHeight; }
-  resize();
-
-  function mkP(){
-    return {
-      x: Math.random()*W, y: Math.random()*H,
-      r: Math.random()*.8+.15,
-      vx: (Math.random()-.5)*.12, vy: (Math.random()-.5)*.1,
-      alpha: Math.random()*.18+.04,
-      life: Math.random()*260, maxLife: 200+Math.random()*300,
-      rgb: Math.random()>.6 ? '196,160,106' : '232,212,168'
-    };
+<!-- ══════════════════════════════════════════════════
+     CAMPO COGNITIVO — vetores direcionais
+══════════════════════════════════════════════════ -->
+<script>
+window._startCogField=function(){
+  const cv=document.getElementById('hero-cv');
+  if(!cv)return;
+  const ctx=cv.getContext('2d');
+  let W,H,t=0,vecs=[],nodes=[];
+  function rs(){W=cv.width=innerWidth;H=cv.height=innerHeight;}
+  rs();
+  function mkV(){
+    const a=Math.random()*Math.PI*2,sp=.14+Math.random()*.24,z=Math.random();
+    return{x:Math.random()*W,y:Math.random()*H,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp,z,
+      r:.22+z*.85,alpha:.07+z*.3,life:Math.random()*240,maxLife:180+Math.random()*300,
+      trail:[],trailMax:Math.floor(5+z*12),hi:Math.random()>.65};
   }
-  for(let i=0;i<50;i++){ const p=mkP(); p.life=Math.random()*p.maxLife; parts.push(p); }
-
+  function mkN(){return{x:W*(.12+Math.random()*.76),y:H*(.18+Math.random()*.64),r:18+Math.random()*52,str:.00025+Math.random()*.00045,phase:Math.random()*Math.PI*2,z:.3+Math.random()*.7};}
+  function init(){rs();vecs=Array.from({length:36},mkV);nodes=Array.from({length:6},mkN);}
   function draw(){
-    ctx.clearRect(0,0,W,H);
-    parts.forEach(p=>{
-      p.life++; if(p.life>p.maxLife){ Object.assign(p,mkP()); p.life=0; }
-      p.x+=p.vx; p.y+=p.vy;
-      if(p.x<0||p.x>W) p.vx*=-1;
-      if(p.y<0||p.y>H) p.vy*=-1;
-      const fade = Math.sin(p.life/p.maxLife*Math.PI);
-      if(p.r>0.6){
-        ctx.beginPath();ctx.arc(p.x,p.y,p.r*3.5,0,Math.PI*2);
-        ctx.fillStyle=`rgba(${p.rgb},${fade*p.alpha*.18})`;ctx.fill();
+    t+=.0035;ctx.clearRect(0,0,W,H);
+    nodes.forEach(nd=>{
+      nd.phase+=.006;
+      const pulse=.6+.4*Math.sin(nd.phase);
+      const grd=ctx.createRadialGradient(nd.x,nd.y,0,nd.x,nd.y,nd.r*pulse);
+      const a=nd.z*.038*pulse;
+      grd.addColorStop(0,`rgba(212,175,55,${a*1.2})`);grd.addColorStop(.45,`rgba(180,148,50,${a*.5})`);grd.addColorStop(1,'rgba(180,148,50,0)');
+      ctx.beginPath();ctx.arc(nd.x,nd.y,nd.r*pulse,0,Math.PI*2);ctx.fillStyle=grd;ctx.fill();
+    });
+    vecs.forEach(v=>{
+      v.life++;if(v.life>v.maxLife){Object.assign(v,mkV());v.life=0;v.trail=[];return;}
+      nodes.forEach(nd=>{const dx=nd.x-v.x,dy=nd.y-v.y,d=Math.hypot(dx,dy);if(d<nd.r*2.8&&d>5){const f=nd.str/(d*.01);v.vx+=(dx/d)*f;v.vy+=(dy/d)*f;}});
+      const da=t*.25+v.alpha*7;v.vx+=Math.cos(da)*.0006;v.vy+=Math.sin(da)*.0005;
+      const sp=Math.hypot(v.vx,v.vy),msp=.36+v.z*.2;if(sp>msp){v.vx*=msp/sp;v.vy*=msp/sp;}
+      v.x+=v.vx;v.y+=v.vy;
+      if(v.x<-20)v.x=W+20;if(v.x>W+20)v.x=-20;if(v.y<-20)v.y=H+20;if(v.y>H+20)v.y=-20;
+      v.trail.push({x:v.x,y:v.y});if(v.trail.length>v.trailMax)v.trail.shift();
+      const lf=v.life/v.maxLife,fade=Math.sin(lf*Math.PI);
+      if(v.trail.length>2){
+        for(let i=1;i<v.trail.length;i++){
+          const tp=i/v.trail.length,ta=tp*v.alpha*fade*v.z;
+          if(ta<.004)continue;
+          ctx.beginPath();ctx.moveTo(v.trail[i-1].x,v.trail[i-1].y);ctx.lineTo(v.trail[i].x,v.trail[i].y);
+          ctx.strokeStyle=v.hi?`rgba(212,175,55,${ta*1.1})`:`rgba(170,160,145,${ta})`;
+          ctx.lineWidth=(tp*v.r*1.3)*v.z;ctx.lineCap='round';ctx.stroke();
+        }
       }
-      ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
-      ctx.fillStyle=`rgba(${p.rgb},${fade*p.alpha})`;ctx.fill();
+      const pa=v.alpha*fade*(.45+v.z*.55);
+      if(pa>.006){
+        if(v.z>.5){ctx.beginPath();ctx.arc(v.x,v.y,v.r*3.5,0,Math.PI*2);ctx.fillStyle=`rgba(212,175,55,${pa*.07})`;ctx.fill();}
+        ctx.beginPath();ctx.arc(v.x,v.y,v.r*(1+fade*.28),0,Math.PI*2);
+        ctx.fillStyle=v.hi?`rgba(222,188,100,${pa})`:`rgba(185,178,165,${pa})`;ctx.fill();
+      }
     });
     requestAnimationFrame(draw);
   }
-  draw();
-  addEventListener('resize', resize, {passive:true});
+  init();draw();
+  cv.style.opacity='.62';
+  addEventListener('resize',()=>init(),{passive:true});
+};
+</script>
+
+<!-- ══════════════════════════════════════════════════
+     LOADER — boot sequence + parallax
+══════════════════════════════════════════════════ -->
+<script>
+// Parallax
+(function(){
+  let mx=0,my=0,cx=0,cy=0;
+  addEventListener('mousemove',e=>{mx=(e.clientX/innerWidth-.5)*2;my=(e.clientY/innerHeight-.5)*2;},{passive:true});
+  function tick(){
+    cx+=(mx-cx)*.055;cy+=(my-cy)*.055;
+    const wrap=document.getElementById('s-wrap');
+    const vol=document.getElementById('h-vol1');
+    if(wrap)wrap.style.transform=`translateX(${cx*10}px) translateY(${cy*8}px) translateZ(0)`;
+    if(vol)vol.style.transform=`translate(calc(-50% + ${cx*22}px),calc(-50% + ${cy*16}px))`;
+    requestAnimationFrame(tick);
+  }
+  tick();
 })();
 
-/* ── TELEMETRIA AO VIVO ──────────────────────────── */
-function ticker(){
-  const x=document.getElementById('dxau');
-  const n=document.getElementById('dnas');
-  if(x) x.textContent=(2385+Math.random()*10-5).toFixed(2);
-  if(n) n.textContent=(18340+Math.random()*70-35).toFixed(0);
-  setTimeout(ticker, 2200+Math.random()*1400);
-}
-setTimeout(ticker, 800);
-
-/* ── NAV REVEAL ──────────────────────────────────── */
-window.addEventListener('scroll', ()=>{
-  document.getElementById('nav').classList.toggle('visible', scrollY>80);
-},{passive:true});
-setTimeout(()=>document.getElementById('nav').classList.add('visible'),400);
-
-/* ── PIPELINE ANIMADO ─────────────────────────────── */
-let pStep=-1, pRunning=false;
-function runPipeline(){
-  if(pRunning) return; pRunning=true;
-  const steps=document.querySelectorAll('.pipeline-step');
-  function adv(){
-    pStep=(pStep+1)%steps.length;
-    steps.forEach((s,i)=>s.classList.toggle('active',i<=pStep));
-    setTimeout(adv,920);
+// Loader
+(function(){
+  const ldl=document.getElementById('loader');
+  const lgo=document.getElementById('ld-logo');
+  const fill=document.getElementById('ld-fill');
+  const pct=document.getElementById('ld-pct');
+  const msg=document.getElementById('ld-msg');
+  if(!ldl)return;
+  const msgs=['Verificando integridade neural...','Carregando parâmetros operacionais...','Conectando MT5 Bridge...','Sincronizando cloud matrix soberana...','Calibrando assertividade histórica...','Consciência operacional inicializada.'];
+  let p=0,mi=0;
+  setTimeout(()=>{lgo.style.opacity='1';},200);
+  const tmr=setInterval(()=>{
+    p=Math.min(p+(Math.random()*3.2+1.1),100);
+    fill.style.width=p+'%';pct.textContent=Math.floor(p)+'%';
+    if(p>(mi+1)*(100/msgs.length)){msg.textContent=msgs[Math.min(mi,msgs.length-1)];mi++;}
+    if(p>=100){clearInterval(tmr);pct.textContent='100%';msg.textContent=msgs[msgs.length-1];setTimeout(reveal,420);}
+  },48);
+  function reveal(){
+    const fl=document.createElement('div');
+    fl.style.cssText='position:fixed;inset:0;z-index:9998;background:#fff;pointer-events:none;opacity:0';
+    document.body.appendChild(fl);
+    if(typeof gsap==='undefined'){ldl.style.display='none';fl.remove();window._bootApp&&window._bootApp();return;}
+    gsap.timeline()
+      .to(fl,{opacity:.11,duration:.07,ease:'power4.in'})
+      .to(fl,{opacity:0,duration:.5,ease:'power4.out'})
+      .to(ldl,{opacity:0,duration:.4,ease:'power3.in',onComplete:()=>{ldl.style.display='none';fl.remove();}},0)
+      .add(()=>{document.getElementById('qc').style.opacity='1';window._qi&&window._qi(1.4);window._startCogField&&window._startCogField();window._bootApp&&window._bootApp();},.1);
   }
-  adv();
+})();
+</script>
+
+<!-- ══════════════════════════════════════════════════
+     REACT APP — JSX via Babel
+     Spring Physics · Bento Grid · Stagger cascade
+══════════════════════════════════════════════════ -->
+<script type="text/babel" data-presets="react">
+const{useState,useEffect,useRef,useCallback,Fragment}=React;
+
+// Spring stagger — materialização em cascata
+function useReveal(ref,opts={}){
+  const[vis,setVis]=useState(false);
+  useEffect(()=>{
+    if(!ref.current)return;
+    const io=new IntersectionObserver(([e])=>{if(e.isIntersecting)setVis(true);},{threshold:opts.threshold||.1,rootMargin:opts.margin||'0px 0px -30px 0px'});
+    io.observe(ref.current);
+    return()=>io.disconnect();
+  },[ref]);
+  return vis;
 }
 
-/* ── CONTADORES ANIMADOS ─────────────────────────── */
-function animCount(el, to, dur){
-  let s=null;
-  (function step(ts){
-    if(!s) s=ts;
-    const p=Math.min((ts-s)/dur,1), ep=1-Math.pow(1-p,3);
-    el.textContent=Math.round(ep*to);
-    if(p<1) requestAnimationFrame(step);
-  })(performance.now());
+// Spring physics: stiffness 80 · damping 20 · mass 1
+function springReveal(el,delay=0){
+  if(!el||typeof gsap==='undefined')return;
+  gsap.fromTo(el,
+    {opacity:0,y:30,filter:'blur(4px)'},
+    {opacity:1,y:0,filter:'blur(0px)',
+     duration:1.1,delay,ease:'power4.out'}
+  );
 }
 
-/* ── SIMULADOR ───────────────────────────────────── */
-function fmt(v){ return new Intl.NumberFormat('pt-PT',{style:'currency',currency:'EUR',maximumFractionDigits:0}).format(v); }
-function simRun(){
-  const cap=+document.getElementById('sl-cap').value;
-  const ops=+document.getElementById('sl-ops').value;
-  const ass=+document.getElementById('sl-ass').value/100;
-  const rk=+document.getElementById('sl-rk').value/100;
-  const mo=+document.getElementById('sl-mo').value;
-  document.getElementById('v-cap').textContent=fmt(cap);
-  document.getElementById('v-ops').textContent=ops+' / sem';
-  document.getElementById('v-ass').textContent=Math.round(ass*100)+'%';
-  document.getElementById('v-rk').textContent=(rk*100).toFixed(2)+'%';
-  document.getElementById('v-mo').textContent=mo+(mo===1?' mês':' meses');
-  const wks=mo*4.33,tot=ops*wks,w=tot*ass,l=tot*(1-ass);
-  const wkR=w/wks*(rk*3)-l/wks*rk, mR=wkR*4.33;
-  let cur=cap; const monthly=[cap];
-  for(let m=0;m<mo;m++){ cur*=(1+mR); monthly.push(Math.round(cur)); }
-  const fin=monthly[mo], profit=fin-cap, pct=(profit/cap*100).toFixed(1);
-  document.getElementById('r-cap').textContent=fmt(fin);
-  document.getElementById('r-luc').textContent=(profit>=0?'+':'')+fmt(profit);
-  document.getElementById('r-mult').textContent=(fin/cap).toFixed(2)+'x';
-  drawChart(monthly,cap);
-}
-function drawChart(data,base){
-  const cv=document.getElementById('cv-sim'); if(!cv)return;
-  const dpr=devicePixelRatio, ctx=cv.getContext('2d');
-  cv.width=cv.offsetWidth*dpr; cv.height=120*dpr; cv.style.height='120px';
-  ctx.scale(dpr,dpr);
-  const w=cv.offsetWidth, h=120; ctx.clearRect(0,0,w,h);
-  if(data.length<2)return;
-  const mn=Math.min(...data)*.97, mx=Math.max(...data)*1.03;
-  const px=i=>(i/(data.length-1))*w, py=v=>h-((v-mn)/(mx-mn))*(h*.84)-h*.08;
-  /* grid */
-  ctx.strokeStyle='rgba(255,255,255,.05)'; ctx.lineWidth=1;
-  [.33,.66].forEach(p=>{ctx.beginPath();ctx.moveTo(0,py(mn+(mx-mn)*p));ctx.lineTo(w,py(mn+(mx-mn)*p));ctx.stroke();});
-  /* fill */
-  const gr=ctx.createLinearGradient(0,0,0,h);
-  gr.addColorStop(0,'rgba(196,160,106,.2)');
-  gr.addColorStop(1,'rgba(155,123,74,0)');
-  ctx.beginPath();ctx.moveTo(px(0),py(data[0]));
-  data.forEach((v,i)=>ctx.lineTo(px(i),py(v)));
-  ctx.lineTo(px(data.length-1),h);ctx.lineTo(0,h);ctx.closePath();
-  ctx.fillStyle=gr; ctx.fill();
-  /* linha */
-  const lg=ctx.createLinearGradient(0,0,w,0);
-  lg.addColorStop(0,'rgba(155,123,74,.7)');
-  lg.addColorStop(.5,'rgba(196,160,106,.9)');
-  lg.addColorStop(1,'rgba(232,212,168,.8)');
-  ctx.beginPath();ctx.moveTo(px(0),py(data[0]));
-  data.forEach((v,i)=>ctx.lineTo(px(i),py(v)));
-  ctx.strokeStyle=lg; ctx.lineWidth=1.5; ctx.stroke();
-  /* base */
-  if(base>=mn&&base<=mx){
-    ctx.beginPath();ctx.moveTo(0,py(base));ctx.lineTo(w,py(base));
-    ctx.strokeStyle='rgba(255,255,255,.08)';ctx.lineWidth=1;ctx.setLineDash([3,4]);ctx.stroke();ctx.setLineDash([]);
-  }
-  /* dots */
-  data.forEach((v,i)=>{
-    ctx.beginPath();ctx.arc(px(i),py(v),2.5,0,Math.PI*2);
-    if(v>=base){ctx.shadowColor='rgba(196,160,106,.6)';ctx.shadowBlur=6;}
-    ctx.fillStyle=v>=base?'rgba(232,212,168,.9)':'rgba(160,156,150,.4)';
-    ctx.fill();ctx.shadowColor='transparent';ctx.shadowBlur=0;
-  });
+// Formato monetário
+const fmt=v=>new Intl.NumberFormat('pt-PT',{style:'currency',currency:'EUR',maximumFractionDigits:0}).format(v);
+
+// ─── EYEBROW ─────────────────────────────────────
+function Eyebrow({children,className=''}){
+  return(
+    <p className={`font-mono text-[9px] font-normal tracking-widest uppercase text-yellow-500/55 ${className}`}>
+      {children}
+    </p>
+  );
 }
 
-/* ── SCROLL REVEAL ──────────────────────────────── */
-const io = new IntersectionObserver((entries)=>{
-  entries.forEach(e=>{
-    if(!e.isIntersecting) return;
-    e.target.classList.add('visible');
-    /* ações específicas ao revelar */
-    const id=e.target.closest('section')?.id;
-    if(id==='pipeline' && !pRunning) runPipeline();
-    if(id==='perf'){
-      const el=e.target;
-      /* contadores */
-      const ca=document.getElementById('cnt-a');
-      const ct=document.getElementById('cnt-t');
-      if(ca && ca.textContent==='0') animCount(ca,76,1500);
-      if(ct && ct.textContent==='0') setTimeout(()=>animCount(ct,4,1200),200);
-      /* barras */
-      setTimeout(()=>{
-        const bg=document.getElementById('bar-g'); if(bg)bg.style.width='78%';
-        const bn=document.getElementById('bar-n'); if(bn)bn.style.width='74%';
-      },400);
-    }
-    if(id==='sim' && !simInited){ simInited=true; simRun(); }
-  });
-},{threshold:.12, rootMargin:'0px 0px -40px 0px'});
+// ─── SECÇÃO wrapper ──────────────────────────────
+function Sec({id,bg='bg-bg-core',children,className=''}){
+  const ref=useRef(null);
+  const vis=useReveal(ref,{threshold:.08});
+  useEffect(()=>{
+    if(!vis)return;
+    const sec=ref.current; if(!sec)return;
+    // staggerChildren: 0.15
+    sec.querySelectorAll('.rv').forEach((el,i)=>{
+      gsap&&gsap.fromTo(el,
+        {opacity:0,y:30,filter:'blur(4px)'},
+        {opacity:1,y:0,filter:'blur(0px)',
+         duration:1.1,delay:i*0.15,ease:'power4.out'}
+      );
+    });
+  },[vis]);
+  return(
+    <section id={id} ref={ref} className={`relative z-10 ${bg} py-[clamp(80px,12vh,140px)] ${className}`}>
+      {/* haze atmosférico por seção */}
+      <div className="absolute inset-0 pointer-events-none" aria-hidden="true"
+        style={{background:'radial-gradient(ellipse 60% 50% at 50% 50%, rgba(212,175,55,.018) 0%, transparent 65%)'}}/>
+      <div className="max-w-[1140px] mx-auto px-[clamp(24px,5.5vw,80px)] relative z-10">
+        {children}
+      </div>
+    </section>
+  );
+}
 
-let simInited=false;
-document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+// ─── HERO ─────────────────────────────────────────
+function Hero(){
+  const[tel,setTel]=useState({xau:'——',nas:'——',cyc:'0847'});
+  const logoRef=useRef(null);
 
-/* ── GSAP SCROLL CINEMATOGRÁFICO ─────────────────── */
-document.addEventListener('DOMContentLoaded',()=>{
-  if(typeof gsap==='undefined') return;
-  gsap.registerPlugin(ScrollTrigger);
-  /* hero reveal */
-  const heroTl = gsap.timeline({delay:.3});
-  heroTl
-    .fromTo('.smith-hero',
-      {opacity:0, y:40, filter:'blur(12px)'},
-      {opacity:1, y:0, filter:'blur(0px)', duration:1.8, ease:'power4.out'})
-    .fromTo('.hero-phrase',
-      {opacity:0, y:20},
-      {opacity:1, y:0, duration:1.2, ease:'power3.out'},'-=.9')
-    .fromTo('.hero-divider',
-      {scaleX:0, transformOrigin:'left'},
-      {scaleX:1, duration:.9, ease:'power3.out'},'-=1.0');
-
-  /* seções — parallax sutil nos headings */
-  document.querySelectorAll('.what-h,.pipeline-h,.perf-h,.sim-h,.infra-h,.diff-h,.access-h').forEach(el=>{
-    gsap.fromTo(el,
-      {y:18},
-      {y:0, ease:'none',
-       scrollTrigger:{trigger:el,start:'top 88%',end:'top 40%',scrub:1.2}
+  useEffect(()=>{
+    window._bootApp=()=>{
+      window._qi&&window._qi(1.5);
+      const logo=logoRef.current; if(!logo)return;
+      if(typeof gsap==='undefined'){logo.style.opacity='1';return;}
+      // materialização cinematográfica
+      gsap.fromTo(logo,
+        {opacity:0,z:-200,scale:.93,filter:'blur(22px)'},
+        {opacity:1,z:0,scale:1,filter:'blur(0px)',duration:1.9,ease:'power4.out',transformOrigin:'center center',
+         onComplete:()=>{
+           logo.classList.add('smith-glitch');
+           setTimeout(()=>logo.classList.remove('smith-glitch'),180);
+           setTimeout(()=>{logo.classList.add('smith-glitch');setTimeout(()=>logo.classList.remove('smith-glitch'),110);},800);
+         }}
+      );
+      // stagger hero reveals (staggerChildren: 0.15)
+      document.querySelectorAll('#hero .rv').forEach((el,i)=>{
+        setTimeout(()=>el.classList.add('vis'),500+i*150);
       });
+      // scroll hint
+      setTimeout(()=>{const s=document.getElementById('h-scroll');if(s)s.style.opacity='1';},3200);
+    };
+    // telemetria
+    function tick(){
+      setTel(prev=>({
+        xau:(2385+Math.random()*10-5).toFixed(2),
+        nas:(18340+Math.random()*70-35).toFixed(0),
+        cyc:String((parseInt(prev.cyc)||847)+Math.round(Math.random())).padStart(4,'0')
+      }));
+      setTimeout(tick,2100+Math.random()*1400);
+    }
+    setTimeout(tick,3800);
+  },[]);
+
+  return(
+    <section id="hero" className="relative">
+      {/* campo cognitivo canvas */}
+      <canvas id="hero-cv" aria-hidden="true"/>
+      {/* vol */}
+      <div className="hv2" aria-hidden="true"/>
+      <div id="h-vol1" className="hero-vol hv1" aria-hidden="true"/>
+      {/* scanline */}
+      <div className="hero-scan" aria-hidden="true"/>
+      {/* strip topo */}
+      <div className="hero-strip">
+        <div className="strip-item"><div className="strip-dot"/>SMITH-CORE-01&nbsp;<span className="strip-val">ONLINE</span></div>
+        <div className="strip-item hidden sm:flex">XAUUSD&nbsp;<span className="strip-val">{tel.xau}</span></div>
+        <div className="strip-item hidden md:flex">NASDAQ&nbsp;<span className="strip-val">{tel.nas}</span></div>
+        <div className="strip-item hidden md:flex">Assertividade&nbsp;<span className="strip-val">76%</span></div>
+        <div className="strip-item">Ciclo&nbsp;<span className="strip-val">{tel.cyc}</span></div>
+      </div>
+      {/* hero body */}
+      <div className="hero-body">
+        <p className="font-mono text-[9px] tracking-widest uppercase text-yellow-500/45 rv">Consciência Operacional Financeira · MT5</p>
+        <div id="s-wrap" className="smith-wrap rv d1" style={{transformStyle:'preserve-3d',marginTop:'6px',marginBottom:0}}>
+          <h1 ref={logoRef} data-text="SMITH" aria-label="SMITH"
+            className="smith-title" style={{opacity:0,transform:'translateZ(-200px) scale(.93)',filter:'blur(22px)'}}>
+            SMITH
+          </h1>
+        </div>
+        <p className="hero-sub rv d2">Operational Financial Intelligence</p>
+        <div className="hero-rule rv d3"/>
+        <p className="hero-phrase rv d4">
+          A inteligência nasce da metodologia.<br/>
+          <em>A execução pertence à máquina.</em>
+        </p>
+      </div>
+      {/* status */}
+      <div className="hero-status">
+        <div className="hst live"><div className="hst-dot"/>STATUS: ONLINE</div>
+        <div className="hst">UPTIME 99.97%</div>
+        <div className="hst">LATENCY 0.3ms</div>
+        <div className="hst">MT5 CONNECTED</div>
+        <div className="hst">ENV SOVEREIGN</div>
+      </div>
+      {/* scroll */}
+      <div id="h-scroll" className="hero-scroll" style={{opacity:0}}>
+        <div className="hs-l"/><span className="hs-t">Scroll</span>
+      </div>
+    </section>
+  );
+}
+
+// ─── S1 — O QUE É SMITH ──────────────────────────
+function WhatIsSmith(){
+  const logRef=useRef(null);
+  const[logRunning,setLogRunning]=useState(false);
+  const vis=useReveal(logRef,{threshold:.12});
+  useEffect(()=>{if(vis&&!logRunning){setLogRunning(true);}
+  },[vis]);
+
+  const LOGS=[
+    {ts:'00:00:01',m:'[BOOT] SMITH COGNITIVE ENGINE INITIALIZING...',cls:'inf'},
+    {ts:'00:00:02',m:'[SYS] OPERATIONAL PARAMETERS v2.0 LOADED',cls:''},
+    {ts:'00:00:04',m:'[CORE] NEURAL WEIGHTS VERIFIED — CHECKSUM OK',cls:'ok'},
+    {ts:'00:00:07',m:'[FEED] XAUUSD M1 CONNECTED // 0.3ms',cls:'gd'},
+    {ts:'00:00:09',m:'[FEED] NASDAQ M1 CONNECTED // 0.4ms',cls:'gd'},
+    {ts:'00:00:12',m:'[MEM] BACKTEST COMPRESSION ACTIVE',cls:'inf'},
+    {ts:'00:00:15',m:'[COMP] 847,293 HISTORICAL BARS PROCESSED',cls:''},
+    {ts:'00:00:19',m:'➔ SOVEREIGN CLOUD SYNC COMPLETE',cls:'ok'},
+    {ts:'00:00:23',m:'[RR] ASYMMETRIC RATIO RECALIBRATING 7:1',cls:'inf'},
+    {ts:'00:00:27',m:'[CTX] LIQUIDITY ZONES — 4,891 NODES INDEXED',cls:''},
+    {ts:'00:00:32',m:'➔ CALIBRATION DEPLOYED — PRODUCTION',cls:'gd'},
+    {ts:'00:00:37',m:'[EVO] SELF-AUDIT COMPLETE — 87.5%',cls:'gd'},
+    {ts:'00:00:41',m:'[ALL] MODULES OPERATIONAL // SMITH ONLINE',cls:'ok'},
+    {ts:'00:00:45',m:'[IDLE] MONITORING M1 — AWAITING CONFLUENCE...',cls:''},
+  ];
+  const mkLog=(pfx)=>LOGS.map((l,i)=>(
+    <div key={`${pfx}-${i}`} className={`log-line ${l.cls} flex items-baseline gap-2 py-[2px]`}>
+      <span className="font-mono text-[8px] text-white/20 flex-shrink-0 tracking-[.04em]">{l.ts}</span>
+      <span className="log-msg">{l.m}</span>
+    </div>
+  ));
+  return(
+    <Sec id="s1" bg="bg-bg-core">
+      <div className="border-b border-white/[0.06] mb-[clamp(48px,7vh,80px)]"/>
+      <Eyebrow>O que é SMITH · Definição Operacional</Eyebrow>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-[clamp(44px,6vw,88px)] mt-[clamp(22px,3.5vh,36px)]">
+        {/* esquerda */}
+        <div className="flex flex-col gap-[clamp(14px,2vh,20px)]">
+          <div className="font-display text-[clamp(5rem,10vw,8rem)] font-extrabold leading-none tracking-tighter text-white/[.03] rv select-none">01</div>
+          <h2 className="font-display text-[clamp(1.8rem,3.8vw,3rem)] font-bold leading-[1.12] tracking-tight text-white rv">
+            Um agente cognitivo<br/>de negociação.<br/>
+            <span className="text-yellow-400/65">Não um robô.</span>
+          </h2>
+          <p className="font-body text-[clamp(.87rem,1.4vw,.97rem)] leading-[1.95] text-white/40 rv">
+            SMITH é executado como Expert Advisor no MT5. Não opera por impulso, não replica indicadores atrasados, não depende de sinais genéricos.<br/><br/>
+            Sua lógica nasce da modelagem explícita da{' '}
+            <strong className="text-white/68 font-medium">metodologia Dom Investitore</strong>{' '}
+            — aplicada à leitura de mercado, execução técnica, memória operacional e avaliação estatística contínua.
+          </p>
+          <ul className="flex flex-col gap-0 mt-2">
+            {[
+              ['Memória Operacional','registra e aprende com cada ciclo'],
+              ['Autoavaliação Estatística','audita a própria performance'],
+              ['Gestão Autónoma','breakeven + trailing sem intervenção'],
+              ['Execução Disciplinada','zero desvio dos parâmetros'],
+            ].map(([k,v],i)=>(
+              <li key={k} className={`rv d${i+1} flex items-start gap-3 py-[clamp(11px,1.7vh,15px)] border-b border-white/[.04] last:border-b-0 text-[.9rem] leading-[1.72] text-white/35 transition-all duration-300 hover:text-white/62 hover:pl-1.5`}>
+                <span className="text-yellow-500/38 flex-shrink-0 mt-0.5">→</span>
+                <span><strong className="text-white/68 font-medium">{k}</strong> · {v}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+        {/* direita — terminal log */}
+        <div ref={logRef} className="rv d2">
+          <div className="bento h-full flex flex-col overflow-hidden rounded-2xl"
+            style={{borderRadius:'16px'}}>
+            {/* terminal header */}
+            <div className="flex items-center justify-between px-4 h-9 bg-white/[.02] border-b border-white/[.05] flex-shrink-0" style={{position:'relative'}}>
+              <div className="flex gap-1.5">
+                {['#282828','#343434','#404040'].map((c,i)=><div key={i} className="w-1.5 h-1.5 rounded-full" style={{background:c}}/>)}
+              </div>
+              <span className="absolute left-1/2 -translate-x-1/2 font-mono text-[8px] tracking-[.1em] text-white/25 whitespace-nowrap">SMITH · COGNITIVE ENGINE · LIVE</span>
+              <div className="flex items-center gap-1.5">
+                <div className="w-1 h-1 rounded-full bg-gold animate-gold-pulse" style={{boxShadow:'0 0 5px rgba(212,175,55,.6)'}}/>
+                <span className="font-mono text-[8px] tracking-[.1em] text-yellow-500/55">LIVE</span>
+              </div>
+            </div>
+            {/* log window */}
+            <div className="flex-1 overflow-hidden relative bg-black/80"
+              style={{WebkitMaskImage:'linear-gradient(180deg,rgba(0,0,0,.96) 0,transparent 7%,transparent 93%,rgba(0,0,0,.96) 100%)'}}>
+              <div className={`log-track flex flex-col px-4 pt-3.5${logRunning?' run':''}`}>
+                {mkLog('a')}{mkLog('b')}
+              </div>
+            </div>
+            {/* footer */}
+            <div className="flex items-center justify-between px-4 py-2 bg-white/[.015] border-t border-white/[.04] flex-shrink-0">
+              <span className="font-mono text-[8px] text-white/18 tracking-[.05em]">CORE-9D4F · CYCLE 847 · DOM INVESTITORE</span>
+              <span className="flex items-center gap-1 font-mono text-[8px] text-yellow-500/40 tracking-[.07em]">
+                PROCESSING<span className="inline-block w-[5px] h-[9px] bg-gold ml-1 animate-blink"/>
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </Sec>
+  );
+}
+
+// ─── S2 — MOTOR DE DECISÃO ───────────────────────
+function Pipeline(){
+  const[active,setActive]=useState(-1);
+  const ref=useRef(null);
+  const vis=useReveal(ref,{threshold:.1});
+  useEffect(()=>{
+    if(!vis)return;
+    window._qi&&window._qi(1.6);
+    let step=-1;
+    function adv(){step=(step+1)%7;setActive(step);setTimeout(adv,920);}
+    const t=setTimeout(adv,500);
+    return()=>clearTimeout(t);
+  },[vis]);
+  const STEPS=[
+    {n:'01',name:'Leitura de Mercado',log:'[MARKET_SCAN] Liquidez monitorada · Sessão ativa'},
+    {n:'02',name:'Validação de Liquidez',log:'[LIQUIDITY_LAYER] Profundidade de mercado verificada'},
+    {n:'03',name:'Probabilidade Operacional',log:'[PROBABILITY_LAYER] Assimetria identificada · 87.4%'},
+    {n:'04',name:'Contexto Institucional',log:'[CONTEXT_ENGINE] Sessão Londres/NY validada'},
+    {n:'05',name:'Execução Objetiva',log:'[EXECUTION_OBJETIVA] Ordem autorizada · MT5 Bridge'},
+    {n:'06',name:'Gestão de Risco',log:'[RISK_PROTOCOL] Breakeven 2º alvo · Trailing ativo'},
+    {n:'07',name:'Memória Operacional',log:'[MEMORY_LAYER] Ciclo registrado · Parâmetros atualizados'},
+  ];
+  return(
+    <Sec id="s2" bg="bg-bg-elevated">
+      <div className="border-b border-yellow-500/15 mb-[clamp(48px,7vh,80px)]"/>
+      <Eyebrow>Motor de Decisão · Pipeline Cognitivo</Eyebrow>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-[clamp(44px,6vw,88px)] mt-[clamp(20px,3vh,32px)]">
+        <div className="flex flex-col gap-[clamp(13px,2vh,18px)]">
+          <h2 className="font-display text-[clamp(2rem,4.5vw,3.5rem)] font-bold leading-[1.12] tracking-tight text-white rv">
+            SMITH não<br/><span className="text-yellow-400/65">reage ao mercado.</span>
+          </h2>
+          <p className="font-body text-[clamp(.87rem,1.4vw,.97rem)] leading-[1.94] text-white/36 rv">
+            SMITH filtra ruído, identifica contexto, valida probabilidade e executa apenas quando a metodologia Dom Investitore encontra assimetria operacional. Cada operação percorre sete etapas cognitivas.
+          </p>
+          {/* conceito */}
+          <div className="bento bento-gold p-[clamp(20px,3vw,30px)] rv" style={{borderRadius:'14px'}}>
+            <p className="font-mono text-[8px] tracking-widest uppercase text-yellow-500/45 mb-3">Conceito Central</p>
+            {['O mercado não recompensa emoção.','Recompensa repetição correta.'].map(l=>(
+              <p key={l} className="font-body text-[clamp(.9rem,1.6vw,1.08rem)] text-white/35 leading-[1.6]">{l}</p>
+            ))}
+            {['Ele observa. Filtra. Valida.','Executa. Gerencia. Permanece.'].map(l=>(
+              <p key={l} className="font-display text-[clamp(.95rem,1.7vw,1.15rem)] font-semibold text-white/72 leading-[1.6] mt-1">{l}</p>
+            ))}
+          </div>
+        </div>
+        {/* pipeline */}
+        <div ref={ref}>
+          <div className="bento p-[clamp(18px,2.8vw,28px)] rv" style={{borderRadius:'14px'}}>
+            <div className="flex items-center justify-between mb-[clamp(14px,2.2vh,22px)]">
+              <span className="font-mono text-[8px] tracking-widest uppercase text-yellow-500/45">Pipeline Ativo · Dom Investitore</span>
+              <div className="flex items-center gap-1.5">
+                <div className="w-[5px] h-[5px] rounded-full bg-gold animate-gold-pulse" style={{boxShadow:'0 0 7px rgba(212,175,55,.65)'}}/>
+                <span className="font-mono text-[8px] tracking-[.1em] text-yellow-500/45">PROCESSANDO</span>
+              </div>
+            </div>
+            <div className="flex flex-col">
+              {STEPS.map((step,i)=>(
+                <Fragment key={step.n}>
+                  {i>0&&<div className="p-line"/>}
+                  <div className={`p-step${i<=active?' active':''}`}>
+                    <span className="p-step-n">{step.n}</span>
+                    <div className="p-dot"/>
+                    <div className="flex-1">
+                      <div className="p-name">{step.name}</div>
+                      <div className="p-log">{step.log}</div>
+                    </div>
+                    <span className="p-st">ATIVO</span>
+                  </div>
+                </Fragment>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    </Sec>
+  );
+}
+
+// ─── S3 — PERFORMANCE ────────────────────────────
+function Performance(){
+  const[cnts,setCnts]=useState({a:0,t:0});
+  const[barsOn,setBarsOn]=useState(false);
+  const ref=useRef(null);
+  const vis=useReveal(ref,{threshold:.1});
+
+  useEffect(()=>{
+    if(!vis)return;
+    window._qi&&window._qi(1.9);
+    let sA=null,sT=null;
+    (function stepA(ts){if(!sA)sA=ts;const p=Math.min((ts-sA)/1500,1),ep=1-Math.pow(1-p,3);setCnts(prev=>({...prev,a:Math.round(ep*76)}));if(p<1)requestAnimationFrame(stepA);})(performance.now());
+    setTimeout(()=>{(function stepT(ts){if(!sT)sT=ts;const p=Math.min((ts-sT)/1200,1),ep=1-Math.pow(1-p,3);setCnts(prev=>({...prev,t:Math.round(ep*4)}));if(p<1)requestAnimationFrame(stepT);})(performance.now());},200);
+    setTimeout(()=>setBarsOn(true),600);
+  },[vis]);
+
+  return(
+    <Sec id="s3" bg="bg-bg-core">
+      <div className="border-b border-white/[.06] mb-[clamp(48px,7vh,80px)]"/>
+      <div className="grid grid-cols-1 md:grid-cols-[1.2fr_1fr] gap-[clamp(44px,6vw,88px)] items-end mb-[clamp(36px,5.5vh,56px)]">
+        <div>
+          <Eyebrow className="rv">Performance Operacional · Execução Objetiva</Eyebrow>
+          <h2 className="font-display text-[clamp(2rem,4vw,3.2rem)] font-bold leading-[1.12] tracking-tight text-white mt-3 rv">
+            A disciplina como<br/><span className="text-yellow-400/65">vantagem operacional.</span>
+          </h2>
+        </div>
+        <p className="font-body text-[clamp(.87rem,1.4vw,.97rem)] leading-[1.94] text-white/36 rv">
+          A força da SMITH está na repetição disciplinada de cenários validados. Não se trata de prever o mercado. Trata-se de executar com precisão quando liquidez, contexto e probabilidade se alinham à metodologia Dom Investitore.
+        </p>
+      </div>
+      {/* bento grid métricas */}
+      <div ref={ref} className="grid grid-cols-2 md:grid-cols-4 gap-[1px] bg-white/[.04] border border-white/[.05] rounded-2xl overflow-hidden mb-3 rv">
+        {[
+          {lbl:'Assertividade Média',val:<><span className="text-gold">{cnts.a}</span><span className="text-gold">%</span></>,sub:'Taxa histórica de acerto'},
+          {lbl:'Alvos por Operação',val:<>{cnts.t}</>,sub:'Média em vencedoras'},
+          {lbl:'Gestão Automática',val:<span className="text-white/45 text-[clamp(1.3rem,2.8vw,2rem)]">BE 2º</span>,sub:'Breakeven no 2º alvo'},
+          {lbl:'Mercados',val:<span className="text-[clamp(.95rem,2vw,1.6rem)]">XAU<span className="text-white/22 text-[.55em]">/</span>NAS</span>,sub:'XAUUSD · NASDAQ · MT5'},
+        ].map((m,i)=>(
+          <div key={i} className="bg-bg-core p-[clamp(18px,2.5vw,28px)] group hover:bg-white/[.016] transition-colors duration-300 relative">
+            <div className="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-yellow-500/0 to-transparent opacity-0 group-hover:opacity-100 group-hover:via-yellow-500/22 transition-opacity duration-400"/>
+            <p className="font-mono text-[8px] tracking-[.16em] uppercase text-white/28 mb-2.5">{m.lbl}</p>
+            <div className="font-display text-[clamp(2.2rem,5vw,3.8rem)] font-bold tracking-tighter leading-none text-white">{m.val}</div>
+            <p className="font-mono text-[8px] tracking-[.09em] uppercase text-white/22 mt-2">{m.sub}</p>
+          </div>
+        ))}
+      </div>
+      {/* ── BARRA DE ALVOS — Design System §4 ── */}
+      <div className="grid grid-cols-1 md:grid-cols-[1.4fr_1fr] gap-3">
+        <div className="bento p-[clamp(18px,2.5vw,28px)] rv" style={{borderRadius:'14px'}}>
+          <p className="font-mono text-[8px] tracking-[.16em] uppercase text-white/25 mb-[clamp(14px,2.2vh,22px)]">
+            Execução Objetiva · Assertividade por Instrumento
+          </p>
+          {[
+            {name:'XAUUSD · Ouro',pct:78,note:'M1 · Alta Liquidez · Sessão Londres/NY'},
+            {name:'NASDAQ 100',pct:74,note:'M1 · Sessão Americana'},
+          ].map(b=>(
+            <div key={b.name} className="mb-[clamp(14px,2.2vh,20px)] last:mb-0">
+              <div className="flex justify-between items-baseline mb-2">
+                <span className="font-display text-[clamp(.88rem,1.5vw,1rem)] font-semibold tracking-tight text-white">{b.name}</span>
+                <span className="font-display text-[clamp(1rem,2vw,1.35rem)] font-bold text-gold">{b.pct}%</span>
+              </div>
+              {/* barra de alvos — prata→ouro ao atingir */}
+              <div className="target-bar-wrap">
+                <div className={`target-bar-fill${barsOn?' triggered':''}`} style={{width:barsOn?b.pct+'%':'0%'}}/>
+              </div>
+              <p className="font-mono text-[8px] tracking-[.07em] text-white/18 mt-1.5">{b.note}</p>
+            </div>
+          ))}
+          {/* modo operacional */}
+          <div className="mt-4 pt-4 border-t border-white/[.04]">
+            <p className="font-mono text-[8px] tracking-[.16em] uppercase text-white/22 mb-2">Modo de Operação</p>
+            {['Sessões definidas por contexto institucional','Breakeven automático no 2º alvo de alvos','Trailing a partir do 3º alvo — movimento estendido','Risco máximo 1% por operação — hard coded'].map(l=>(
+              <p key={l} className="font-mono text-[9px] text-white/35 tracking-[.06em] mb-1">→ {l}</p>
+            ))}
+          </div>
+        </div>
+        <div className="bento p-[clamp(18px,2.5vw,28px)] rv d2 flex flex-col gap-0" style={{borderRadius:'14px'}}>
+          <p className="font-mono text-[8px] tracking-[.16em] uppercase text-white/25 mb-4">Parâmetros de Gestão</p>
+          {[
+            ['Risco / Operação','1.0%'],['RR Médio','1 : 3'],
+            ['Breakeven','2º Alvo'],['Trailing','3º Alvo+'],['Ambiente','MT5 EA'],
+          ].map(([k,v])=>(
+            <div key={k} className="flex justify-between items-center py-[10px] border-b border-white/[.04] last:border-b-0">
+              <span className="font-mono text-[9px] tracking-[.1em] text-white/28">{k}</span>
+              <span className="font-display text-[1rem] font-semibold tracking-tight text-white/72">{v}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+      <p className="font-mono text-[8px] tracking-[.07em] text-white/15 text-center mt-[clamp(14px,2.2vh,22px)] leading-[1.8] rv">
+        Dados baseados em parâmetros históricos e gestão operacional. Resultados futuros dependem de mercado, execução e gerenciamento de risco.
+      </p>
+    </Sec>
+  );
+}
+
+// ─── S4 — SIMULADOR ──────────────────────────────
+function Simulator(){
+  const ref=useRef(null);
+  const vis=useReveal(ref,{threshold:.1});
+  const[params,setParams]=useState({cap:2000,ops:8,ass:76,rk:1,mo:6});
+  const[res,setRes]=useState({fin:0,profit:0,mult:'1.00'});
+  const cvRef=useRef(null);
+
+  useEffect(()=>{if(vis){window._qi&&window._qi(1.2);compute();}
+  },[vis]);
+  useEffect(()=>{compute();},[params]);
+
+  function compute(){
+    const{cap,ops,ass,rk,mo}=params;
+    const a=ass/100,r=rk/100;
+    const wks=mo*4.33,tot=ops*wks,w=tot*a,l=tot*(1-a);
+    const wkR=w/wks*(r*3)-l/wks*r,mR=wkR*4.33;
+    let cur=cap;const monthly=[cap];
+    for(let m=0;m<mo;m++){cur*=(1+mR);monthly.push(Math.round(cur));}
+    const fin=monthly[mo],profit=fin-cap;
+    setRes({fin,profit,mult:(fin/cap).toFixed(2)});
+    setTimeout(()=>drawChart(monthly,cap),40);
+  }
+  function drawChart(data,base){
+    const cv=cvRef.current;if(!cv)return;
+    const dpr=devicePixelRatio,ctx=cv.getContext('2d');
+    cv.width=cv.offsetWidth*dpr;cv.height=120*dpr;cv.style.height='120px';
+    ctx.scale(dpr,dpr);const w=cv.offsetWidth,h=120;ctx.clearRect(0,0,w,h);
+    if(data.length<2)return;
+    const mn=Math.min(...data)*.97,mx=Math.max(...data)*1.03;
+    const px=i=>(i/(data.length-1))*w,py=v=>h-((v-mn)/(mx-mn))*(h*.84)-h*.08;
+    ctx.strokeStyle='rgba(255,255,255,.04)';ctx.lineWidth=1;
+    [.33,.66].forEach(p=>{ctx.beginPath();ctx.moveTo(0,py(mn+(mx-mn)*p));ctx.lineTo(w,py(mn+(mx-mn)*p));ctx.stroke();});
+    const gr=ctx.createLinearGradient(0,0,0,h);
+    gr.addColorStop(0,'rgba(212,175,55,.18)');gr.addColorStop(1,'rgba(212,175,55,0)');
+    ctx.beginPath();ctx.moveTo(px(0),py(data[0]));data.forEach((v,i)=>ctx.lineTo(px(i),py(v)));
+    ctx.lineTo(px(data.length-1),h);ctx.lineTo(0,h);ctx.closePath();ctx.fillStyle=gr;ctx.fill();
+    const lg=ctx.createLinearGradient(0,0,w,0);
+    lg.addColorStop(0,'rgba(100,75,18,.7)');lg.addColorStop(.5,'rgba(212,175,55,.9)');lg.addColorStop(1,'rgba(240,208,96,.8)');
+    ctx.beginPath();ctx.moveTo(px(0),py(data[0]));data.forEach((v,i)=>ctx.lineTo(px(i),py(v)));
+    ctx.strokeStyle=lg;ctx.lineWidth=1.5;ctx.stroke();
+    ctx.beginPath();ctx.moveTo(px(0),py(data[0]));data.forEach((v,i)=>ctx.lineTo(px(i),py(v)));
+    ctx.strokeStyle='rgba(212,175,55,.15)';ctx.lineWidth=5;ctx.stroke();
+    if(base>=mn&&base<=mx){ctx.beginPath();ctx.moveTo(0,py(base));ctx.lineTo(w,py(base));ctx.strokeStyle='rgba(255,255,255,.07)';ctx.lineWidth=1;ctx.setLineDash([3,4]);ctx.stroke();ctx.setLineDash([]);}
+    data.forEach((v,i)=>{ctx.beginPath();ctx.arc(px(i),py(v),2.5,0,Math.PI*2);if(v>=base){ctx.shadowColor='rgba(212,175,55,.6)';ctx.shadowBlur=6;}ctx.fillStyle=v>=base?'rgba(240,208,96,.9)':'rgba(100,96,90,.4)';ctx.fill();ctx.shadowColor='transparent';ctx.shadowBlur=0;});
+  }
+
+  const SLIDERS=[
+    {key:'cap',lbl:'Capital Inicial (€)',min:200,max:50000,step:200,fmt:v=>fmt(v)},
+    {key:'ops',lbl:'Operações por Semana',min:2,max:20,step:1,fmt:v=>v+' / sem'},
+    {key:'ass',lbl:'Assertividade (%)',min:55,max:85,step:1,fmt:v=>v+'%'},
+    {key:'rk',lbl:'Risco por Operação (%)',min:.5,max:3,step:.25,fmt:v=>v.toFixed(2)+'%'},
+    {key:'mo',lbl:'Horizonte (meses)',min:1,max:24,step:1,fmt:v=>v+(v===1?' mês':' meses')},
+  ];
+  const goldTxt={background:'linear-gradient(135deg,#F0D060,#D4AF37)',WebkitBackgroundClip:'text',backgroundClip:'text',color:'transparent'};
+  return(
+    <Sec id="s4" bg="bg-bg-elevated">
+      <div className="border-b border-yellow-500/15 mb-[clamp(48px,7vh,80px)]"/>
+      <Eyebrow>Simulador Operacional · Projeção de Capital</Eyebrow>
+      <h2 className="font-display text-[clamp(2rem,4vw,3rem)] font-bold leading-[1.12] tracking-tight text-white mt-3 mb-[clamp(32px,5vh,52px)] rv">
+        Projete seu potencial<br/><span className="text-yellow-400/65">operacional com SMITH.</span>
+      </h2>
+      <div ref={ref} className="grid grid-cols-1 md:grid-cols-2 gap-[clamp(22px,3.5vw,40px)] items-start">
+        <div className="flex flex-col gap-[clamp(13px,2vh,18px)] rv">
+          <p className="font-body text-[clamp(.86rem,1.3vw,.94rem)] leading-[1.9] text-white/32">
+            Ajuste os parâmetros. O modelo aplica a gestão de risco e assertividade histórica da SMITH na projeção mês a mês.
+          </p>
+          {SLIDERS.map(s=>(
+            <div key={s.key} className="flex flex-col gap-2">
+              <label className="font-mono text-[8px] tracking-[.16em] uppercase text-white/28">{s.lbl}</label>
+              <div className="flex items-center gap-3">
+                <input type="range" className="sim-slider"
+                  min={s.min} max={s.max} step={s.step} value={params[s.key]}
+                  onChange={e=>setParams(p=>({...p,[s.key]:+e.target.value}))}/>
+                <span className="font-display text-[1rem] font-bold tracking-tight min-w-[60px] text-right" style={goldTxt}>
+                  {s.fmt(params[s.key])}
+                </span>
+              </div>
+            </div>
+          ))}
+        </div>
+        <div className="flex flex-col gap-2 rv d2">
+          {[
+            {lbl:'Capital Projetado',v:fmt(res.fin),gold:true,s:'ao final do período'},
+            {lbl:'Lucro Estimado',v:(res.profit>=0?'+':'')+fmt(res.profit),gold:false,s:'sobre capital inicial'},
+            {lbl:'Multiplicador',v:res.mult+'x',gold:false,s:'fator de crescimento'},
+          ].map(r=>(
+            <div key={r.lbl} className="bento bento-gold p-[clamp(13px,1.8vw,18px)]" style={{borderRadius:'14px'}}>
+              <p className="font-mono text-[8px] tracking-[.16em] uppercase text-white/22 mb-1.5">{r.lbl}</p>
+              <p className="font-display text-[clamp(1.5rem,3.2vw,2.2rem)] font-bold tracking-tight text-white" style={r.gold?goldTxt:{}}>{r.v}</p>
+              <p className="font-mono text-[8px] tracking-[.08em] uppercase text-white/18 mt-1">{r.s}</p>
+            </div>
+          ))}
+          <div className="bento p-[clamp(12px,1.8vw,18px)]" style={{borderRadius:'14px'}}>
+            <p className="font-mono text-[8px] tracking-[.14em] uppercase text-white/2 mb-2">Evolução Mês a Mês</p>
+            <canvas ref={cvRef} aria-label="Gráfico evolução" style={{width:'100%',height:'120px',display:'block'}}/>
+          </div>
+        </div>
+      </div>
+      <p className="font-mono text-[8px] tracking-[.07em] text-white/14 text-center mt-[clamp(14px,2vh,22px)] leading-[1.8] rv">
+        Projeção baseada em parâmetros históricos e gestão operacional SMITH. Não constitui promessa de rendimento.
+      </p>
+    </Sec>
+  );
+}
+
+// ─── S5 — PROCESSAMENTO / NÚCLEO ─────────────────
+function Core(){
+  const ref=useRef(null);
+  const vis=useReveal(ref,{threshold:.1});
+  useEffect(()=>{
+    if(!vis)return;
+    ['r1','r2','r3','orb-core'].forEach(id=>{const el=document.getElementById(id);if(el)el.classList.add('go');});
+    window._qi&&window._qi(2.0);
+  },[vis]);
+  return(
+    <Sec id="s5" bg="bg-bg-core">
+      <div className="border-b border-white/[.06] mb-[clamp(48px,7vh,80px)]"/>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-[clamp(44px,6vw,88px)] items-center">
+        <div className="flex flex-col gap-[clamp(13px,2vh,18px)]">
+          <Eyebrow className="rv">Infraestrutura · M5 Ultra Apple</Eyebrow>
+          <h2 className="font-display text-[clamp(1.8rem,3.6vw,2.8rem)] font-bold leading-[1.14] tracking-tight text-white rv">
+            Um núcleo que<br/><span className="text-yellow-400/65">nunca para.</span>
+          </h2>
+          <p className="font-body text-[clamp(.87rem,1.4vw,.97rem)] leading-[1.92] text-white/36 rv">
+            SMITH opera em ambiente dedicado de processamento local de alta performance. Arquitetura M5 Ultra Apple. Execução contínua, baixa latência, processamento cognitivo soberano.
+          </p>
+          {/* layers */}
+          <div className="flex flex-col rv">
+            {[
+              ['Operational Core','ACTIVE',true],
+              ['Memory Layer','RECORDING',false],
+              ['Execution Objetiva','STANDBY',true],
+              ['Risk Protocol','MONITORING',false],
+              ['MT5 Bridge','CONNECTED',true],
+              ['M5 Ultra Apple','SOVEREIGN',true],
+            ].map(([name,st,active])=>(
+              <div key={name}
+                className="flex items-center gap-3 py-[clamp(10px,1.5vh,13px)] px-[clamp(10px,1.5vw,14px)] border-b border-white/[.04] last:border-b-0 transition-all duration-300 hover:bg-white/[.016] hover:pl-4 rounded-xl">
+                <div className={`w-[5px] h-[5px] rounded-full flex-shrink-0${active?' animate-gold-pulse':''}`}
+                  style={{background:active?'#D4AF37':'rgba(255,255,255,.18)',boxShadow:active?'0 0 6px rgba(212,175,55,.5)':'none'}}/>
+                <span className="font-mono text-[10px] font-medium tracking-[.1em] uppercase text-white/62 flex-1">{name}</span>
+                <span className={`font-mono text-[8px] tracking-[.09em] uppercase${active?' text-yellow-500/50':' text-white/22'}`}>{st}</span>
+              </div>
+            ))}
+          </div>
+          {/* specs */}
+          <div className="bento p-[clamp(14px,2vw,20px)] rv d2" style={{borderRadius:'12px'}}>
+            {[['Processador','M5 Ultra Apple'],['Execução','Local · Soberana'],['Latência','0.3ms'],['Uptime','99.97%'],['Ambiente','MT5 Expert Advisor']].map(([k,v])=>(
+              <div key={k} className="flex justify-between py-[9px] border-b border-white/[.04] last:border-b-0">
+                <span className="font-mono text-[9px] tracking-[.1em] text-white/25">{k}</span>
+                <span className="font-mono text-[9px] tracking-[.08em] font-medium text-white/62">{v}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+        {/* orb */}
+        <div ref={ref} className="flex items-center justify-center p-[clamp(36px,5.5vw,72px)] rv d1">
+          <div className="orb-outer" style={{width:'clamp(200px,30vw,290px)',height:'clamp(200px,30vw,290px)'}}>
+            <div id="r1" className="ring r1"/>
+            <div id="r2" className="ring r2"/>
+            <div id="r3" className="ring r3"/>
+            <div id="orb-core" className="orb-inner" style={{width:'clamp(88px,12vw,118px)',height:'clamp(88px,12vw,118px)'}}
+              role="img" aria-label="Núcleo operacional SMITH">
+              <span className="font-mono text-[8px] tracking-[.14em] uppercase text-yellow-500/32">CORE</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </Sec>
+  );
+}
+
+// ─── S6 — DIFERENCIAL ────────────────────────────
+function Diferencial(){
+  return(
+    <Sec id="s6" bg="bg-bg-elevated">
+      <div className="border-b border-yellow-500/15 mb-[clamp(48px,7vh,80px)]"/>
+      <Eyebrow>Diferencial · SMITH vs Automação Comum</Eyebrow>
+      <h2 className="font-display text-[clamp(2rem,4vw,3.2rem)] font-bold leading-[1.12] tracking-tight text-white mt-3 max-w-[640px] rv">
+        Não é automação.<br/><span className="text-yellow-400/65">É inteligência operacional.</span>
+      </h2>
+      <p className="font-body text-[clamp(.87rem,1.4vw,.97rem)] leading-[1.9] text-white/32 mt-3 max-w-[480px] mb-[clamp(32px,5vh,52px)] rv">
+        A diferença não está na velocidade. Está na qualidade do julgamento por trás de cada operação.
+      </p>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-[1px] bg-white/[.04] border border-white/[.05] rounded-2xl overflow-hidden rv">
+        <div className="bg-bg-elevated p-[clamp(22px,3vw,36px)]">
+          <div className="font-mono text-[9px] tracking-[.18em] uppercase text-silver/50 flex items-center gap-2 mb-[clamp(14px,2.2vh,22px)]">
+            <div className="w-[5px] h-[5px] rounded-full bg-silver/40"/>Robôs Comuns
+          </div>
+          {['Executam regras fixas sem contexto','Dependem de indicadores atrasados','Sem memória operacional entre ciclos','Não adaptam parâmetros ao histórico','Quebram em mudanças de regime','Gestão de risco estática'].map(v=>(
+            <div key={v} className="flex items-start gap-2.5 py-2 border-b border-white/[.04] last:border-b-0 text-[clamp(.83rem,1.3vw,.92rem)] leading-[1.7] text-white/32">
+              <span className="opacity-40 mt-0.5 flex-shrink-0">×</span>{v}
+            </div>
+          ))}
+        </div>
+        <div className="bg-black/40 p-[clamp(22px,3vw,36px)] border-t md:border-t-0 md:border-l border-yellow-500/08">
+          <div className="font-mono text-[9px] tracking-[.18em] uppercase text-yellow-500/55 flex items-center gap-2 mb-[clamp(14px,2.2vh,22px)]">
+            <div className="w-[5px] h-[5px] rounded-full bg-gold"/>SMITH · Dom Investitore
+          </div>
+          {['Metodologia modelada com contexto real','Leitura operacional contínua e contextualizada','Memória ativa em todos os ciclos','Calibração autónoma dentro dos parâmetros','Disciplina independente de condições emocionais','Breakeven + Trailing dinâmicos e automáticos'].map(v=>(
+            <div key={v} className="flex items-start gap-2.5 py-2 border-b border-white/[.04] last:border-b-0 text-[clamp(.83rem,1.3vw,.92rem)] leading-[1.7] text-white/62">
+              <span className="text-yellow-500/65 mt-0.5 flex-shrink-0">→</span>{v}
+            </div>
+          ))}
+        </div>
+      </div>
+    </Sec>
+  );
+}
+
+// ─── S7 — CONDIÇÃO EXCLUSIVA ─────────────────────
+function Exclusiva(){
+  const goldTxt={background:'linear-gradient(135deg,#F0D060,#D4AF37,#8B6914)',backgroundSize:'200% 200%',WebkitBackgroundClip:'text',backgroundClip:'text',color:'transparent',animation:'titanSpin 6s ease-in-out infinite'};
+  return(
+    <Sec id="s7" bg="bg-bg-core">
+      <div className="border-b border-white/[.06] mb-[clamp(48px,7vh,80px)]"/>
+      <Eyebrow>Acesso Interno · Mentorados Dom Investitore</Eyebrow>
+      <h2 className="font-display text-[clamp(2rem,4vw,3rem)] font-bold leading-[1.12] tracking-tight text-white mt-3 rv">
+        Licença operacional exclusiva.
+      </h2>
+      <p className="font-body text-[clamp(.87rem,1.4vw,.97rem)] leading-[1.9] text-white/32 mt-3 max-w-[520px] mb-[clamp(36px,5.5vh,56px)] rv">
+        SMITH não é vendido ao público. O acesso é reservado para mentorados com vínculo ativo Dom Investitore. Condição interna — não replicada externamente.
+      </p>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-[clamp(14px,2vw,22px)] max-w-[780px] mb-[clamp(28px,4.5vh,42px)]">
+        <div className="bento p-[clamp(24px,3.5vw,40px)] rv" style={{borderRadius:'18px'}}>
+          <p className="font-mono text-[8px] tracking-[.2em] uppercase text-white/22 mb-3">Valor de Revenda</p>
+          <p className="font-display text-[clamp(2rem,5vw,3.6rem)] font-bold tracking-tighter leading-none text-white/14 line-through" style={{textDecorationColor:'rgba(255,255,255,.06)'}}>€500</p>
+          <p className="font-mono text-[9px] tracking-[.1em] uppercase text-white/18 mt-2">Licença pública de mercado</p>
+          <p className="text-[12px] text-white/18 mt-3 leading-[1.6]">Valor de referência institucional. Não disponível externamente.</p>
+        </div>
+        <div className="bento bento-gold p-[clamp(24px,3.5vw,40px)] rv d2" style={{borderRadius:'18px'}}>
+          <p className="font-mono text-[8px] tracking-[.2em] uppercase text-white/22 mb-3">Condição Reservada · Mentorado</p>
+          <p className="font-display text-[clamp(2.4rem,6vw,4rem)] font-bold tracking-tighter leading-none" style={goldTxt}>€250</p>
+          <p className="font-mono text-[9px] tracking-[.1em] uppercase text-white/18 mt-2">Licença operacional · Acesso anual</p>
+          <div className="flex flex-col gap-2 mt-4">
+            {['Expert Advisor SMITH MT5 licenciado','Suporte de configuração e ativação','Atualizações do motor cognitivo','Acesso ao grupo fechado operacional'].map(v=>(
+              <div key={v} className="flex items-center gap-2 text-[12px] text-white/35">
+                <span className="text-yellow-500/45">—</span>{v}
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+      <div className="rv inline-flex items-center gap-2 px-3.5 py-1.5 border border-yellow-500/12 rounded-sm" style={{background:'rgba(212,175,55,.03)'}}>
+        <div className="w-1 h-1 rounded-full bg-gold opacity-65 animate-gold-pulse" style={{boxShadow:'0 0 5px rgba(212,175,55,.45)'}}/>
+        <span className="font-mono text-[8px] tracking-[.14em] uppercase text-yellow-500/45">Grupo Fechado · Mentorados Dom Investitore Apenas</span>
+      </div>
+    </Sec>
+  );
+}
+
+// ─── S8 — FECHAMENTO ─────────────────────────────
+function Closing(){
+  const ref=useRef(null);
+  const vis=useReveal(ref,{threshold:.08,margin:'0px 0px -80px 0px'});
+  const[dark,setDark]=useState(0);
+  useEffect(()=>{
+    if(!vis)return;
+    window._qi&&window._qi(.2);
+    let op=0;
+    (function dk(){op=Math.min(op+.003,.8);setDark(op);if(op<.8)requestAnimationFrame(dk);})();
+  },[vis]);
+  const titanGrad={background:'linear-gradient(135deg,rgba(255,255,255,.82) 0%,rgba(190,188,185,.86) 14%,rgba(140,137,133,.78) 28%,rgba(212,208,202,.84) 40%,rgba(212,175,55,.68) 50%,rgba(212,208,202,.84) 60%,rgba(132,130,126,.76) 72%,rgba(188,186,183,.8) 86%,rgba(255,255,255,.78) 100%)',backgroundSize:'280% 280%',WebkitBackgroundClip:'text',backgroundClip:'text',color:'transparent',animation:'titanSpin 9s ease-in-out infinite'};
+  return(
+    <>
+      <div style={{position:'fixed',inset:0,background:'#000',pointerEvents:'none',zIndex:0,opacity:dark}}/>
+      <section id="s8" className="relative z-10 bg-bg-core pb-0">
+        <div className="border-b border-white/[.04] mb-0"/>
+        <div ref={ref}
+          className="max-w-[1140px] mx-auto px-[clamp(24px,5.5vw,80px)] text-center flex flex-col items-center gap-[clamp(14px,2.2vh,20px)] pt-[clamp(90px,14vh,150px)]">
+          <h2 className="font-display font-extrabold tracking-tighter rv" style={{fontSize:'clamp(5rem,17vw,14rem)',lineHeight:'.88',...titanGrad}}>SMITH</h2>
+          <p className="font-mono font-light tracking-widest uppercase rv" style={{fontSize:'clamp(.6rem,1vw,.72rem)',color:'rgba(255,255,255,.28)'}}>Operational Financial Intelligence</p>
+          <div className="rv" style={{width:'36px',height:'1px',background:'rgba(212,175,55,.28)'}}/>
+          <div className="flex flex-col gap-1.5 rv">
+            {['A inteligência nasce da metodologia.','A execução pertence à máquina.','O acesso pertence aos mentorados.'].map(l=>(
+              <p key={l} className="font-display font-light text-white/28 leading-[1.62]" style={{fontSize:'clamp(.92rem,1.8vw,1.2rem)'}}>{l}</p>
+            ))}
+          </div>
+          <p className="font-mono font-medium tracking-[.22em] uppercase rv" style={{fontSize:'clamp(.6rem,1.05vw,.74rem)',color:'rgba(212,175,55,.52)',textShadow:'0 0 12px rgba(212,175,55,.18)'}}>
+            ACESSO FECHADO AOS MENTORADOS DOM INVESTITORE
+          </p>
+        </div>
+        {/* footer */}
+        <footer className="max-w-[1140px] mx-auto px-[clamp(24px,5.5vw,80px)] border-t border-white/[.04] mt-[clamp(52px,9vh,96px)] py-[clamp(22px,3.5vh,38px)] flex flex-col items-center gap-2.5">
+          <p className="font-mono text-[8px] tracking-[.26em] uppercase text-white/12 text-center leading-[2.2]">Dom Investitore — Creating the Next Generation<br/>of Operational Financial Intelligence</p>
+          <p className="font-mono text-[7px] tracking-[.1em] text-white/07 uppercase">SMITH v2.0 · Dom Investitore © 2026</p>
+          <div className="flex items-center gap-1.5">
+            <div className="w-[3px] h-[3px] rounded-full bg-gold opacity-30 animate-gold-pulse"/>
+            <span className="font-mono text-[7px] tracking-[.12em] uppercase text-white/1">Smith · Operational · Monitoring Active</span>
+          </div>
+        </footer>
+      </section>
+    </>
+  );
+}
+
+// ─── APP ROOT ─────────────────────────────────────
+function App(){
+  return(
+    <>
+      <Hero/>
+      <WhatIsSmith/>
+      <Pipeline/>
+      <Performance/>
+      <Simulator/>
+      <Core/>
+      <Diferencial/>
+      <Exclusiva/>
+      <Closing/>
+    </>
+  );
+}
+
+// GSAP parallax headings
+document.addEventListener('DOMContentLoaded',()=>{
+  if(typeof gsap==='undefined'||typeof ScrollTrigger==='undefined')return;
+  gsap.registerPlugin(ScrollTrigger);
+  ['h2','h1'].forEach(sel=>{
+    document.querySelectorAll(`section ${sel}`).forEach(el=>{
+      gsap.fromTo(el,{y:20},{y:0,ease:'none',scrollTrigger:{trigger:el,start:'top 88%',end:'top 35%',scrub:1.3}});
+    });
   });
   ScrollTrigger.refresh();
 });
+
+ReactDOM.createRoot(document.getElementById('root')).render(React.createElement(App));
 </script>
 </body>
 </html>
