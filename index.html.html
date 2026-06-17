@@ -3,1827 +3,1878 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>SMITH — Operational Financial Intelligence · Dom Investitore</title>
+<title>SMITH — Operational Financial Intelligence</title>
 
+<!-- Playfair Display (editorial) + JetBrains Mono (HUD) -->
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-<!-- Editorial + Mono premium — referência arqui9 -->
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=JetBrains+Mono:wght@300;400;500;600&display=swap" rel="stylesheet"/>
 
+<!-- GSAP — única dependência CDN -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
 
 <style>
-/* ══════════════════════════════════════════════════════
-   SMITH × ARQUI9
-   Paleta: off-white, stone, charcoal, bronze polido
-   Inspiração: editorial de luxo + laboratório tecnológico
-══════════════════════════════════════════════════════ */
-:root {
-  /* Fundos — quase brancos e pedra */
-  --bg:       #F8F6F2;   /* off-white quente */
-  --bg2:      #F2EFE9;   /* pedra clara */
-  --bg-dark:  #0E0D0B;   /* charcoal profundo */
-  --bg-mid:   #1A1814;   /* charcoal médio */
+/* ═══════════════════════════════════════════════════════
+   SMITH — DESIGN SYSTEM DOM MASCARINI
+   §1  Void #050505 · Panel #111111 · Edge #222222
+   §2  Playfair Display (editorial) × JetBrains Mono (HUD)
+   §3  circOut ≤0.2s · Scramble text · Sem spring physics
+   §4  Execução Objetiva · Alvos T1-T4 matemáticos
+═══════════════════════════════════════════════════════ */
 
-  /* Texto */
-  --ink:      #0E0D0B;   /* preto quase total */
-  --ink2:     #3A3832;   /* charcoal texto */
-  --ink3:     #7A7670;   /* stone médio */
-  --ink4:     #B0ACA5;   /* stone claro */
+/* ── RESET ─────────────────────────────────────────── */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 
-  /* Bronze polido — acento SMITH */
-  --bronze:   #9B7B4A;   /* bronze principal */
-  --bronze2:  #C4A06A;   /* bronze claro / champagne */
-  --bronze3:  #6B5230;   /* bronze escuro / shadow */
-  --bronze-hi:#E8D4A8;   /* highlight metálico */
+html{
+  font-size:16px;
+  background:#050505;
+  color:#F4F4F2;
+  font-family:'JetBrains Mono',monospace;
+  -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+  scroll-behavior:auto;
+}
+body{min-height:100vh;overflow-x:hidden;background:#050505}
 
-  /* Linhas e bordas */
-  --line:     rgba(14,13,11,.1);
-  --line2:    rgba(14,13,11,.06);
-  --line-b:   rgba(155,123,74,.22);
+::-webkit-scrollbar{width:1px}
+::-webkit-scrollbar-track{background:#050505}
+::-webkit-scrollbar-thumb{background:#1A1A1A}
 
-  /* Glass (dark sections) */
-  --glass:    rgba(255,255,255,.04);
-  --glass-b:  rgba(255,255,255,.08);
-
-  /* Fontes */
-  --serif:  'Cormorant Garamond', Georgia, serif;
-  --sans:   'Inter', system-ui, sans-serif;
-  --mono:   'JetBrains Mono', monospace;
-
-  /* Easing */
-  --ease:   cubic-bezier(.16,1,.3,1);
-  --ease2:  cubic-bezier(.4,0,.2,1);
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}
 }
 
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-html {
-  background: var(--bg);
-  color: var(--ink);
-  font-family: var(--sans);
-  -webkit-font-smoothing: antialiased;
-  overflow-x: hidden;
-  scroll-behavior: smooth;
-}
-body { min-height: 100vh; overflow-x: hidden; }
-
-::-webkit-scrollbar { width: 1px; }
-::-webkit-scrollbar-track { background: var(--bg); }
-::-webkit-scrollbar-thumb { background: var(--bronze); opacity: .3; }
-
-/* ── KEYFRAMES ─────────────────────────────────────── */
-@keyframes fadeUp {
-  from { opacity: 0; transform: translateY(28px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-@keyframes fadeIn {
-  from { opacity: 0; } to { opacity: 1; }
-}
-@keyframes bronzePulse {
-  0%,100% { box-shadow: 0 0 0 0 rgba(155,123,74,0); }
-  50%      { box-shadow: 0 0 0 4px rgba(155,123,74,.12); }
-}
-@keyframes bronzeGlow {
-  0%,100% {
-    text-shadow:
-      0 0 20px rgba(196,160,106,.12),
-      0 0 60px rgba(155,123,74,.06);
-  }
-  50% {
-    text-shadow:
-      0 0 35px rgba(196,160,106,.22),
-      0 0 90px rgba(155,123,74,.1),
-      0 0 180px rgba(155,123,74,.04);
-  }
-}
-@keyframes shimmer {
-  from { background-position: -300% center; }
-  to   { background-position:  300% center; }
-}
-@keyframes dotPulse {
-  0%,100% { opacity: .5; transform: scale(1); }
-  50%      { opacity: 1;  transform: scale(1.3); }
-}
-@keyframes scanLine {
-  from { top: -1px; }
-  to   { top: 101%; }
-}
-@keyframes logScroll {
-  from { transform: translateY(0); }
-  to   { transform: translateY(-50%); }
-}
-@keyframes borderFlow {
-  0%   { background-position: 0% 50%; }
-  50%  { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
-}
-@keyframes floatY {
-  0%,100% { transform: translateY(0); }
-  50%      { transform: translateY(-8px); }
+/* ── TOKENS ─────────────────────────────────────────── */
+:root{
+  --void:   #050505;
+  --panel:  #111111;
+  --edge:   #222222;
+  --edge2:  #1A1A1A;
+  --champ:  #C9A86A;
+  --champ2: #D8C08A;
+  --hi:     #F0E2BD;
+  --txt:    #F4F4F2;
+  --txt2:   #6A6A6A;
+  --muted:  #3A3A3A;
+  --serif:  'Playfair Display',Georgia,serif;
+  --mono:   'JetBrains Mono',monospace;
+  --circ:   cubic-bezier(.5,0,.5,1);
 }
 
-/* ── LAYOUT BASE ────────────────────────────────────── */
-.container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 clamp(24px, 5vw, 80px);
+/* ── §2 TIPOGRAFIA ─────────────────────────────────── */
+.t-display{font-family:var(--serif);font-weight:700;letter-spacing:-.02em;line-height:1.08}
+.t-serif  {font-family:var(--serif)}
+.t-mono   {font-family:var(--mono)}
+h1,h2,h3  {font-family:var(--serif);font-weight:700}
+
+/* ── §1 PAINÉIS: matte sólido ──────────────────────── */
+.panel{
+  background:var(--panel);
+  border:1px solid var(--edge);
+  border-radius:0;
+  position:relative;
 }
 
-/* ── DIVISORES ──────────────────────────────────────── */
-.rule {
-  height: 1px;
-  background: var(--line);
-}
-.rule-bronze {
-  height: 1px;
-  background: linear-gradient(90deg, transparent, var(--bronze) 30%, var(--bronze) 70%, transparent);
-  opacity: .35;
+/* ── LAYOUT ─────────────────────────────────────────── */
+.container{max-width:1080px;margin:0 auto;padding:0 clamp(20px,5vw,72px)}
+.section{position:relative;padding:clamp(72px,11vh,130px) 0}
+.hr{height:1px;background:var(--edge2);margin-bottom:clamp(48px,7vh,80px)}
+
+/* ── EYEBROW ────────────────────────────────────────── */
+.eyebrow{
+  display:block;
+  font-family:var(--mono);
+  font-size:9px;font-weight:500;
+  letter-spacing:.22em;text-transform:uppercase;
+  color:var(--champ);opacity:.6;
+  margin-bottom:clamp(16px,2.5vh,24px);
 }
 
-/* ── EYEBROW label ──────────────────────────────────── */
-.label {
-  font-family: var(--mono);
-  font-size: 10px;
-  font-weight: 400;
-  letter-spacing: .2em;
-  text-transform: uppercase;
-  color: var(--bronze);
-  opacity: .75;
-}
+/* ── §3 REVEAL — circOut seco ──────────────────────── */
+.rv{opacity:0;transform:translateY(10px)}
+/* Aplicado via JS com transition circOut .15s */
 
-/* ── GLASS CARD (dark sections) ─────────────────────── */
-.glass-card {
-  background: rgba(255,255,255,.03);
-  backdrop-filter: blur(24px) saturate(140%);
-  -webkit-backdrop-filter: blur(24px) saturate(140%);
-  border: 1px solid rgba(255,255,255,.07);
-  border-radius: 2px;
-  position: relative;
+/* ═══════════════════════════════════════════════════════
+   LOADER
+═══════════════════════════════════════════════════════ */
+#loader{
+  position:fixed;inset:0;z-index:9999;
+  background:#000;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:18px;
 }
-.glass-card::before {
-  content: '';
-  position: absolute;
-  top: 0; left: 0; right: 0; height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(196,160,106,.25), transparent);
+#ld-logo{
+  font-family:var(--mono);
+  font-size:clamp(1.8rem,4.5vw,2.8rem);
+  font-weight:400;letter-spacing:.32em;
+  color:var(--champ);opacity:0;
 }
+#ld-track{width:clamp(140px,22vw,210px);height:1px;background:#1A1A1A}
+#ld-fill{height:100%;width:0;background:var(--champ);transition:width .05s linear}
+#ld-pct{font-family:var(--mono);font-size:9px;letter-spacing:.28em;color:var(--champ);opacity:.65}
+#ld-msg{font-family:var(--mono);font-size:7px;letter-spacing:.18em;text-transform:uppercase;color:var(--txt2);opacity:.45;margin-top:-12px}
 
-/* ── STONE CARD (light sections) ────────────────────── */
-.stone-card {
-  background: var(--bg2);
-  border: 1px solid var(--line);
-  border-radius: 2px;
-  position: relative;
+/* ═══════════════════════════════════════════════════════
+   HERO
+═══════════════════════════════════════════════════════ */
+#hero{
+  min-height:100vh;
+  display:flex;flex-direction:column;justify-content:flex-end;
+  position:relative;overflow:hidden;
+  background:#050505;
 }
-.stone-card::before {
-  content: '';
-  position: absolute;
-  top: 0; left: 0; right: 0; height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(155,123,74,.3), transparent);
+/* strip topo */
+#hero-strip{
+  position:absolute;top:0;left:0;right:0;
+  height:40px;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 clamp(20px,5vw,72px);
+  border-bottom:1px solid var(--edge2);
+  background:#050505;
+  z-index:5;
 }
+.strip-cell{
+  font-family:var(--mono);font-size:8px;
+  letter-spacing:.1em;color:var(--txt2);
+  display:flex;align-items:center;gap:7px;
+}
+.strip-cell.live{color:var(--champ)}
+.strip-dot{
+  width:4px;height:4px;border-radius:50%;
+  background:var(--champ);
+  animation:blink 1.2s step-end infinite;
+}
+@keyframes blink{0%,49%{opacity:1}50%,100%{opacity:0}}
 
-/* ══════════════════════════════════════════════════════
-   NAV
-══════════════════════════════════════════════════════ */
-nav {
-  position: fixed; top: 0; left: 0; right: 0;
-  z-index: 100;
-  height: 56px;
-  display: flex; align-items: center; justify-content: space-between;
-  padding: 0 clamp(24px, 5vw, 80px);
-  background: rgba(248,246,242,.92);
-  backdrop-filter: blur(20px);
-  border-bottom: 1px solid var(--line);
-  opacity: 0;
-  transition: opacity .6s var(--ease);
-}
-nav.visible { opacity: 1; }
-.nav-logo {
-  font-family: var(--serif);
-  font-size: 1.1rem;
-  font-weight: 500;
-  letter-spacing: .08em;
-  color: var(--ink);
-}
-.nav-status {
-  display: flex; align-items: center; gap: 7px;
-  font-family: var(--mono);
-  font-size: 9px;
-  letter-spacing: .16em;
-  color: var(--ink3);
-}
-.nav-dot {
-  width: 5px; height: 5px;
-  border-radius: 50%;
-  background: var(--bronze);
-  animation: dotPulse 2.8s ease-in-out infinite;
-}
-
-/* ══════════════════════════════════════════════════════
-   HERO — dark, editorial, espacial
-══════════════════════════════════════════════════════ */
-#hero {
-  min-height: 100vh;
-  background: var(--bg-dark);
-  display: flex; flex-direction: column;
-  justify-content: flex-end;
-  padding-bottom: clamp(60px, 10vh, 100px);
-  position: relative;
-  overflow: hidden;
-}
-/* canvas partículas */
-#hero-cv {
-  position: absolute; inset: 0;
-  pointer-events: none; z-index: 0; opacity: .55;
-}
-/* scanline sutil */
-#hero::after {
-  content: '';
-  position: absolute; left: 0; right: 0; height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(196,160,106,.15) 30%, rgba(196,160,106,.25) 50%, rgba(196,160,106,.15) 70%, transparent);
-  animation: scanLine 11s linear infinite;
-  pointer-events: none; z-index: 2; opacity: .6;
-}
-.hero-content {
-  position: relative; z-index: 3;
-  padding: 0 clamp(24px, 5vw, 80px);
-}
-/* linha topo hero */
-.hero-top {
-  position: absolute; top: 0; left: 0; right: 0;
-  display: flex; align-items: center; justify-content: space-between;
-  padding: 20px clamp(24px, 5vw, 80px);
-  border-bottom: 1px solid rgba(255,255,255,.06);
-  z-index: 4;
-}
-.hero-top-label {
-  font-family: var(--mono);
-  font-size: 9px; letter-spacing: .16em; text-transform: uppercase;
-  color: rgba(255,255,255,.32);
-}
-/* SMITH — tipografia editorial com bronze */
-.smith-hero {
-  font-family: var(--serif);
-  font-size: clamp(5rem, 16vw, 14rem);
-  font-weight: 300;
-  line-height: .9;
-  letter-spacing: -.02em;
-  /* bronze polido metálico */
-  background: linear-gradient(
-    135deg,
-    #E8D4A8 0%,
-    #C4A06A 20%,
-    #9B7B4A 42%,
-    #C4A06A 58%,
-    #E8D4A8 74%,
-    #C4A06A 88%,
-    #9B7B4A 100%
+/* SMITH logotipo */
+#smith-logo{
+  font-family:var(--serif);
+  font-size:clamp(5rem,18vw,14rem);
+  font-weight:900;
+  letter-spacing:-.04em;
+  line-height:.88;
+  background:linear-gradient(
+    175deg,
+    #F4F4F2 0%,#C8C6C4 13%,#A2A09E 26%,
+    #D4D2D0 40%,#C9A86A 50%,#D4D2D0 60%,
+    #A0A09E 72%,#C8C6C4 85%,#F4F4F2 100%
   );
-  background-size: 300% 300%;
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  animation: shimmer 8s ease-in-out infinite, bronzeGlow 9s ease-in-out infinite;
-  will-change: filter;
+  background-size:260% 260%;
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+  animation:metalShift 8s linear infinite;
+  filter:drop-shadow(0 1px 0 rgba(40,38,35,.95)) drop-shadow(0 3px 4px rgba(0,0,0,.9));
+  display:block;
 }
-.hero-sub {
-  font-family: var(--mono);
-  font-size: clamp(.62rem, 1vw, .78rem);
-  letter-spacing: .32em; text-transform: uppercase;
-  color: rgba(255,255,255,.4);
-  margin-top: clamp(12px, 2vh, 20px);
-}
-.hero-divider {
-  width: 48px; height: 1px;
-  background: var(--bronze);
-  opacity: .5;
-  margin: clamp(20px, 3vh, 32px) 0;
-}
-.hero-phrase {
-  font-family: var(--serif);
-  font-size: clamp(1rem, 2.2vw, 1.5rem);
-  font-weight: 300; font-style: italic;
-  color: rgba(255,255,255,.45);
-  line-height: 1.6;
-  max-width: 520px;
-}
-.hero-status {
-  position: absolute;
-  bottom: clamp(60px, 10vh, 100px);
-  right: clamp(24px, 5vw, 80px);
-  display: flex; flex-direction: column; gap: 5px;
-  z-index: 3;
-}
-.hero-status-row {
-  display: flex; align-items: center; gap: 8px;
-  font-family: var(--mono);
-  font-size: 8px; letter-spacing: .12em;
-  color: rgba(255,255,255,.28);
-}
-.hero-status-row.live {
-  color: rgba(196,160,106,.65);
-}
-.hero-status-dot {
-  width: 4px; height: 4px; border-radius: 50%;
-  background: var(--bronze2);
-  animation: dotPulse 2.4s ease-in-out infinite;
-}
-/* telemetria top-right no hero */
-.hero-tel {
-  font-family: var(--mono);
-  font-size: 8px; letter-spacing: .1em;
-  color: rgba(255,255,255,.25);
-  text-align: right;
-}
-.hero-tel span { color: rgba(196,160,106,.6); }
-
-/* scroll indicator */
-.scroll-hint {
-  position: absolute; bottom: 24px; left: 50%;
-  transform: translateX(-50%);
-  display: flex; flex-direction: column; align-items: center; gap: 6px;
-  z-index: 4; opacity: 0;
-  animation: fadeIn .8s ease 3.5s forwards;
-}
-.scroll-line {
-  width: 1px; height: 28px;
-  background: linear-gradient(180deg, transparent, rgba(196,160,106,.4));
-}
-.scroll-label {
-  font-family: var(--mono);
-  font-size: 7px; letter-spacing: .2em;
-  color: rgba(255,255,255,.22); text-transform: uppercase;
+@keyframes metalShift{
+  0%{background-position:0% 50%}
+  50%{background-position:100% 50%}
+  100%{background-position:0% 50%}
 }
 
-/* ══════════════════════════════════════════════════════
-   S — O QUE É SMITH (fundo claro)
-══════════════════════════════════════════════════════ */
-#what {
-  background: var(--bg);
-  padding: clamp(80px, 14vh, 140px) 0;
+/* hero body */
+#hero-body{
+  position:relative;z-index:4;
+  padding:0 clamp(20px,5vw,72px) clamp(56px,9vh,90px);
 }
-.what-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: clamp(48px, 6vw, 96px);
-  align-items: start;
+#hero-sub{
+  font-family:var(--mono);
+  font-size:clamp(.6rem,1.05vw,.72rem);
+  letter-spacing:.38em;text-transform:uppercase;
+  color:rgba(244,244,242,.35);
+  margin-top:clamp(8px,1.5vh,14px);
+  margin-bottom:clamp(16px,2.8vh,26px);
+  display:block;
 }
-@media (max-width: 768px) { .what-grid { grid-template-columns: 1fr; } }
-.what-num {
-  font-family: var(--serif);
-  font-size: clamp(5rem, 10vw, 8rem);
-  font-weight: 300;
-  color: var(--bg2);
-  line-height: 1;
-  letter-spacing: -.04em;
-  user-select: none;
-  margin-bottom: 16px;
+#hero-rule{
+  width:0;height:1px;
+  background:rgba(201,168,106,.3);
+  margin-bottom:clamp(14px,2.2vh,22px);
+  transition:width .4s var(--circ);
 }
-.what-h {
-  font-family: var(--serif);
-  font-size: clamp(1.8rem, 3.5vw, 2.8rem);
-  font-weight: 400;
-  line-height: 1.18;
-  letter-spacing: -.01em;
-  color: var(--ink);
-}
-.what-h em { font-style: italic; color: var(--bronze); }
-.what-body {
-  font-family: var(--sans);
-  font-size: clamp(.88rem, 1.5vw, 1rem);
-  line-height: 1.96;
-  color: var(--ink3);
-  margin-top: clamp(16px, 2.5vh, 24px);
-}
-.attr-list {
-  list-style: none;
-  display: flex; flex-direction: column; gap: 12px;
-  margin-top: clamp(24px, 3.5vh, 36px);
-}
-.attr-item {
-  display: flex; align-items: flex-start; gap: 12px;
-  font-family: var(--sans);
-  font-size: .9rem; line-height: 1.7;
-  color: var(--ink2);
-  padding-bottom: 12px;
-  border-bottom: 1px solid var(--line2);
-}
-.attr-item:last-child { border-bottom: none; }
-.attr-arrow { color: var(--bronze); opacity: .65; flex-shrink: 0; }
-.attr-item strong { color: var(--ink); font-weight: 500; }
-
-/* conceito */
-.concept-block {
-  margin-top: clamp(32px, 5vh, 52px);
-  padding: clamp(24px, 3.5vw, 40px);
-  background: var(--bg-dark);
-  border-radius: 2px;
-  position: relative; overflow: hidden;
-}
-.concept-block::before {
-  content: '';
-  position: absolute; top: 0; left: 0; right: 0; height: 1px;
-  background: linear-gradient(90deg, transparent, var(--bronze2), transparent);
-  opacity: .4;
-}
-.concept-label {
-  font-family: var(--mono);
-  font-size: 9px; letter-spacing: .2em; text-transform: uppercase;
-  color: var(--bronze2); opacity: .6;
-  margin-bottom: 16px;
-}
-.concept-lines {
-  display: flex; flex-direction: column; gap: 6px;
-}
-.concept-line {
-  font-family: var(--serif);
-  font-size: clamp(.95rem, 1.8vw, 1.2rem);
-  color: rgba(255,255,255,.6);
-  line-height: 1.5;
-}
-.concept-line.strong {
-  color: rgba(255,255,255,.88);
-  font-style: italic;
+#hero-phrase{
+  font-family:var(--serif);
+  font-size:clamp(.88rem,1.8vw,1.2rem);
+  font-weight:400;line-height:1.7;
+  color:rgba(244,244,242,.3);
+  max-width:460px;
+  font-style:italic;
 }
 
-/* ══════════════════════════════════════════════════════
-   S — PIPELINE (fundo escuro)
-══════════════════════════════════════════════════════ */
-#pipeline {
-  background: var(--bg-mid);
-  padding: clamp(80px, 14vh, 140px) 0;
+/* status lateral */
+#hero-status{
+  position:absolute;
+  bottom:clamp(56px,9vh,90px);
+  right:clamp(20px,5vw,72px);
+  display:flex;flex-direction:column;gap:5px;
+  z-index:4;
 }
-.pipeline-intro {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: clamp(48px, 6vw, 96px);
-  margin-bottom: clamp(48px, 7vh, 72px);
+@media(max-width:640px){#hero-status{display:none}}
+.hst{
+  font-family:var(--mono);font-size:8px;
+  letter-spacing:.1em;color:var(--txt2);
+  display:flex;align-items:center;gap:6px;
 }
-@media (max-width: 768px) { .pipeline-intro { grid-template-columns: 1fr; } }
-.pipeline-h {
-  font-family: var(--serif);
-  font-size: clamp(2rem, 4.5vw, 3.5rem);
-  font-weight: 300; line-height: 1.15;
-  color: rgba(255,255,255,.88);
-}
-.pipeline-h em { font-style: italic; color: var(--bronze2); }
-.pipeline-body {
-  font-size: clamp(.88rem, 1.4vw, .98rem);
-  line-height: 1.92; color: rgba(255,255,255,.42);
-  padding-top: 8px;
-}
-/* steps */
-.pipeline-steps {
-  display: flex; flex-direction: column;
-  border-top: 1px solid rgba(255,255,255,.06);
-}
-.pipeline-step {
-  display: flex; align-items: center; gap: 20px;
-  padding: clamp(14px, 2vh, 20px) 0;
-  border-bottom: 1px solid rgba(255,255,255,.05);
-  opacity: .22;
-  transition: opacity .7s var(--ease), background .5s ease, padding-left .5s var(--ease);
-  border-radius: 2px;
-  cursor: default;
-}
-.pipeline-step.active {
-  opacity: 1;
-  background: rgba(155,123,74,.06);
-  padding-left: 12px;
-}
-.pipeline-step-n {
-  font-family: var(--mono);
-  font-size: 8px; letter-spacing: .14em;
-  color: var(--bronze2); opacity: .5;
-  flex-shrink: 0; min-width: 20px;
-}
-.pipeline-step-dot {
-  width: 8px; height: 8px; border-radius: 50%;
-  border: 1px solid rgba(196,160,106,.25);
-  flex-shrink: 0;
-  transition: all .6s var(--ease);
-}
-.pipeline-step.active .pipeline-step-dot {
-  background: var(--bronze2);
-  border-color: var(--bronze2);
-  box-shadow: 0 0 10px rgba(196,160,106,.55), 0 0 24px rgba(155,123,74,.25);
-}
-.pipeline-step-content { flex: 1; }
-.pipeline-step-name {
-  font-family: var(--mono);
-  font-size: 10px; font-weight: 500;
-  letter-spacing: .12em; text-transform: uppercase;
-  color: rgba(255,255,255,.8);
-  margin-bottom: 3px;
-}
-.pipeline-step-log {
-  font-family: var(--mono);
-  font-size: 9px; color: rgba(255,255,255,.3);
-  letter-spacing: .04em;
-}
-.pipeline-step.active .pipeline-step-log {
-  color: var(--bronze2); opacity: .8;
-}
-.pipeline-step-st {
-  font-family: var(--mono);
-  font-size: 8px; letter-spacing: .1em; text-transform: uppercase;
-  color: var(--bronze2); opacity: 0;
-  transition: opacity .4s ease;
-}
-.pipeline-step.active .pipeline-step-st { opacity: .6; }
+.hst.live{color:rgba(201,168,106,.55)}
+.hst-dot{width:4px;height:4px;border-radius:50%;background:var(--champ);animation:blink 1.2s step-end infinite}
 
-/* ══════════════════════════════════════════════════════
-   S — PERFORMANCE (fundo claro, editorial)
-══════════════════════════════════════════════════════ */
-#perf {
-  background: var(--bg);
-  padding: clamp(80px, 14vh, 140px) 0;
+/* scroll */
+#hero-scroll{
+  position:absolute;bottom:20px;left:50%;transform:translateX(-50%);
+  display:flex;flex-direction:column;align-items:center;gap:5px;
+  z-index:4;opacity:0;
 }
-.perf-header {
-  display: grid;
-  grid-template-columns: 1.2fr 1fr;
-  gap: clamp(48px, 6vw, 96px);
-  align-items: end;
-  margin-bottom: clamp(48px, 7vh, 72px);
-}
-@media (max-width: 768px) { .perf-header { grid-template-columns: 1fr; } }
-.perf-h {
-  font-family: var(--serif);
-  font-size: clamp(2rem, 4vw, 3.2rem);
-  font-weight: 400; line-height: 1.18;
-  color: var(--ink);
-}
-.perf-h em { font-style: italic; color: var(--bronze); }
-.perf-desc {
-  font-size: clamp(.86rem, 1.4vw, .96rem);
-  line-height: 1.92; color: var(--ink3);
-}
+.scroll-line{width:1px;height:24px;background:linear-gradient(180deg,transparent,rgba(201,168,106,.28))}
+.scroll-lbl{font-family:var(--mono);font-size:7px;letter-spacing:.2em;text-transform:uppercase;color:var(--txt2);opacity:.3}
 
-/* big number cards */
-.perf-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 1px;
-  border: 1px solid var(--line);
-  border-radius: 2px;
-  overflow: hidden;
-  margin-bottom: clamp(32px, 5vh, 52px);
-}
-@media (max-width: 860px) { .perf-grid { grid-template-columns: repeat(2, 1fr); } }
-@media (max-width: 480px) { .perf-grid { grid-template-columns: 1fr; } }
-.perf-card {
-  padding: clamp(24px, 3vw, 36px);
-  background: var(--bg);
-  position: relative; overflow: hidden;
-}
-.perf-card::after {
-  content: '';
-  position: absolute; top: 0; left: 0; right: 0; height: 2px;
-  background: linear-gradient(90deg, transparent, var(--bronze), transparent);
-  opacity: 0;
-  transition: opacity .4s ease;
-}
-.perf-card:hover::after { opacity: .4; }
-.perf-card-label {
-  font-family: var(--mono);
-  font-size: 8px; letter-spacing: .18em; text-transform: uppercase;
-  color: var(--ink4); margin-bottom: 12px;
-}
-.perf-card-val {
-  font-family: var(--serif);
-  font-size: clamp(2.2rem, 5vw, 3.8rem);
-  font-weight: 300; line-height: 1;
-  letter-spacing: -.03em;
-  color: var(--ink);
-}
-.perf-card-val .accent {
-  background: linear-gradient(135deg, var(--bronze-hi), var(--bronze2), var(--bronze));
-  -webkit-background-clip: text; background-clip: text; color: transparent;
-}
-.perf-card-sub {
-  font-family: var(--mono);
-  font-size: 8px; letter-spacing: .1em; text-transform: uppercase;
-  color: var(--ink4); margin-top: 8px;
-}
+/* ═══════════════════════════════════════════════════════
+   S2 — O QUE É SMITH
+═══════════════════════════════════════════════════════ */
+#s2{background:#050505}
+.s2-grid{display:grid;grid-template-columns:1fr 1fr;gap:clamp(28px,4.5vw,60px);align-items:start}
+@media(max-width:768px){.s2-grid{grid-template-columns:1fr}}
 
-/* barras */
-.perf-bars {
-  display: grid;
-  grid-template-columns: 1.5fr 1fr;
-  gap: clamp(20px, 3vw, 36px);
+/* terminal log */
+.term{border:1px solid var(--edge2);background:#0A0A0A}
+.term-head{
+  display:flex;align-items:center;justify-content:space-between;
+  height:32px;padding:0 14px;
+  border-bottom:1px solid var(--edge2);
+  background:#080808;
 }
-@media (max-width: 768px) { .perf-bars { grid-template-columns: 1fr; } }
-.perf-bar-card {
-  padding: clamp(20px, 2.5vw, 32px);
-  background: var(--bg);
-  border: 1px solid var(--line);
-  border-radius: 2px;
+.term-dots{display:flex;gap:5px}
+.term-dot{width:6px;height:6px;border-radius:0;background:var(--edge)}
+.term-title{font-family:var(--mono);font-size:7px;letter-spacing:.1em;color:var(--txt2);opacity:.3}
+.term-live{display:flex;align-items:center;gap:5px;font-family:var(--mono);font-size:7px;letter-spacing:.1em;color:var(--champ)}
+.term-live-dot{width:4px;height:4px;border-radius:50%;background:var(--champ);animation:blink 1.2s step-end infinite}
+.term-body{height:clamp(180px,24vh,260px);overflow:hidden;position:relative}
+.term-body::before{content:'';position:absolute;top:0;left:0;right:0;height:28px;background:linear-gradient(180deg,#0A0A0A,transparent);z-index:2}
+.term-body::after{content:'';position:absolute;bottom:0;left:0;right:0;height:28px;background:linear-gradient(0deg,#0A0A0A,transparent);z-index:2}
+.log-scroll{display:flex;flex-direction:column;padding:12px 14px 0}
+.log-scroll.run{animation:logScroll 42s linear infinite}
+@keyframes logScroll{from{transform:translateY(0)}to{transform:translateY(-50%)}}
+.ll{display:flex;gap:9px;padding:2px 0;line-height:1.8;flex-shrink:0}
+.ll-ts{font-family:var(--mono);font-size:8px;color:var(--txt2);opacity:.22;flex-shrink:0;letter-spacing:.04em}
+.ll-m{font-family:var(--mono);font-size:9px;color:var(--txt2);opacity:.45;letter-spacing:.03em}
+.ll.ok .ll-m{color:#F4F4F2;opacity:.8}
+.ll.gd .ll-m{color:var(--champ);opacity:.85}
+.ll.inf .ll-m{color:var(--txt2);opacity:.6}
+.term-foot{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:7px 14px;border-top:1px solid var(--edge2);
+  background:#080808;
 }
-.perf-bar-title {
-  font-family: var(--mono);
-  font-size: 9px; letter-spacing: .16em; text-transform: uppercase;
-  color: var(--ink3); margin-bottom: clamp(16px, 2.5vh, 24px);
-}
-.perf-bar-item { margin-bottom: clamp(16px, 2.5vh, 22px); }
-.perf-bar-item:last-child { margin-bottom: 0; }
-.perf-bar-row {
-  display: flex; justify-content: space-between;
-  align-items: baseline; margin-bottom: 8px;
-}
-.perf-bar-name {
-  font-family: var(--sans);
-  font-size: clamp(.88rem, 1.4vw, 1rem);
-  font-weight: 500; color: var(--ink);
-}
-.perf-bar-pct {
-  font-family: var(--serif);
-  font-size: clamp(1.1rem, 2vw, 1.5rem);
-  font-weight: 300; color: var(--bronze);
-}
-.perf-bar-track {
-  height: 2px; background: var(--line); border-radius: 1px; overflow: visible;
-}
-.perf-bar-fill {
-  height: 100%; border-radius: 1px;
-  background: linear-gradient(90deg, var(--bronze3), var(--bronze2), var(--bronze-hi));
-  width: 0; transition: width 1.6s var(--ease);
-  position: relative;
-  box-shadow: 0 0 6px rgba(196,160,106,.4);
-}
-.perf-bar-fill::after {
-  content: '';
-  position: absolute; right: -1px; top: -3px;
-  width: 8px; height: 8px; border-radius: 50%;
-  background: var(--bronze2);
-  box-shadow: 0 0 8px rgba(196,160,106,.6);
-}
+.term-foot-l,.term-foot-r{font-family:var(--mono);font-size:7px;letter-spacing:.05em;color:var(--txt2);opacity:.2}
+.term-cursor{display:inline-block;width:5px;height:9px;background:var(--champ);margin-left:4px;vertical-align:middle;animation:blink 1s step-end infinite}
 
+.attr-list{display:flex;flex-direction:column;margin-top:clamp(18px,2.5vh,26px)}
+.attr-row{
+  display:flex;align-items:flex-start;gap:10px;
+  padding:clamp(10px,1.5vh,14px) 0;
+  border-bottom:1px solid var(--edge2);
+  font-size:.88rem;line-height:1.7;color:var(--txt2);
+  transition:color .1s var(--circ);
+}
+.attr-row:hover{color:#F4F4F2}
+.attr-row:last-child{border-bottom:none}
+.attr-arr{color:var(--champ);opacity:.5;flex-shrink:0;margin-top:2px}
+
+/* ═══════════════════════════════════════════════════════
+   S3 — MOTOR DE DECISÃO
+═══════════════════════════════════════════════════════ */
+#s3{background:#0A0A0A}
+.pipeline{border:1px solid var(--edge2);background:#050505}
+.pipeline-head{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:clamp(14px,2vw,20px);
+  border-bottom:1px solid var(--edge2);
+}
+.p-step{
+  display:flex;align-items:center;gap:14px;
+  padding:clamp(9px,1.5vh,13px) clamp(10px,1.5vw,16px);
+  border-bottom:1px solid rgba(255,255,255,.028);
+  opacity:.18;
+  transition:opacity .1s linear,padding-left .1s var(--circ),background .1s linear;
+}
+.p-step:last-child{border-bottom:none}
+.p-step.active{opacity:1;background:rgba(201,168,106,.025);padding-left:clamp(16px,2.5vw,24px)}
+.p-num{font-family:var(--mono);font-size:7px;letter-spacing:.16em;color:var(--champ);opacity:.45;flex-shrink:0;min-width:20px}
+.p-dot{
+  width:8px;height:8px;
+  border:1px solid rgba(201,168,106,.2);
+  border-radius:0;flex-shrink:0;
+  transition:all .1s var(--circ);
+}
+.p-step.active .p-dot{background:var(--champ);border-color:var(--champ)}
+.p-name{font-family:var(--mono);font-size:10px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:#F4F4F2;margin-bottom:2px}
+.p-log{font-family:var(--mono);font-size:8px;letter-spacing:.04em;color:var(--txt2)}
+.p-step.active .p-log{color:rgba(201,168,106,.7)}
+.p-status{font-family:var(--mono);font-size:8px;letter-spacing:.1em;text-transform:uppercase;color:var(--champ);opacity:0;transition:opacity .1s linear}
+.p-step.active .p-status{opacity:.55}
+.p-eline{width:1px;height:clamp(7px,1.2vh,11px);background:linear-gradient(180deg,rgba(201,168,106,.04),rgba(201,168,106,.16),rgba(201,168,106,.04));margin-left:clamp(30px,4.5vw,46px)}
+
+/* ═══════════════════════════════════════════════════════
+   S4 — PERFORMANCE
+═══════════════════════════════════════════════════════ */
+#s4{background:#050505}
+.metrics-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--edge2);border:1px solid var(--edge2);margin-bottom:2px}
+@media(max-width:860px){.metrics-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:480px){.metrics-grid{grid-template-columns:1fr}}
+.m-cell{padding:clamp(18px,2.5vw,26px);background:#050505;transition:background .1s linear}
+.m-cell:hover{background:#080808}
+.m-lbl{font-family:var(--mono);font-size:8px;letter-spacing:.16em;text-transform:uppercase;color:var(--txt2);opacity:.5;margin-bottom:10px}
+.m-val{font-family:var(--serif);font-size:clamp(2rem,5vw,3.6rem);font-weight:700;letter-spacing:-.04em;line-height:1;color:#F4F4F2}
+.m-val .acc{
+  background:linear-gradient(135deg,#F0E2BD,#D8C08A,#C9A86A);
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+}
+.m-sub{font-family:var(--mono);font-size:8px;letter-spacing:.1em;text-transform:uppercase;color:var(--txt2);opacity:.38;margin-top:7px}
+
+/* row abaixo */
+.perf-row{display:grid;grid-template-columns:1.4fr 1fr;gap:2px}
+@media(max-width:768px){.perf-row{grid-template-columns:1fr}}
+
+/* §4 BARRA DE ALVOS MATEMÁTICOS */
+.exec-bar{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;height:8px}
+.exec-seg{
+  background:var(--edge2);
+  border:1px solid var(--muted);
+  position:relative;
+  transition:background .08s linear,border-color .08s linear;
+}
+.exec-seg::after{
+  content:attr(data-lbl);
+  position:absolute;top:11px;left:50%;
+  transform:translateX(-50%);
+  font-family:var(--mono);font-size:6px;letter-spacing:.06em;
+  color:var(--muted);white-space:nowrap;
+}
+.exec-seg.t-reached{background:var(--champ);border-color:var(--champ2)}
+.exec-seg.t-be{background:#3C3C38;border-color:#555550}
+.exec-seg.t-trail{background:linear-gradient(90deg,#8D7447,var(--champ));border-color:var(--champ)}
+.perf-bar-card{background:#050505;border:1px solid var(--edge2);padding:clamp(16px,2.2vw,22px)}
+.perf-bar-tit{font-family:var(--mono);font-size:8px;letter-spacing:.16em;text-transform:uppercase;color:var(--txt2);opacity:.38;margin-bottom:clamp(14px,2vh,20px)}
+.bar-item{margin-bottom:clamp(16px,2.5vh,24px)}
+.bar-item:last-child{margin-bottom:0}
+.bar-top{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px}
+.bar-nm{font-family:var(--serif);font-size:clamp(.88rem,1.5vw,1.02rem);font-weight:700;color:#F4F4F2}
+.bar-pct{font-family:var(--mono);font-size:9px;font-weight:500;color:var(--champ);letter-spacing:.08em}
 /* gestão */
-.perf-mgmt {
-  padding: clamp(20px, 2.5vw, 32px);
-  background: var(--bg2);
-  border: 1px solid var(--line);
-  border-radius: 2px;
-  display: flex; flex-direction: column; gap: 12px;
-}
-.perf-mgmt-title {
-  font-family: var(--mono);
-  font-size: 9px; letter-spacing: .16em; text-transform: uppercase;
-  color: var(--ink3); margin-bottom: 4px;
-}
-.mgmt-row {
-  display: flex; justify-content: space-between; align-items: center;
-  padding: 10px 0; border-bottom: 1px solid var(--line2);
-}
-.mgmt-row:last-child { border-bottom: none; }
-.mgmt-k { font-family: var(--mono); font-size: 9px; letter-spacing: .1em; color: var(--ink3); }
-.mgmt-v { font-family: var(--serif); font-size: 1.1rem; font-weight: 300; color: var(--ink); }
+.mgmt-card{background:#050505;border:1px solid var(--edge2);padding:clamp(16px,2.2vw,22px);display:flex;flex-direction:column}
+.mgmt-row{display:flex;justify-content:space-between;align-items:baseline;padding:9px 0;border-bottom:1px solid rgba(255,255,255,.04)}
+.mgmt-row:last-child{border-bottom:none}
+.mgmt-k{font-family:var(--mono);font-size:8px;letter-spacing:.1em;color:var(--txt2)}
+.mgmt-v{font-family:var(--serif);font-size:1rem;font-weight:700;color:#F4F4F2}
 
-/* disclaimer */
-.perf-disc {
-  margin-top: clamp(20px, 3vh, 32px);
-  font-family: var(--mono);
-  font-size: 8px; letter-spacing: .07em;
-  color: var(--ink4); opacity: .7;
-  text-align: center; line-height: 1.8;
+/* ═══════════════════════════════════════════════════════
+   S5 — SIMULADOR
+═══════════════════════════════════════════════════════ */
+#s5{background:#0A0A0A}
+.sim-grid{display:grid;grid-template-columns:1fr 1fr;gap:clamp(22px,3.5vw,44px);align-items:start}
+@media(max-width:768px){.sim-grid{grid-template-columns:1fr}}
+.sim-field{display:flex;flex-direction:column;gap:7px;margin-bottom:18px}
+.sim-lbl{font-family:var(--mono);font-size:8px;letter-spacing:.16em;text-transform:uppercase;color:var(--txt2);opacity:.5}
+.sim-row{display:flex;align-items:center;gap:12px}
+.sim-slider{
+  -webkit-appearance:none;appearance:none;
+  flex:1;height:1px;background:var(--edge2);
+  border-radius:0;outline:none;cursor:pointer;
 }
+.sim-slider::-webkit-slider-thumb{
+  -webkit-appearance:none;
+  width:10px;height:10px;border-radius:0;
+  background:var(--champ);border:none;box-shadow:none;cursor:pointer;
+}
+.sim-slider::-moz-range-thumb{
+  width:10px;height:10px;border-radius:0;
+  background:var(--champ);border:none;cursor:pointer;
+}
+.sim-val{font-family:var(--serif);font-size:1rem;font-weight:700;color:var(--champ);min-width:56px;text-align:right;letter-spacing:-.02em}
+.res-cell{background:#050505;border:1px solid var(--edge2);padding:clamp(13px,1.8vw,18px);margin-bottom:2px}
+.res-lbl{font-family:var(--mono);font-size:8px;letter-spacing:.16em;text-transform:uppercase;color:var(--txt2);opacity:.38;margin-bottom:5px}
+.res-val{font-family:var(--serif);font-size:clamp(1.4rem,3vw,2rem);font-weight:700;letter-spacing:-.03em;color:#F4F4F2}
+.res-val.profit{
+  background:linear-gradient(135deg,#F0E2BD,#D8C08A);
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+}
+.res-sub{font-family:var(--mono);font-size:7px;letter-spacing:.08em;text-transform:uppercase;color:var(--txt2);opacity:.25;margin-top:3px}
+.chart-card{background:#050505;border:1px solid var(--edge2);padding:clamp(12px,1.8vw,16px)}
+.chart-lbl{font-family:var(--mono);font-size:8px;letter-spacing:.14em;text-transform:uppercase;color:var(--txt2);opacity:.3;margin-bottom:8px}
+.sim-disc{font-family:var(--mono);font-size:7px;letter-spacing:.07em;color:var(--txt2);opacity:.18;text-align:center;margin-top:18px;line-height:1.7}
 
-/* ══════════════════════════════════════════════════════
-   S — SIMULADOR (fundo escuro — painel institucional)
-══════════════════════════════════════════════════════ */
-#sim {
-  background: var(--bg-dark);
-  padding: clamp(80px, 14vh, 140px) 0;
+/* ═══════════════════════════════════════════════════════
+   S6 — NÚCLEO / INFRAESTRUTURA
+═══════════════════════════════════════════════════════ */
+#s6{background:#050505}
+.core-grid{display:grid;grid-template-columns:1fr 1fr;gap:clamp(28px,4.5vw,60px);align-items:center}
+@media(max-width:768px){.core-grid{grid-template-columns:1fr}}
+.layer-list{display:flex;flex-direction:column}
+.layer-row{
+  display:flex;align-items:center;gap:10px;
+  padding:clamp(9px,1.4vh,13px) clamp(10px,1.5vw,16px);
+  border-bottom:1px solid rgba(255,255,255,.028);
+  transition:background .08s linear,padding-left .08s var(--circ);
 }
-.sim-header {
-  margin-bottom: clamp(40px, 6vh, 60px);
-}
-.sim-h {
-  font-family: var(--serif);
-  font-size: clamp(2rem, 4vw, 3rem);
-  font-weight: 300; color: rgba(255,255,255,.85);
-  margin-top: 12px;
-}
-.sim-h em { font-style: italic; color: var(--bronze2); }
-.sim-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: clamp(24px, 3.5vw, 48px);
-  align-items: start;
-}
-@media (max-width: 768px) { .sim-grid { grid-template-columns: 1fr; } }
+.layer-row:hover{background:rgba(255,255,255,.018);padding-left:clamp(16px,2.5vw,22px)}
+.layer-row:last-child{border-bottom:none}
+.l-dot{width:5px;height:5px;border-radius:0;flex-shrink:0;background:var(--champ);animation:blink 2.4s step-end infinite}
+.l-dot.idle{background:var(--muted);animation:none}
+.l-name{font-family:var(--mono);font-size:10px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:#F4F4F2;flex:1}
+.l-st{font-family:var(--mono);font-size:8px;letter-spacing:.09em;text-transform:uppercase;color:var(--champ)}
+.l-st.idle{color:var(--txt2)}
+.spec-list{display:flex;flex-direction:column;margin-top:14px;border-top:1px solid var(--edge2)}
+.spec-row{display:flex;justify-content:space-between;align-items:baseline;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.035)}
+.spec-row:last-child{border-bottom:none}
+.spec-k{font-family:var(--mono);font-size:9px;letter-spacing:.1em;color:var(--txt2)}
+.spec-v{font-family:var(--mono);font-size:9px;font-weight:500;letter-spacing:.08em;color:#F4F4F2}
 
-/* sliders */
-.sim-controls {
-  display: flex; flex-direction: column; gap: 20px;
-}
-.sim-field { display: flex; flex-direction: column; gap: 8px; }
-.sim-lbl {
-  font-family: var(--mono);
-  font-size: 8px; letter-spacing: .16em; text-transform: uppercase;
-  color: rgba(255,255,255,.32);
-}
-.sim-row { display: flex; align-items: center; gap: 14px; }
-.sim-slider {
-  -webkit-appearance: none; appearance: none;
-  flex: 1; height: 1px;
-  background: rgba(255,255,255,.1);
-  border-radius: 1px; outline: none; cursor: pointer;
-}
-.sim-slider::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  width: 14px; height: 14px; border-radius: 50%;
-  background: var(--bg-dark);
-  border: 1.5px solid var(--bronze2);
-  box-shadow: 0 0 10px rgba(196,160,106,.4);
-  cursor: pointer;
-}
-.sim-slider::-moz-range-thumb {
-  width: 14px; height: 14px; border-radius: 50%;
-  background: var(--bg-dark);
-  border: 1.5px solid var(--bronze2);
-  cursor: pointer;
-}
-.sim-val {
-  font-family: var(--serif);
-  font-size: 1.1rem; font-weight: 300;
-  color: var(--bronze2); min-width: 64px; text-align: right;
-}
-.sim-intro {
-  font-size: clamp(.86rem, 1.3vw, .94rem);
-  line-height: 1.88; color: rgba(255,255,255,.38);
-  margin-bottom: 24px;
+/* ═══════════════════════════════════════════════════════
+   SmithCoreVisual — Núcleo Computacional Nativo
+   5 camadas: bgfield · glow · imagem mascarada · partículas · HUD
+   Paleta: preto profundo · grafite · roxo sofisticado · branco frio
+═══════════════════════════════════════════════════════ */
+.core-visual{
+  position:relative;
+  width:100%;
+  min-height:clamp(280px,32vw,380px);
+  display:flex;align-items:center;justify-content:flex-end;
+  overflow:visible;
+  perspective:1800px;
+  padding-right:clamp(0px,4vw,28px);
 }
 
-/* resultados */
-.sim-results { display: flex; flex-direction: column; gap: 10px; }
-.sim-res-card {
-  padding: clamp(16px, 2vw, 22px);
-  border: 1px solid rgba(255,255,255,.06);
-  border-radius: 2px;
-  background: rgba(255,255,255,.025);
-  position: relative;
+/* CAMADA 1 — fundo radial preto/roxo profundo */
+.core-bgfield{
+  position:absolute;inset:-12%;
+  background:
+    radial-gradient(ellipse 52% 48% at 58% 50%,rgba(80,48,170,.07) 0%,rgba(55,32,125,.035) 40%,transparent 70%),
+    radial-gradient(ellipse 95% 95% at 50% 50%,rgba(0,0,0,0) 0%,rgba(0,0,0,.5) 68%,#000 100%);
+  pointer-events:none;z-index:0;
 }
-.sim-res-card::before {
-  content: '';
-  position: absolute; top: 0; left: 0; right: 0; height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(196,160,106,.2), transparent);
+/* haze atmosférico adicional — profundidade Vision Pro */
+.core-bgfield::after{
+  content:'';
+  position:absolute;inset:0;
+  background:radial-gradient(ellipse 78% 66% at 58% 50%,rgba(110,80,200,.02) 0%,transparent 62%);
+  filter:blur(48px);
+  animation:hazeDrift 17s ease-in-out infinite;
 }
-.sim-res-l {
-  font-family: var(--mono);
-  font-size: 8px; letter-spacing: .16em; text-transform: uppercase;
-  color: rgba(255,255,255,.28); margin-bottom: 6px;
-}
-.sim-res-v {
-  font-family: var(--serif);
-  font-size: clamp(1.5rem, 3vw, 2.2rem);
-  font-weight: 300; color: rgba(255,255,255,.88);
-}
-.sim-res-v.profit {
-  background: linear-gradient(135deg, var(--bronze-hi), var(--bronze2));
-  -webkit-background-clip: text; background-clip: text; color: transparent;
-}
-.sim-res-s {
-  font-family: var(--mono);
-  font-size: 8px; letter-spacing: .08em;
-  color: rgba(255,255,255,.22); text-transform: uppercase; margin-top: 4px;
-}
-.sim-chart-wrap {
-  padding: clamp(14px, 1.8vw, 20px);
-  border: 1px solid rgba(255,255,255,.06);
-  border-radius: 2px;
-  background: rgba(255,255,255,.018);
-}
-.sim-chart-label {
-  font-family: var(--mono);
-  font-size: 8px; letter-spacing: .14em; text-transform: uppercase;
-  color: rgba(255,255,255,.24); margin-bottom: 10px;
-}
-#cv-sim { width: 100%; height: 120px; display: block; }
-.sim-disc {
-  font-family: var(--mono);
-  font-size: 8px; letter-spacing: .07em;
-  color: rgba(255,255,255,.18);
-  text-align: center; margin-top: 20px; line-height: 1.8;
+@keyframes hazeDrift{
+  0%,100%{opacity:.6;transform:scale(1) translateX(0)}
+  50%{opacity:1;transform:scale(1.08) translateX(-2%)}
 }
 
-/* ══════════════════════════════════════════════════════
-   S — INFRAESTRUTURA
-══════════════════════════════════════════════════════ */
-#infra {
-  background: var(--bg);
-  padding: clamp(80px, 14vh, 140px) 0;
+/* CAMADA 3 — halo + glow pulsante atrás do chip */
+.core-glow{
+  position:absolute;
+  border-radius:50%;
+  pointer-events:none;
+  will-change:transform,opacity;
 }
-.infra-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: clamp(48px, 6vw, 96px);
-  align-items: center;
+.core-glow-a{
+  width:clamp(200px,23vw,340px);height:clamp(200px,23vw,340px);
+  background:radial-gradient(circle,rgba(132,92,255,.1) 0%,rgba(132,92,255,.035) 36%,transparent 68%);
+  filter:blur(58px);
+  animation:coreBreath 9s ease-in-out infinite;
+  z-index:1;
 }
-@media (max-width: 768px) { .infra-grid { grid-template-columns: 1fr; } }
-.infra-h {
-  font-family: var(--serif);
-  font-size: clamp(1.8rem, 3.5vw, 2.8rem);
-  font-weight: 400; line-height: 1.2;
-  color: var(--ink); margin-top: 12px;
+.core-glow-b{
+  width:clamp(95px,11.5vw,160px);height:clamp(95px,11.5vw,160px);
+  background:radial-gradient(circle,rgba(205,178,255,.18) 0%,rgba(165,125,255,.07) 45%,transparent 75%);
+  filter:blur(24px);
+  animation:coreBreath 5.6s ease-in-out infinite reverse;
+  z-index:1;
 }
-.infra-h em { font-style: italic; color: var(--bronze); }
-.infra-body {
-  font-size: clamp(.86rem, 1.4vw, .96rem);
-  line-height: 1.9; color: var(--ink3);
-  margin-top: clamp(16px, 2.5vh, 24px);
+@keyframes coreBreath{
+  0%,100%{opacity:.32;transform:scale(.94)}
+  50%{opacity:.56;transform:scale(1.03)}
 }
-.infra-layers { margin-top: clamp(24px, 3.5vh, 36px); }
-.infra-layer {
-  display: flex; align-items: center; gap: 12px;
-  padding: clamp(10px, 1.5vh, 14px) 0;
-  border-bottom: 1px solid var(--line2);
-  transition: background .3s ease, padding-left .3s ease;
+
+/* orbitais — rotação mínima */
+.core-orbit{
+  position:absolute;
+  border:1px solid rgba(180,160,255,.1);
+  border-radius:50%;
+  pointer-events:none;
+  z-index:2;
 }
-.infra-layer:hover { background: var(--bg2); padding-left: 8px; }
-.infra-layer:last-child { border-bottom: none; }
-.infra-dot {
-  width: 5px; height: 5px; border-radius: 50%;
-  background: var(--bronze); flex-shrink: 0;
-  box-shadow: 0 0 6px rgba(155,123,74,.5);
-  animation: dotPulse 3s ease-in-out infinite;
+.core-orbit-1{
+  width:clamp(170px,19.5vw,290px);height:clamp(170px,19.5vw,290px);
+  border-color:rgba(185,150,255,.07);
+  animation:orbitRotate 52s linear infinite;
 }
-.infra-dot.idle { background: var(--ink4); box-shadow: none; animation: none; }
-.infra-name {
-  font-family: var(--mono);
-  font-size: 10px; font-weight: 500;
-  letter-spacing: .1em; text-transform: uppercase;
-  color: var(--ink2); flex: 1;
+.core-orbit-2{
+  width:clamp(122px,14vw,220px);height:clamp(122px,14vw,220px);
+  border-color:rgba(185,150,255,.05);
+  border-style:dashed;
+  animation:orbitRotate 70s linear infinite reverse;
 }
-.infra-st {
-  font-family: var(--mono);
-  font-size: 8px; letter-spacing: .1em;
-  color: var(--bronze); text-transform: uppercase;
+@keyframes orbitRotate{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+
+/* CAMADA 2 — imagem com máscara radial orgânica */
+.core-img-stage{
+  position:relative;z-index:3;
+  display:flex;align-items:center;justify-content:center;
+  transform-style:preserve-3d;
+  will-change:transform;
+  /* repousa mais ao fundo desde o início — artefato distante, não protagonista */
+  transform:translateZ(-165px) translateX(5%);
+  margin-right:clamp(-26px,-3vw,4px);
 }
-.infra-st.idle { color: var(--ink4); }
-.infra-specs {
-  margin-top: clamp(20px, 3vh, 30px);
+.core-img{
+  width:clamp(160px,18.5vw,300px);
+  height:auto;
+  display:block;
+  opacity:.54;
+  filter:
+    contrast(1.08) brightness(.86) saturate(.92)
+    blur(.5px)
+    drop-shadow(0 0 38px rgba(150,105,255,.22))
+    drop-shadow(0 0 70px rgba(132,92,255,.14))
+    drop-shadow(0 22px 50px rgba(0,0,0,.6));
+  -webkit-mask-image:radial-gradient(circle at center,#000 22%,rgba(0,0,0,.46) 44%,rgba(0,0,0,.12) 64%,transparent 82%);
+  mask-image:radial-gradient(circle at center,#000 22%,rgba(0,0,0,.46) 44%,rgba(0,0,0,.12) 64%,transparent 82%);
+  animation:coreFloat 11s ease-in-out infinite, coreLuminance 4.2s ease-in-out infinite;
+  will-change:transform,filter;
 }
-.infra-spec {
-  display: flex; justify-content: space-between;
-  padding: 9px 0; border-bottom: 1px solid var(--line2);
+/* respiração luminosa do chip — brilho vivo, não estático */
+@keyframes coreLuminance{
+  0%,100%{
+    filter:
+      contrast(1.08) brightness(.86) saturate(.92)
+      blur(.5px)
+      drop-shadow(0 0 38px rgba(150,105,255,.22))
+      drop-shadow(0 0 70px rgba(132,92,255,.14))
+      drop-shadow(0 22px 50px rgba(0,0,0,.6));
+  }
+  50%{
+    filter:
+      contrast(1.12) brightness(.97) saturate(1.05)
+      blur(.4px)
+      drop-shadow(0 0 46px rgba(165,120,255,.34))
+      drop-shadow(0 0 90px rgba(140,95,255,.2))
+      drop-shadow(0 22px 50px rgba(0,0,0,.6));
+  }
 }
-.infra-spec:last-child { border-bottom: none; }
-.infra-spec-k { font-family: var(--mono); font-size: 9px; letter-spacing: .1em; color: var(--ink3); }
-.infra-spec-v { font-family: var(--mono); font-size: 9px; letter-spacing: .08em; color: var(--ink); font-weight: 500; }
-/* orb abstrato */
-.infra-orb-wrap {
-  display: flex; align-items: center; justify-content: center;
-  padding: clamp(40px, 6vw, 80px);
+@keyframes coreFloat{
+  0%,100%{transform:translateY(0) translateZ(0) scale(1)}
+  50%{transform:translateY(-4px) translateZ(-12px) scale(1.005)}
 }
-.infra-orb-ring {
-  width: clamp(200px, 28vw, 280px);
-  height: clamp(200px, 28vw, 280px);
-  border-radius: 50%;
-  border: 1px solid var(--line);
-  display: flex; align-items: center; justify-content: center;
-  position: relative;
-  animation: floatY 7s ease-in-out infinite;
+/* feixe de luz sutil saindo do núcleo */
+.core-beam{
+  position:absolute;top:50%;left:50%;
+  width:1px;height:clamp(110px,12.5vw,180px);
+  background:linear-gradient(180deg,rgba(180,140,255,.1),transparent 70%);
+  transform:translate(-50%,-50%) rotate(0deg);
+  filter:blur(2.4px);
+  opacity:.24;
+  z-index:2;
+  animation:beamPulse 8s ease-in-out infinite;
+  pointer-events:none;
 }
-.infra-orb-ring::before {
-  content: '';
-  position: absolute; inset: -12px; border-radius: 50%;
-  border: 1px solid rgba(155,123,74,.12);
+@keyframes beamPulse{0%,100%{opacity:.16}50%{opacity:.34}}
+
+/* CAMADA 4 — partículas */
+.core-particles{
+  position:absolute;inset:0;
+  width:100%;height:100%;
+  z-index:4;pointer-events:none;
 }
-.infra-orb-ring::after {
-  content: '';
-  position: absolute; inset: -24px; border-radius: 50%;
-  border: 1px solid rgba(155,123,74,.06);
+
+/* CAMADA 5 — HUD minimalista + sync lines */
+.core-hud{
+  position:absolute;inset:0;
+  width:100%;height:100%;
+  z-index:5;pointer-events:none;
+  overflow:visible;
 }
-.infra-orb-core {
-  width: clamp(80px, 11vw, 110px);
-  height: clamp(80px, 11vw, 110px);
-  border-radius: 50%;
-  background: radial-gradient(circle at 38% 34%,
-    rgba(232,212,168,.06) 0%,
-    rgba(196,160,106,.08) 35%,
-    rgba(155,123,74,.04) 65%,
-    rgba(14,13,11,.98) 100%
+.sync-line{
+  stroke:rgba(170,130,255,.0);
+  stroke-width:1;
+  fill:none;
+  transition:stroke .3s ease;
+}
+.sync-line.lit{stroke:rgba(170,130,255,.45)}
+.sync-dot{
+  fill:rgba(180,140,255,0);
+  transition:fill .3s ease;
+}
+.sync-dot.lit{fill:rgba(200,170,255,.9)}
+
+/* vinheta de fusão com a seção */
+.core-vignette{
+  position:absolute;inset:-18%;
+  background:radial-gradient(ellipse 56% 56% at 60% 50%,transparent 28%,rgba(5,5,5,.6) 52%,#050505 86%);
+  pointer-events:none;z-index:6;
+}
+
+/* mobile — núcleo continua premium */
+@media(max-width:768px){
+  .core-visual{min-height:240px;justify-content:center}
+  .core-img-stage{transform:translateZ(-70px);margin-right:0}
+  .core-img{width:clamp(150px,40vw,230px);opacity:.42}
+  .core-glow-a{width:170px;height:170px}
+  .core-orbit-1,.core-orbit-2{display:none}
+}
+
+
+/* ═══════════════════════════════════════════════════════
+   S7 — DIFERENCIAL
+═══════════════════════════════════════════════════════ */
+#s7{background:#0A0A0A}
+.diff-cols{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--edge2);border:1px solid var(--edge2)}
+@media(max-width:640px){.diff-cols{grid-template-columns:1fr}}
+.diff-col{padding:clamp(20px,2.8vw,32px);background:#050505}
+.diff-col.smith-col{background:#080808;border-left:1px solid rgba(201,168,106,.06)}
+.diff-head{font-family:var(--mono);font-size:8px;letter-spacing:.18em;text-transform:uppercase;display:flex;align-items:center;gap:7px;margin-bottom:clamp(14px,2vh,20px)}
+.diff-head.gray{color:var(--txt2)}
+.diff-head.gold{color:var(--champ)}
+.diff-head-dot{width:5px;height:5px;border-radius:0;background:currentColor}
+.diff-item{display:flex;align-items:flex-start;gap:9px;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.028);font-size:.88rem;line-height:1.7;color:var(--txt2)}
+.diff-item.s{color:rgba(244,244,242,.68)}
+.diff-item:last-child{border-bottom:none}
+.diff-sym{flex-shrink:0;margin-top:2px;opacity:.4}
+.diff-sym.g{color:var(--champ);opacity:.75}
+
+/* ═══════════════════════════════════════════════════════
+   S8 — CONDIÇÃO EXCLUSIVA
+═══════════════════════════════════════════════════════ */
+#s8{background:#050505}
+.access-cards{display:grid;grid-template-columns:1fr 1fr;gap:2px;max-width:720px;margin-bottom:clamp(24px,3.5vh,36px)}
+@media(max-width:580px){.access-cards{grid-template-columns:1fr}}
+.ac{background:var(--panel);border:1px solid var(--edge);padding:clamp(22px,3vw,36px)}
+.ac.feat{border-color:rgba(201,168,106,.18)}
+.ac-lbl{font-family:var(--mono);font-size:8px;letter-spacing:.2em;text-transform:uppercase;color:var(--txt2);opacity:.45;margin-bottom:12px}
+.ac-price{font-family:var(--serif);font-size:clamp(2rem,5.5vw,3.6rem);font-weight:900;letter-spacing:-.04em;line-height:1;color:rgba(244,244,242,.12);text-decoration:line-through;text-decoration-color:rgba(244,244,242,.05)}
+.ac-price.feat-p{
+  background:linear-gradient(135deg,#F0E2BD,#D8C08A,#C9A86A);
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+  text-decoration:none;
+  animation:metalShift 6s linear infinite;
+}
+.ac-sub{font-family:var(--mono);font-size:8px;letter-spacing:.1em;text-transform:uppercase;color:var(--txt2);opacity:.28;margin-top:6px}
+.ac-inc{margin-top:14px;display:flex;flex-direction:column;gap:7px}
+.ac-inc-row{font-size:12px;color:var(--txt2);display:flex;align-items:center;gap:7px}
+.ac-inc-row::before{content:'—';color:rgba(201,168,106,.45)}
+.ac-badge{
+  display:inline-flex;align-items:center;gap:7px;
+  padding:6px 14px;
+  border:1px solid rgba(201,168,106,.12);
+  background:rgba(201,168,106,.03);
+}
+.ac-badge-dot{width:4px;height:4px;border-radius:0;background:var(--champ);animation:blink 1.2s step-end infinite}
+.ac-badge-txt{font-family:var(--mono);font-size:7px;letter-spacing:.14em;text-transform:uppercase;color:rgba(201,168,106,.45)}
+
+/* ═══════════════════════════════════════════════════════
+   S9 — FECHAMENTO
+═══════════════════════════════════════════════════════ */
+#s9{background:#050505;padding-bottom:0}
+#s9-dark{position:fixed;inset:0;background:#000;pointer-events:none;z-index:0;opacity:0}
+.close-smith{
+  font-family:var(--serif);
+  font-size:clamp(4rem,12vw,9rem);
+  font-weight:900;letter-spacing:-.04em;line-height:.88;
+  background:linear-gradient(
+    175deg,
+    #F4F4F2 0%,#C8C6C4 13%,#A2A09E 26%,
+    #D4D2D0 40%,#C9A86A 50%,#D4D2D0 60%,
+    #A0A09E 72%,#C8C6C4 85%,#F4F4F2 100%
   );
-  border: 1px solid rgba(196,160,106,.2);
-  display: flex; align-items: center; justify-content: center;
+  background-size:260% 260%;
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+  animation:metalShift 9s linear infinite;
+  display:block;text-align:center;
 }
-.infra-orb-label {
-  font-family: var(--mono);
-  font-size: 8px; letter-spacing: .14em; text-transform: uppercase;
-  color: rgba(196,160,106,.5);
+.close-ofi{
+  font-family:var(--mono);
+  font-size:clamp(.6rem,1vw,.72rem);letter-spacing:.38em;text-transform:uppercase;
+  color:rgba(244,244,242,.28);text-align:center;display:block;
+  margin-top:clamp(8px,1.5vh,14px);
 }
+.close-rule{width:32px;height:1px;background:rgba(201,168,106,.28);margin:clamp(18px,2.8vh,28px) auto}
+.close-lines{display:flex;flex-direction:column;gap:5px;text-align:center}
+.close-line{font-family:var(--serif);font-size:clamp(.88rem,1.7vw,1.1rem);font-weight:400;font-style:italic;color:rgba(244,244,242,.28);line-height:1.6}
+.close-acc{
+  font-family:var(--mono);
+  font-size:clamp(.6rem,1vw,.72rem);letter-spacing:.22em;text-transform:uppercase;
+  color:rgba(201,168,106,.52);text-align:center;display:block;
+  margin-top:clamp(12px,2vh,18px);
+}
+footer{
+  position:relative;z-index:2;
+  margin-top:clamp(44px,7vh,80px);
+  padding:clamp(18px,3vh,32px) 0;
+  border-top:1px solid rgba(255,255,255,.035);
+  display:flex;flex-direction:column;align-items:center;gap:8px;
+}
+.f-sig{font-family:var(--mono);font-size:7px;letter-spacing:.26em;text-transform:uppercase;color:var(--txt2);opacity:.12;text-align:center;line-height:2.2}
+.f-hash{font-family:var(--mono);font-size:6px;letter-spacing:.1em;text-transform:uppercase;color:var(--txt2);opacity:.08}
+.f-live{display:flex;align-items:center;gap:5px;font-family:var(--mono);font-size:6px;letter-spacing:.12em;text-transform:uppercase;color:var(--txt2);opacity:.1}
+.f-dot{width:3px;height:3px;border-radius:0;background:var(--champ);opacity:.3;animation:blink 2.4s step-end infinite}
 
-/* ══════════════════════════════════════════════════════
-   S — DIFERENCIAL
-══════════════════════════════════════════════════════ */
-#diff {
-  background: var(--bg2);
-  padding: clamp(80px, 14vh, 140px) 0;
-}
-.diff-h {
-  font-family: var(--serif);
-  font-size: clamp(2rem, 4vw, 3.2rem);
-  font-weight: 400; line-height: 1.18;
-  color: var(--ink); margin-top: 12px;
-  max-width: 640px;
-}
-.diff-h em { font-style: italic; color: var(--bronze); }
-.diff-sub {
-  font-size: clamp(.86rem, 1.4vw, .96rem);
-  line-height: 1.9; color: var(--ink3);
-  margin-top: 12px; max-width: 480px;
-  margin-bottom: clamp(40px, 6vh, 60px);
-}
-.diff-cols {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1px;
-  border: 1px solid var(--line);
-  border-radius: 2px; overflow: hidden;
-}
-@media (max-width: 640px) { .diff-cols { grid-template-columns: 1fr; } }
-.diff-col {
-  padding: clamp(24px, 3vw, 40px);
-  background: var(--bg);
-}
-.diff-col.smith-col { background: var(--ink); }
-.diff-col-label {
-  font-family: var(--mono);
-  font-size: 9px; letter-spacing: .18em; text-transform: uppercase;
-  display: flex; align-items: center; gap: 8px;
-  margin-bottom: clamp(16px, 2.5vh, 24px);
-}
-.diff-col-label.gray { color: var(--ink3); }
-.diff-col-label.gold { color: var(--bronze2); }
-.diff-col-dot { width: 5px; height: 5px; border-radius: 50%; background: currentColor; }
-.diff-row {
-  display: flex; align-items: flex-start; gap: 10px;
-  font-size: clamp(.84rem, 1.3vw, .92rem);
-  line-height: 1.7;
-  padding: 8px 0; border-bottom: 1px solid var(--line2);
-  color: var(--ink2);
-}
-.diff-row:last-child { border-bottom: none; }
-.diff-col.smith-col .diff-row { border-color: rgba(255,255,255,.06); color: rgba(255,255,255,.6); }
-.diff-row.s { color: rgba(255,255,255,.82); }
-.diff-sym { flex-shrink: 0; opacity: .45; margin-top: 2px; }
-.diff-sym.g { color: var(--bronze2); opacity: .75; }
-
-/* ══════════════════════════════════════════════════════
-   S — CONDIÇÃO EXCLUSIVA
-══════════════════════════════════════════════════════ */
-#access {
-  background: var(--bg-dark);
-  padding: clamp(80px, 14vh, 140px) 0;
-}
-.access-h {
-  font-family: var(--serif);
-  font-size: clamp(2rem, 4vw, 3rem);
-  font-weight: 300; color: rgba(255,255,255,.85);
-  margin-top: 12px;
-}
-.access-sub {
-  font-size: clamp(.86rem, 1.4vw, .96rem);
-  line-height: 1.9; color: rgba(255,255,255,.35);
-  margin-top: 12px; max-width: 520px;
-  margin-bottom: clamp(40px, 6vh, 60px);
-}
-.access-cards {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: clamp(16px, 2.5vw, 28px);
-  max-width: 760px;
-  margin-bottom: clamp(32px, 5vh, 48px);
-}
-@media (max-width: 600px) { .access-cards { grid-template-columns: 1fr; } }
-.access-card {
-  padding: clamp(28px, 4vw, 44px);
-  border: 1px solid rgba(255,255,255,.07);
-  border-radius: 2px;
-  position: relative;
-  background: rgba(255,255,255,.02);
-}
-.access-card.featured {
-  border-color: rgba(196,160,106,.25);
-  background: rgba(155,123,74,.04);
-}
-.access-card.featured::before {
-  content: '';
-  position: absolute; top: 0; left: 0; right: 0; height: 1px;
-  background: linear-gradient(90deg, transparent, var(--bronze2), transparent);
-  opacity: .5;
-}
-.access-card-label {
-  font-family: var(--mono);
-  font-size: 8px; letter-spacing: .2em; text-transform: uppercase;
-  color: rgba(255,255,255,.28); margin-bottom: 16px;
-}
-.access-card-price {
-  font-family: var(--serif);
-  font-size: clamp(2.4rem, 6vw, 4rem);
-  font-weight: 300; line-height: 1;
-  color: rgba(255,255,255,.18);
-  text-decoration: line-through;
-  text-decoration-color: rgba(255,255,255,.06);
-}
-.access-card-price.featured-price {
-  background: linear-gradient(135deg, var(--bronze-hi), var(--bronze2), var(--bronze));
-  -webkit-background-clip: text; background-clip: text; color: transparent;
-  text-decoration: none;
-}
-.access-card-ps {
-  font-family: var(--mono);
-  font-size: 9px; letter-spacing: .1em; text-transform: uppercase;
-  color: rgba(255,255,255,.22); margin-top: 8px;
-}
-.access-card-inc {
-  margin-top: clamp(16px, 2.5vh, 24px);
-  display: flex; flex-direction: column; gap: 8px;
-}
-.access-inc-row {
-  display: flex; align-items: center; gap: 8px;
-  font-size: 12px; color: rgba(255,255,255,.45);
-}
-.access-inc-row::before { content: '—'; color: var(--bronze2); opacity: .55; }
-.access-badge {
-  display: inline-flex; align-items: center; gap: 8px;
-  padding: 7px 16px;
-  border: 1px solid rgba(196,160,106,.18);
-  border-radius: 1px;
-  background: rgba(155,123,74,.04);
-}
-.access-badge-dot {
-  width: 4px; height: 4px; border-radius: 50%;
-  background: var(--bronze2);
-  animation: dotPulse 3s ease-in-out infinite;
-  box-shadow: 0 0 5px rgba(196,160,106,.5);
-}
-.access-badge-txt {
-  font-family: var(--mono);
-  font-size: 8px; letter-spacing: .14em; text-transform: uppercase;
-  color: rgba(196,160,106,.55);
-}
-
-/* ══════════════════════════════════════════════════════
-   S — FECHAMENTO (fundo escuro, editorial)
-══════════════════════════════════════════════════════ */
-#closing {
-  background: var(--bg-dark);
-  padding: clamp(100px, 18vh, 180px) 0 clamp(60px, 10vh, 100px);
-  text-align: center;
-}
-.closing-smith {
-  font-family: var(--serif);
-  font-size: clamp(5rem, 16vw, 13rem);
-  font-weight: 300; line-height: .88;
-  letter-spacing: -.02em;
-  background: linear-gradient(
-    135deg,
-    #E8D4A8 0%,
-    #C4A06A 20%,
-    #9B7B4A 42%,
-    #C4A06A 58%,
-    #E8D4A8 74%,
-    #C4A06A 88%,
-    #9B7B4A 100%
-  );
-  background-size: 300% 300%;
-  -webkit-background-clip: text; background-clip: text; color: transparent;
-  animation: shimmer 10s ease-in-out infinite;
-}
-.closing-ofi {
-  font-family: var(--mono);
-  font-size: clamp(.6rem, 1vw, .74rem);
-  letter-spacing: .32em; text-transform: uppercase;
-  color: rgba(255,255,255,.28); margin-top: 16px;
-}
-.closing-rule {
-  width: 40px; height: 1px;
-  background: var(--bronze); opacity: .4;
-  margin: clamp(24px, 4vh, 40px) auto;
-}
-.closing-lines {
-  display: flex; flex-direction: column; gap: 6px;
-  margin-bottom: clamp(28px, 4vh, 40px);
-}
-.closing-line {
-  font-family: var(--serif);
-  font-size: clamp(.95rem, 1.8vw, 1.2rem);
-  font-style: italic; font-weight: 300;
-  color: rgba(255,255,255,.4);
-}
-.closing-acc {
-  font-family: var(--mono);
-  font-size: clamp(.6rem, 1.1vw, .76rem);
-  letter-spacing: .22em; text-transform: uppercase;
-  color: var(--bronze2);
-  text-shadow: 0 0 16px rgba(196,160,106,.35);
-}
-footer {
-  margin-top: clamp(56px, 9vh, 96px);
-  padding-top: clamp(24px, 4vh, 40px);
-  border-top: 1px solid rgba(255,255,255,.05);
-  display: flex; flex-direction: column; align-items: center; gap: 10px;
-}
-.footer-sig {
-  font-family: var(--mono);
-  font-size: 8px; letter-spacing: .26em; text-transform: uppercase;
-  color: rgba(255,255,255,.15); text-align: center; line-height: 2;
-}
-.footer-hash {
-  font-family: var(--mono);
-  font-size: 7px; letter-spacing: .1em;
-  color: rgba(255,255,255,.08); text-transform: uppercase;
-}
-.footer-live {
-  display: flex; align-items: center; gap: 6px;
-  font-family: var(--mono);
-  font-size: 7px; letter-spacing: .12em;
-  color: rgba(255,255,255,.12); text-transform: uppercase;
-}
-.footer-dot {
-  width: 3px; height: 3px; border-radius: 50%;
-  background: var(--bronze); opacity: .3;
-  animation: dotPulse 6s ease-in-out infinite;
-}
-
-/* ── REVEAL ANIMAÇÕES ───────────────────────────────── */
-.reveal {
-  opacity: 0; transform: translateY(24px);
-  transition: opacity .9s var(--ease), transform .9s var(--ease);
-}
-.reveal.visible {
-  opacity: 1; transform: translateY(0);
-}
-.reveal-delay-1 { transition-delay: .1s; }
-.reveal-delay-2 { transition-delay: .2s; }
-.reveal-delay-3 { transition-delay: .32s; }
-.reveal-delay-4 { transition-delay: .44s; }
+/* ── TEXTO HELPER ──────────────────────────────────── */
+.text-champ{color:var(--champ)}
+.text-subtle{color:var(--txt2)}
 </style>
 </head>
 <body>
 
-<!-- NAV -->
-<nav id="nav">
-  <span class="nav-logo">SMITH</span>
-  <div class="nav-status">
-    <div class="nav-dot"></div>
-    STATUS: ONLINE
-  </div>
-</nav>
+<!-- LOADER -->
+<div id="loader">
+  <div id="ld-logo">SMITH</div>
+  <div id="ld-track"><div id="ld-fill"></div></div>
+  <span id="ld-pct">0%</span>
+  <span id="ld-msg">Inicializando sistema cognitivo</span>
+</div>
 
-<!-- ══ HERO ══════════════════════════════════════════ -->
+<!-- ════════════════════════════════════════════════════
+     HERO
+════════════════════════════════════════════════════ -->
 <section id="hero">
-  <canvas id="hero-cv" aria-hidden="true"></canvas>
-  <!-- topo editorial -->
-  <div class="hero-top">
-    <span class="hero-top-label">Dom Investitore · Inteligência Operacional</span>
-    <div class="hero-tel">
-      XAUUSD <span id="dxau">——</span> &nbsp;·&nbsp; NASDAQ <span id="dnas">——</span>
-    </div>
+  <div id="hero-strip">
+    <div class="strip-cell live"><div class="strip-dot"></div>SMITH-CORE-01&nbsp;<strong style="color:#C9A86A">ONLINE</strong></div>
+    <div class="strip-cell" id="tel-xau">XAUUSD ——</div>
+    <div class="strip-cell hidden-sm" id="tel-nas">NASDAQ ——</div>
+    <div class="strip-cell hidden-sm">Assertividade <strong style="color:#C9A86A">76%</strong></div>
+    <div class="strip-cell" id="tel-cyc">Ciclo 0847</div>
   </div>
-  <!-- conteúdo principal -->
-  <div class="hero-content">
-    <p class="label reveal">Consciência Operacional Financeira · MT5</p>
-    <h1 class="smith-hero reveal reveal-delay-1">SMITH</h1>
-    <p class="hero-sub reveal reveal-delay-2">Operational Financial Intelligence</p>
-    <div class="hero-divider reveal reveal-delay-3"></div>
-    <p class="hero-phrase reveal reveal-delay-4">
+
+  <div id="hero-body">
+    <span class="eyebrow rv" style="opacity:0">Consciência Operacional Financeira · MT5</span>
+    <span id="smith-logo" class="rv" style="opacity:0" aria-label="SMITH">SMITH</span>
+    <span id="hero-sub" class="rv" style="opacity:0">Operational Financial Intelligence</span>
+    <div id="hero-rule"></div>
+    <p id="hero-phrase" class="rv" style="opacity:0">
       A inteligência nasce da metodologia.<br/>
-      A execução pertence à máquina.
+      <em>A execução pertence à máquina.</em>
     </p>
   </div>
-  <!-- status lateral -->
-  <div class="hero-status">
-    <div class="hero-status-row live">
-      <div class="hero-status-dot"></div>
-      STATUS: ONLINE
-    </div>
-    <div class="hero-status-row">UPTIME 99.97%</div>
-    <div class="hero-status-row">LATENCY 0.3ms</div>
-    <div class="hero-status-row">MT5 CONNECTED</div>
-    <div class="hero-status-row">ENV SOVEREIGN</div>
+
+  <div id="hero-status">
+    <div class="hst live"><div class="hst-dot"></div>STATUS: ONLINE</div>
+    <div class="hst">UPTIME 99.97%</div>
+    <div class="hst">LATENCY 0.3ms</div>
+    <div class="hst">MT5 CONNECTED</div>
+    <div class="hst">ENV SOVEREIGN</div>
   </div>
-  <!-- scroll -->
-  <div class="scroll-hint">
+
+  <div id="hero-scroll">
     <div class="scroll-line"></div>
-    <span class="scroll-label">Scroll</span>
+    <span class="scroll-lbl">Scroll</span>
   </div>
 </section>
 
-<!-- ══ O QUE É SMITH ══════════════════════════════════ -->
-<section id="what">
+<!-- ════════════════════════════════════════════════════
+     S2 — O QUE É SMITH
+════════════════════════════════════════════════════ -->
+<section id="s2" class="section">
   <div class="container">
-    <div class="rule" style="margin-bottom:clamp(52px,8vh,84px)"></div>
-    <p class="label reveal">O que é SMITH · Definição Operacional</p>
-    <div class="what-grid" style="margin-top:clamp(24px,4vh,40px)">
+    <div class="hr"></div>
+    <span class="eyebrow rv">O que é SMITH · Definição Operacional</span>
+    <div class="s2-grid">
       <div>
-        <div class="what-num reveal">01</div>
-        <h2 class="what-h reveal">
-          Um agente cognitivo<br/>de negociação.<br/><em>Não um robô.</em>
+        <h2 class="t-display rv" style="font-size:clamp(1.9rem,4.2vw,3.2rem);color:#F4F4F2;margin-bottom:16px">
+          Um agente cognitivo<br>de negociação.<br>
+          <span style="color:#C9A86A">Não um robô.</span>
         </h2>
-        <p class="what-body reveal">
-          SMITH é executado como Expert Advisor no MT5. Não opera por impulso, não replica indicadores atrasados, não depende de sinais genéricos.<br/><br/>
-          Sua lógica nasce da modelagem explícita da <strong>metodologia Dom Investitore</strong> — aplicada à leitura de mercado, execução técnica, memória operacional e avaliação estatística contínua.
+        <p class="rv" style="font-size:clamp(.87rem,1.5vw,.98rem);line-height:1.92;color:#6A6A6A">
+          SMITH é executado como Expert Advisor no MT5. Não opera por impulso, não replica indicadores atrasados, não depende de sinais genéricos.<br><br>
+          Sua lógica nasce da modelagem explícita da
+          <strong style="color:#F4F4F2;font-weight:500">metodologia Dom Investitore</strong>
+          — aplicada à leitura de mercado, execução técnica, memória operacional e avaliação estatística contínua.
+        </p>
+        <div class="attr-list rv">
+          <div class="attr-row"><span class="attr-arr">→</span><span><strong style="color:#F4F4F2;font-weight:500">Memória Operacional</strong> · registra e aprende com cada ciclo</span></div>
+          <div class="attr-row"><span class="attr-arr">→</span><span><strong style="color:#F4F4F2;font-weight:500">Autoavaliação Estatística</strong> · audita a própria performance</span></div>
+          <div class="attr-row"><span class="attr-arr">→</span><span><strong style="color:#F4F4F2;font-weight:500">Gestão Autónoma</strong> · breakeven + trailing sem intervenção</span></div>
+          <div class="attr-row"><span class="attr-arr">→</span><span><strong style="color:#F4F4F2;font-weight:500">Execução Disciplinada</strong> · zero desvio dos parâmetros</span></div>
+        </div>
+      </div>
+      <div class="rv">
+        <div class="term">
+          <div class="term-head">
+            <div class="term-dots"><div class="term-dot"></div><div class="term-dot"></div><div class="term-dot"></div></div>
+            <span class="term-title">SMITH · COGNITIVE ENGINE · LIVE</span>
+            <div class="term-live"><div class="term-live-dot"></div>LIVE</div>
+          </div>
+          <div class="term-body">
+            <div class="log-scroll" id="log-track"></div>
+          </div>
+          <div class="term-foot">
+            <span class="term-foot-l">CORE-9D4F · CYCLE 847 · DOM INVESTITORE</span>
+            <span class="term-foot-r">PROCESSING<span class="term-cursor"></span></span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════════
+     S3 — MOTOR DE DECISÃO
+════════════════════════════════════════════════════ -->
+<section id="s3" class="section">
+  <div class="container">
+    <div class="hr"></div>
+    <span class="eyebrow rv">Motor de Decisão · Pipeline Cognitivo</span>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:clamp(28px,4.5vw,60px);align-items:start" class="grid-2col">
+      <div>
+        <h2 class="t-display rv" style="font-size:clamp(1.5rem,3.2vw,2.4rem);color:#F4F4F2;margin-bottom:12px">
+          SMITH não reage ao mercado.
+        </h2>
+        <p class="rv" style="font-size:clamp(.85rem,1.5vw,.95rem);line-height:1.9;color:#6A6A6A">
+          SMITH filtra ruído, identifica contexto, valida probabilidade e executa apenas quando a metodologia Dom Investitore encontra assimetria operacional.
         </p>
       </div>
-      <div>
-        <ul class="attr-list">
-          <li class="attr-item reveal reveal-delay-1">
-            <span class="attr-arrow">→</span>
-            <span><strong>Memória Operacional</strong> · registra e aprende com cada ciclo</span>
-          </li>
-          <li class="attr-item reveal reveal-delay-2">
-            <span class="attr-arrow">→</span>
-            <span><strong>Autoavaliação Estatística</strong> · audita a própria performance</span>
-          </li>
-          <li class="attr-item reveal reveal-delay-3">
-            <span class="attr-arrow">→</span>
-            <span><strong>Gestão Autónoma</strong> · breakeven + trailing sem intervenção</span>
-          </li>
-          <li class="attr-item reveal reveal-delay-4">
-            <span class="attr-arrow">→</span>
-            <span><strong>Execução Disciplinada</strong> · zero desvio dos parâmetros definidos</span>
-          </li>
-        </ul>
-        <div class="concept-block reveal" style="margin-top:clamp(24px,3.5vh,36px)">
-          <p class="concept-label">Conceito Central</p>
-          <div class="concept-lines">
-            <p class="concept-line">O mercado não recompensa emoção.</p>
-            <p class="concept-line">Recompensa repetição correta.</p>
-            <p class="concept-line strong">Ele observa. Filtra. Valida.</p>
-            <p class="concept-line strong">Executa. Gerencia. Permanece.</p>
+      <div class="rv">
+        <div class="pipeline">
+          <div class="pipeline-head">
+            <span style="font-family:var(--mono);font-size:8px;font-weight:500;letter-spacing:.2em;text-transform:uppercase;color:#C9A86A;opacity:.6">Motor de Decisão · Pipeline Ativo</span>
+            <div style="display:flex;align-items:center;gap:6px">
+              <div class="strip-dot"></div>
+              <span style="font-family:var(--mono);font-size:8px;letter-spacing:.1em;color:#C9A86A;opacity:.55">PROCESSANDO</span>
+            </div>
           </div>
+          <div id="pipeline-steps"></div>
         </div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ══ PIPELINE ════════════════════════════════════════ -->
-<section id="pipeline">
+<!-- ════════════════════════════════════════════════════
+     S4 — PERFORMANCE
+════════════════════════════════════════════════════ -->
+<section id="s4" class="section">
   <div class="container">
-    <div class="rule-bronze" style="margin-bottom:clamp(52px,8vh,84px)"></div>
-    <p class="label reveal" style="color:rgba(196,160,106,.6)">Motor de Decisão · Pipeline Cognitivo</p>
-    <div class="pipeline-intro" style="margin-top:clamp(20px,3vh,32px)">
-      <h2 class="pipeline-h reveal">
-        SMITH não<br/><em>reage ao mercado.</em>
+    <div class="hr"></div>
+    <span class="eyebrow rv">Performance Operacional · Execução Objetiva</span>
+    <div style="max-width:560px;margin-bottom:clamp(32px,5vh,50px)" class="rv">
+      <h2 class="t-display" style="font-size:clamp(1.7rem,3.6vw,2.6rem);color:#F4F4F2;margin-bottom:10px">
+        A disciplina como vantagem operacional.
       </h2>
-      <p class="pipeline-body reveal">
-        SMITH filtra ruído, identifica contexto, valida probabilidade e executa apenas quando a metodologia Dom Investitore encontra assimetria operacional. Cada operação percorre sete etapas cognitivas antes da execução.
+      <p style="font-size:clamp(.85rem,1.5vw,.95rem);line-height:1.9;color:#6A6A6A">
+        A força da SMITH está na repetição disciplinada de cenários validados. Não prever o mercado — executar com precisão quando liquidez, contexto e probabilidade se alinham.
       </p>
     </div>
-    <div class="pipeline-steps" id="pipeline-steps">
-      <div class="pipeline-step" data-step="0">
-        <span class="pipeline-step-n">01</span>
-        <div class="pipeline-step-dot"></div>
-        <div class="pipeline-step-content">
-          <div class="pipeline-step-name">Leitura de Mercado</div>
-          <div class="pipeline-step-log">[MARKET_SCAN] Liquidez monitorada · Sessão ativa</div>
-        </div>
-        <span class="pipeline-step-st">ATIVO</span>
+    <!-- métricas -->
+    <div class="metrics-grid rv">
+      <div class="m-cell">
+        <div class="m-lbl">Assertividade Média</div>
+        <div class="m-val"><span class="acc" id="cnt-a">0</span><span class="acc">%</span></div>
+        <div class="m-sub">Taxa histórica</div>
       </div>
-      <div class="pipeline-step" data-step="1">
-        <span class="pipeline-step-n">02</span>
-        <div class="pipeline-step-dot"></div>
-        <div class="pipeline-step-content">
-          <div class="pipeline-step-name">Validação de Liquidez</div>
-          <div class="pipeline-step-log">[LIQUIDITY_LAYER] Profundidade verificada</div>
-        </div>
-        <span class="pipeline-step-st">ATIVO</span>
+      <div class="m-cell">
+        <div class="m-lbl">Alvos por Operação</div>
+        <div class="m-val" id="cnt-t">0</div>
+        <div class="m-sub">Média em vencedoras</div>
       </div>
-      <div class="pipeline-step" data-step="2">
-        <span class="pipeline-step-n">03</span>
-        <div class="pipeline-step-dot"></div>
-        <div class="pipeline-step-content">
-          <div class="pipeline-step-name">Probabilidade Operacional</div>
-          <div class="pipeline-step-log">[PROBABILITY_LAYER] Assimetria identificada · 87.4%</div>
-        </div>
-        <span class="pipeline-step-st">ATIVO</span>
+      <div class="m-cell">
+        <div class="m-lbl">Gestão Automática</div>
+        <div class="m-val" style="font-size:clamp(1.3rem,2.8vw,2.1rem);color:#6A6A6A">BE 2º</div>
+        <div class="m-sub">Breakeven no 2º alvo</div>
       </div>
-      <div class="pipeline-step" data-step="3">
-        <span class="pipeline-step-n">04</span>
-        <div class="pipeline-step-dot"></div>
-        <div class="pipeline-step-content">
-          <div class="pipeline-step-name">Contexto Institucional</div>
-          <div class="pipeline-step-log">[CONTEXT_ENGINE] Sessão Londres/NY validada</div>
-        </div>
-        <span class="pipeline-step-st">ATIVO</span>
-      </div>
-      <div class="pipeline-step" data-step="4">
-        <span class="pipeline-step-n">05</span>
-        <div class="pipeline-step-dot"></div>
-        <div class="pipeline-step-content">
-          <div class="pipeline-step-name">Execução</div>
-          <div class="pipeline-step-log">[EXECUTION_ENGINE] Ordem autorizada · MT5</div>
-        </div>
-        <span class="pipeline-step-st">ATIVO</span>
-      </div>
-      <div class="pipeline-step" data-step="5">
-        <span class="pipeline-step-n">06</span>
-        <div class="pipeline-step-dot"></div>
-        <div class="pipeline-step-content">
-          <div class="pipeline-step-name">Gestão de Risco</div>
-          <div class="pipeline-step-log">[RISK_PROTOCOL] Breakeven 2º alvo · Trailing</div>
-        </div>
-        <span class="pipeline-step-st">ATIVO</span>
-      </div>
-      <div class="pipeline-step" data-step="6">
-        <span class="pipeline-step-n">07</span>
-        <div class="pipeline-step-dot"></div>
-        <div class="pipeline-step-content">
-          <div class="pipeline-step-name">Memória Operacional</div>
-          <div class="pipeline-step-log">[MEMORY_LAYER] Ciclo registrado · Parâmetros atualizados</div>
-        </div>
-        <span class="pipeline-step-st">ATIVO</span>
+      <div class="m-cell">
+        <div class="m-lbl">Mercados</div>
+        <div class="m-val" style="font-size:clamp(.95rem,2.2vw,1.65rem)">XAU<span style="font-size:.55em;color:#6A6A6A"> / </span>NAS</div>
+        <div class="m-sub">XAUUSD · NASDAQ · MT5</div>
       </div>
     </div>
-  </div>
-</section>
-
-<!-- ══ PERFORMANCE ══════════════════════════════════════ -->
-<section id="perf">
-  <div class="container">
-    <div class="rule" style="margin-bottom:clamp(52px,8vh,84px)"></div>
-    <div class="perf-header">
-      <div>
-        <p class="label reveal">Performance Operacional · Dados Históricos</p>
-        <h2 class="perf-h reveal" style="margin-top:12px">
-          A disciplina como<br/><em>vantagem operacional.</em>
-        </h2>
-      </div>
-      <p class="perf-desc reveal">
-        A força da SMITH está na repetição disciplinada de cenários validados. Não se trata de prever o mercado. Trata-se de executar com precisão quando liquidez, contexto e probabilidade se alinham à metodologia Dom Investitore.
-      </p>
-    </div>
-    <!-- métricas grandes -->
-    <div class="perf-grid reveal">
-      <div class="perf-card">
-        <p class="perf-card-label">Assertividade Média</p>
-        <div class="perf-card-val"><span class="accent" id="cnt-a">0</span><span class="accent">%</span></div>
-        <p class="perf-card-sub">Taxa histórica de acerto</p>
-      </div>
-      <div class="perf-card">
-        <p class="perf-card-label">Alvos por Operação</p>
-        <div class="perf-card-val"><span id="cnt-t">0</span></div>
-        <p class="perf-card-sub">Média em vencedoras</p>
-      </div>
-      <div class="perf-card">
-        <p class="perf-card-label">Gestão Automática</p>
-        <div class="perf-card-val" style="font-size:clamp(1.4rem,3vw,2.2rem)"><span style="color:var(--ink3)">BE 2º</span></div>
-        <p class="perf-card-sub">Breakeven no 2º alvo</p>
-      </div>
-      <div class="perf-card">
-        <p class="perf-card-label">Mercados</p>
-        <div class="perf-card-val" style="font-size:clamp(1.1rem,2.2vw,1.8rem)">XAU<span style="color:var(--ink4);font-size:.55em"> / </span>NAS</div>
-        <p class="perf-card-sub">XAUUSD · NASDAQ · MT5</p>
-      </div>
-    </div>
-    <!-- barras -->
-    <div class="perf-bars">
-      <div class="perf-bar-card reveal">
-        <p class="perf-bar-title">Assertividade por Instrumento</p>
-        <div class="perf-bar-item">
-          <div class="perf-bar-row">
-            <span class="perf-bar-name">XAUUSD · Ouro</span>
-            <span class="perf-bar-pct">78%</span>
+    <!-- row barras -->
+    <div class="perf-row rv">
+      <div class="perf-bar-card">
+        <div class="perf-bar-tit">§4 Execução Objetiva · Alvos Matemáticos T1-T4</div>
+        <!-- XAUUSD -->
+        <div class="bar-item">
+          <div class="bar-top">
+            <span class="bar-nm">XAUUSD · Ouro</span>
+            <span class="bar-pct" id="xau-pct">78% · 3 alvos médios</span>
           </div>
-          <div class="perf-bar-track"><div class="perf-bar-fill" id="bar-g" style="--tw:78%"></div></div>
-          <div style="margin-top:6px;font-family:var(--mono);font-size:8px;color:var(--ink4);letter-spacing:.07em">M1 · Alta Liquidez · Sessão Londres/NY</div>
-        </div>
-        <div class="perf-bar-item">
-          <div class="perf-bar-row">
-            <span class="perf-bar-name">NASDAQ 100</span>
-            <span class="perf-bar-pct">74%</span>
+          <div style="margin-bottom:18px">
+            <div class="exec-bar" id="bar-xau">
+              <div class="exec-seg" data-lbl="T1·BE"></div>
+              <div class="exec-seg" data-lbl="T2·TRAIL"></div>
+              <div class="exec-seg" data-lbl="T3·EXT"></div>
+              <div class="exec-seg" data-lbl="T4·CLOSE"></div>
+            </div>
           </div>
-          <div class="perf-bar-track"><div class="perf-bar-fill" id="bar-n" style="--tw:74%"></div></div>
-          <div style="margin-top:6px;font-family:var(--mono);font-size:8px;color:var(--ink4);letter-spacing:.07em">M1 · Sessão Americana</div>
+          <span style="font-family:var(--mono);font-size:7px;color:#3A3A3A;letter-spacing:.07em">M1 · Alta Liquidez · Sessão Londres/NY</span>
+        </div>
+        <!-- NASDAQ -->
+        <div class="bar-item">
+          <div class="bar-top">
+            <span class="bar-nm">NASDAQ 100</span>
+            <span class="bar-pct" id="nas-pct">74% · 2 alvos médios</span>
+          </div>
+          <div style="margin-bottom:18px">
+            <div class="exec-bar" id="bar-nas">
+              <div class="exec-seg" data-lbl="T1·BE"></div>
+              <div class="exec-seg" data-lbl="T2·TRAIL"></div>
+              <div class="exec-seg" data-lbl="T3·EXT"></div>
+              <div class="exec-seg" data-lbl="T4·CLOSE"></div>
+            </div>
+          </div>
+          <span style="font-family:var(--mono);font-size:7px;color:#3A3A3A;letter-spacing:.07em">M1 · Sessão Americana</span>
+        </div>
+        <div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--edge2)">
+          <div style="font-family:var(--mono);font-size:7px;letter-spacing:.16em;text-transform:uppercase;color:#3A3A3A;margin-bottom:8px">Modo Operacional</div>
+          <div style="display:flex;flex-direction:column;gap:5px">
+            <span style="font-family:var(--mono);font-size:8px;color:#6A6A6A">→ Sessões definidas por contexto institucional</span>
+            <span style="font-family:var(--mono);font-size:8px;color:#6A6A6A">→ Breakeven automático no T2 (2º alvo matemático)</span>
+            <span style="font-family:var(--mono);font-size:8px;color:#6A6A6A">→ Trailing a partir do T3 — movimento estendido</span>
+            <span style="font-family:var(--mono);font-size:8px;color:#6A6A6A">→ Risco máximo 1.0% por operação — hard coded</span>
+          </div>
         </div>
       </div>
-      <div class="perf-mgmt reveal reveal-delay-2">
-        <p class="perf-mgmt-title">Parâmetros de Gestão</p>
+      <div class="mgmt-card">
+        <div class="perf-bar-tit" style="margin-bottom:14px">Parâmetros de Gestão</div>
         <div class="mgmt-row"><span class="mgmt-k">Risco / Operação</span><span class="mgmt-v">1.0%</span></div>
         <div class="mgmt-row"><span class="mgmt-k">RR Médio</span><span class="mgmt-v">1 : 3</span></div>
-        <div class="mgmt-row"><span class="mgmt-k">Breakeven</span><span class="mgmt-v">2º Alvo</span></div>
-        <div class="mgmt-row"><span class="mgmt-k">Trailing</span><span class="mgmt-v">3º Alvo+</span></div>
+        <div class="mgmt-row"><span class="mgmt-k">Breakeven</span><span class="mgmt-v">T2 (2º Alvo)</span></div>
+        <div class="mgmt-row"><span class="mgmt-k">Trailing</span><span class="mgmt-v">T3+</span></div>
         <div class="mgmt-row"><span class="mgmt-k">Ambiente</span><span class="mgmt-v">MT5 EA</span></div>
       </div>
     </div>
-    <p class="perf-disc reveal">Dados baseados em parâmetros históricos e gestão operacional. Resultados futuros dependem de mercado, execução e gerenciamento de risco.</p>
+    <p style="font-family:var(--mono);font-size:7px;letter-spacing:.07em;color:#3A3A3A;text-align:center;margin-top:14px;line-height:1.7">
+      Dados baseados em backtesting e operações monitorizadas com parâmetros da metodologia Dom Investitore. Resultados passados não garantem resultados futuros.
+    </p>
   </div>
 </section>
 
-<!-- ══ SIMULADOR ════════════════════════════════════════ -->
-<section id="sim">
+<!-- ════════════════════════════════════════════════════
+     S5 — SIMULADOR
+════════════════════════════════════════════════════ -->
+<section id="s5" class="section">
   <div class="container">
-    <div class="rule-bronze" style="margin-bottom:clamp(52px,8vh,84px)"></div>
-    <div class="sim-header">
-      <p class="label reveal" style="color:rgba(196,160,106,.6)">Simulador Operacional · Projeção de Capital</p>
-      <h2 class="sim-h reveal">
-        Projete seu potencial<br/><em>operacional com SMITH.</em>
-      </h2>
-    </div>
+    <div class="hr"></div>
+    <span class="eyebrow rv">Simulador Operacional · Projeção de Capital</span>
+    <h2 class="t-display rv" style="font-size:clamp(1.6rem,3.4vw,2.5rem);color:#F4F4F2;margin-bottom:clamp(28px,4.5vh,44px)">
+      Projete seu potencial<br>operacional com SMITH.
+    </h2>
     <div class="sim-grid">
-      <div class="sim-controls reveal">
-        <p class="sim-intro">Ajuste os parâmetros com base no seu perfil. O modelo aplica a gestão de risco e assertividade histórica da SMITH na projeção mês a mês.</p>
+      <div class="rv">
+        <p style="font-size:clamp(.84rem,1.4vw,.94rem);line-height:1.88;color:#6A6A6A;margin-bottom:22px">
+          Ajuste os parâmetros. O modelo aplica gestão de risco e assertividade histórica na projeção mês a mês.
+        </p>
         <div class="sim-field">
           <label class="sim-lbl" for="sl-cap">Capital Inicial (€)</label>
           <div class="sim-row">
-            <input type="range" class="sim-slider" id="sl-cap" min="200" max="50000" step="200" value="2000" oninput="simRun()"/>
+            <input type="range" class="sim-slider" id="sl-cap" min="200" max="50000" step="200" value="2000">
             <span class="sim-val" id="v-cap">2.000€</span>
           </div>
         </div>
         <div class="sim-field">
           <label class="sim-lbl" for="sl-ops">Operações por Semana</label>
           <div class="sim-row">
-            <input type="range" class="sim-slider" id="sl-ops" min="2" max="20" step="1" value="8" oninput="simRun()"/>
+            <input type="range" class="sim-slider" id="sl-ops" min="2" max="20" step="1" value="8">
             <span class="sim-val" id="v-ops">8 / sem</span>
           </div>
         </div>
         <div class="sim-field">
           <label class="sim-lbl" for="sl-ass">Assertividade (%)</label>
           <div class="sim-row">
-            <input type="range" class="sim-slider" id="sl-ass" min="55" max="85" step="1" value="76" oninput="simRun()"/>
+            <input type="range" class="sim-slider" id="sl-ass" min="55" max="85" step="1" value="76">
             <span class="sim-val" id="v-ass">76%</span>
           </div>
         </div>
         <div class="sim-field">
           <label class="sim-lbl" for="sl-rk">Risco por Operação (%)</label>
           <div class="sim-row">
-            <input type="range" class="sim-slider" id="sl-rk" min="0.5" max="3" step="0.25" value="1" oninput="simRun()"/>
-            <span class="sim-val" id="v-rk">1.0%</span>
+            <input type="range" class="sim-slider" id="sl-rk" min="0.5" max="3" step="0.25" value="1">
+            <span class="sim-val" id="v-rk">1.00%</span>
           </div>
         </div>
         <div class="sim-field">
           <label class="sim-lbl" for="sl-mo">Horizonte (meses)</label>
           <div class="sim-row">
-            <input type="range" class="sim-slider" id="sl-mo" min="1" max="24" step="1" value="6" oninput="simRun()"/>
+            <input type="range" class="sim-slider" id="sl-mo" min="1" max="24" step="1" value="6">
             <span class="sim-val" id="v-mo">6 meses</span>
           </div>
         </div>
       </div>
-      <div class="sim-results reveal reveal-delay-2">
-        <div class="sim-res-card">
-          <p class="sim-res-l">Capital Projetado</p>
-          <p class="sim-res-v profit" id="r-cap">—</p>
-          <p class="sim-res-s">ao final do período</p>
-        </div>
-        <div class="sim-res-card">
-          <p class="sim-res-l">Lucro Estimado</p>
-          <p class="sim-res-v" id="r-luc">—</p>
-          <p class="sim-res-s">sobre capital inicial</p>
-        </div>
-        <div class="sim-res-card">
-          <p class="sim-res-l">Multiplicador</p>
-          <p class="sim-res-v" id="r-mult">—</p>
-          <p class="sim-res-s">fator de crescimento</p>
-        </div>
-        <div class="sim-chart-wrap">
-          <p class="sim-chart-label">Evolução Mês a Mês</p>
-          <canvas id="cv-sim" aria-label="Gráfico evolução de capital"></canvas>
-        </div>
+      <div class="rv">
+        <div class="res-cell"><div class="res-lbl">Capital Projetado</div><div class="res-val profit" id="r-cap">—</div><div class="res-sub">ao final do período</div></div>
+        <div class="res-cell"><div class="res-lbl">Lucro Estimado</div><div class="res-val" id="r-luc">—</div><div class="res-sub">sobre capital inicial</div></div>
+        <div class="res-cell"><div class="res-lbl">Multiplicador</div><div class="res-val" id="r-mult">—</div><div class="res-sub">fator de crescimento</div></div>
+        <div class="chart-card"><div class="chart-lbl">Evolução Mês a Mês</div><canvas id="cv-sim" style="width:100%;height:120px;display:block"></canvas></div>
+        <p class="sim-disc">Projeção baseada em parâmetros históricos. Não constitui promessa de rendimento.</p>
       </div>
     </div>
-    <p class="sim-disc">Projeção baseada em parâmetros históricos e gestão operacional SMITH. Resultados futuros dependem de condições de mercado, execução e gerenciamento individual de risco. Não constitui promessa de rendimento.</p>
   </div>
 </section>
 
-<!-- ══ INFRAESTRUTURA ════════════════════════════════════ -->
-<section id="infra">
+<!-- ════════════════════════════════════════════════════
+     S6 — NÚCLEO
+════════════════════════════════════════════════════ -->
+<section id="s6" class="section">
   <div class="container">
-    <div class="rule" style="margin-bottom:clamp(52px,8vh,84px)"></div>
-    <div class="infra-grid">
+    <div class="hr"></div>
+    <div class="core-grid">
       <div>
-        <p class="label reveal">Infraestrutura · M5 Ultra Apple</p>
-        <h2 class="infra-h reveal">
-          Um núcleo que<br/><em>nunca para.</em>
+        <span class="eyebrow rv">Infraestrutura · M5 Ultra Apple</span>
+        <h2 class="t-display rv" style="font-size:clamp(1.7rem,3.6vw,2.6rem);color:#F4F4F2;margin-bottom:12px">
+          Um núcleo que <span style="color:#C9A86A">nunca para.</span>
         </h2>
-        <p class="infra-body reveal">SMITH opera em ambiente dedicado de processamento local de alta performance. Arquitetura M5 Ultra Apple. Execução contínua, baixa latência, processamento cognitivo soberano. Integrado ao MT5.</p>
-        <div class="infra-layers reveal">
-          <div class="infra-layer"><div class="infra-dot"></div><span class="infra-name">Operational Core</span><span class="infra-st">ACTIVE</span></div>
-          <div class="infra-layer"><div class="infra-dot idle"></div><span class="infra-name">Memory Layer</span><span class="infra-st idle">RECORDING</span></div>
-          <div class="infra-layer"><div class="infra-dot"></div><span class="infra-name">Execution Engine</span><span class="infra-st">STANDBY</span></div>
-          <div class="infra-layer"><div class="infra-dot idle"></div><span class="infra-name">Risk Protocol</span><span class="infra-st idle">MONITORING</span></div>
-          <div class="infra-layer"><div class="infra-dot"></div><span class="infra-name">MT5 Bridge</span><span class="infra-st">CONNECTED</span></div>
-          <div class="infra-layer"><div class="infra-dot"></div><span class="infra-name">M5 Ultra Apple</span><span class="infra-st">SOVEREIGN</span></div>
+        <p class="rv" style="font-size:clamp(.84rem,1.4vw,.95rem);line-height:1.9;color:#6A6A6A;margin-bottom:18px">
+          SMITH opera em ambiente dedicado de processamento local de alta performance. Arquitetura M5 Ultra Apple. Execução contínua, baixa latência, processamento cognitivo soberano.
+        </p>
+        <div class="layer-list rv" style="border:1px solid var(--edge2)">
+          <div class="layer-row"><div class="l-dot"></div><span class="l-name">Operational Core</span><span class="l-st">ACTIVE</span></div>
+          <div class="layer-row"><div class="l-dot idle"></div><span class="l-name">Memory Layer</span><span class="l-st idle">RECORDING</span></div>
+          <div class="layer-row"><div class="l-dot"></div><span class="l-name">Execution Engine</span><span class="l-st">STANDBY</span></div>
+          <div class="layer-row"><div class="l-dot idle"></div><span class="l-name">Risk Protocol</span><span class="l-st idle">MONITORING</span></div>
+          <div class="layer-row"><div class="l-dot"></div><span class="l-name">MT5 Bridge</span><span class="l-st">CONNECTED</span></div>
+          <div class="layer-row"><div class="l-dot"></div><span class="l-name">M5 Ultra Apple</span><span class="l-st">SOVEREIGN</span></div>
         </div>
-        <div class="infra-specs reveal reveal-delay-2">
-          <div class="infra-spec"><span class="infra-spec-k">Processador</span><span class="infra-spec-v">M5 Ultra Apple</span></div>
-          <div class="infra-spec"><span class="infra-spec-k">Execução</span><span class="infra-spec-v">Local · Soberana</span></div>
-          <div class="infra-spec"><span class="infra-spec-k">Latência</span><span class="infra-spec-v">0.3ms</span></div>
-          <div class="infra-spec"><span class="infra-spec-k">Uptime</span><span class="infra-spec-v">99.97%</span></div>
-          <div class="infra-spec"><span class="infra-spec-k">Ambiente</span><span class="infra-spec-v">MT5 Expert Advisor</span></div>
-        </div>
-      </div>
-      <div class="infra-orb-wrap reveal">
-        <div class="infra-orb-ring">
-          <div class="infra-orb-core">
-            <span class="infra-orb-label">CORE</span>
-          </div>
+        <div class="spec-list rv">
+          <div class="spec-row"><span class="spec-k">Processador</span><span class="spec-v">M5 Ultra Apple</span></div>
+          <div class="spec-row"><span class="spec-k">Execução</span><span class="spec-v">Local · Soberana</span></div>
+          <div class="spec-row"><span class="spec-k">Latência</span><span class="spec-v">0.3ms</span></div>
+          <div class="spec-row"><span class="spec-k">Uptime</span><span class="spec-v">99.97%</span></div>
+          <div class="spec-row"><span class="spec-k">Ambiente</span><span class="spec-v">MT5 Expert Advisor</span></div>
         </div>
       </div>
+      <!-- §SmithCoreVisual — Núcleo Computacional Nativo da Interface -->
+      <div class="core-visual rv" id="core-visual">
+        <!-- Camada 1: fundo radial preto/roxo profundo -->
+        <div class="core-bgfield" aria-hidden="true"></div>
+
+        <!-- Camada 3 (atrás da imagem): halo + glow pulsante -->
+        <div class="core-glow core-glow-a" aria-hidden="true"></div>
+        <div class="core-glow core-glow-b" aria-hidden="true"></div>
+
+        <!-- orbitais (atrás/ao redor) -->
+        <div class="core-orbit core-orbit-1" aria-hidden="true"></div>
+        <div class="core-orbit core-orbit-2" aria-hidden="true"></div>
+
+        <!-- Camada 2: imagem do chip com máscara radial -->
+        <div class="core-img-stage" id="core-img-stage">
+          <img src="smith-m5-core.png" alt="Núcleo computacional SMITH — Apple M5 Pro" class="core-img"/>
+          <!-- feixe de luz sutil saindo do núcleo -->
+          <div class="core-beam" aria-hidden="true"></div>
+        </div>
+
+        <!-- Camada 4: partículas frente/fundo -->
+        <canvas class="core-particles" id="core-particles" aria-hidden="true"></canvas>
+
+        <!-- Camada 5: HUD minimalista + linhas de sincronização -->
+        <svg class="core-hud" id="core-hud" viewBox="0 0 600 600" aria-hidden="true">
+          <defs>
+            <radialGradient id="syncFade" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stop-color="rgba(180,140,255,.9)"/>
+              <stop offset="100%" stop-color="rgba(180,140,255,0)"/>
+            </radialGradient>
+          </defs>
+          <g id="sync-lines"></g>
+          <circle id="hud-ring" cx="300" cy="300" r="150" fill="none" stroke="rgba(170,130,255,.05)" stroke-width="1"/>
+          <circle id="hud-ring2" cx="300" cy="300" r="120" fill="none" stroke="rgba(170,130,255,.03)" stroke-width="1" stroke-dasharray="2 6"/>
+        </svg>
+
+        <!-- vinheta de borda — funde com a seção -->
+        <div class="core-vignette" aria-hidden="true"></div>
+      </div></div>
     </div>
   </div>
 </section>
 
-<!-- ══ DIFERENCIAL ════════════════════════════════════════ -->
-<section id="diff">
+<!-- ════════════════════════════════════════════════════
+     S7 — DIFERENCIAL
+════════════════════════════════════════════════════ -->
+<section id="s7" class="section">
   <div class="container">
-    <div class="rule" style="margin-bottom:clamp(52px,8vh,84px)"></div>
-    <p class="label reveal">Diferencial · SMITH vs Automação Comum</p>
-    <h2 class="diff-h reveal">Não é automação.<br/><em>É inteligência operacional.</em></h2>
-    <p class="diff-sub reveal">A diferença não está na velocidade de execução. Está na qualidade do julgamento por trás de cada operação.</p>
-    <div class="diff-cols reveal">
+    <div class="hr"></div>
+    <span class="eyebrow rv">Diferencial · SMITH vs Automação Comum</span>
+    <h2 class="t-display rv" style="font-size:clamp(2rem,4vw,3.2rem);color:#F4F4F2;max-width:600px;margin-bottom:10px">
+      Não é automação.<br><span style="color:#C9A86A">É inteligência operacional.</span>
+    </h2>
+    <p class="rv" style="font-size:clamp(.85rem,1.4vw,.95rem);color:#6A6A6A;max-width:460px;margin-bottom:clamp(28px,4.5vh,44px)">
+      A diferença não está na velocidade. Está na qualidade do julgamento por trás de cada operação.
+    </p>
+    <div class="diff-cols rv">
       <div class="diff-col">
-        <div class="diff-col-label gray"><div class="diff-col-dot"></div>Robôs Comuns</div>
-        <div class="diff-row"><span class="diff-sym">×</span>Executam regras fixas sem contexto</div>
-        <div class="diff-row"><span class="diff-sym">×</span>Dependem de indicadores atrasados</div>
-        <div class="diff-row"><span class="diff-sym">×</span>Sem memória operacional entre ciclos</div>
-        <div class="diff-row"><span class="diff-sym">×</span>Não adaptam parâmetros ao histórico</div>
-        <div class="diff-row"><span class="diff-sym">×</span>Quebram em mudanças de regime</div>
-        <div class="diff-row"><span class="diff-sym">×</span>Gestão de risco estática</div>
+        <div class="diff-head gray"><div class="diff-head-dot"></div>Robôs Comuns</div>
+        <div class="diff-item"><span class="diff-sym">×</span>Executam regras fixas sem contexto</div>
+        <div class="diff-item"><span class="diff-sym">×</span>Dependem de indicadores atrasados</div>
+        <div class="diff-item"><span class="diff-sym">×</span>Sem memória operacional entre ciclos</div>
+        <div class="diff-item"><span class="diff-sym">×</span>Não adaptam parâmetros ao histórico</div>
+        <div class="diff-item"><span class="diff-sym">×</span>Quebram em mudanças de regime</div>
+        <div class="diff-item"><span class="diff-sym">×</span>Gestão de risco estática</div>
       </div>
       <div class="diff-col smith-col">
-        <div class="diff-col-label gold"><div class="diff-col-dot"></div>SMITH · Dom Investitore</div>
-        <div class="diff-row s"><span class="diff-sym g">→</span>Metodologia modelada com contexto real</div>
-        <div class="diff-row s"><span class="diff-sym g">→</span>Leitura operacional contínua e contextualizada</div>
-        <div class="diff-row s"><span class="diff-sym g">→</span>Memória ativa em todos os ciclos</div>
-        <div class="diff-row s"><span class="diff-sym g">→</span>Calibração autónoma dentro dos parâmetros</div>
-        <div class="diff-row s"><span class="diff-sym g">→</span>Disciplina independente de condições emocionais</div>
-        <div class="diff-row s"><span class="diff-sym g">→</span>Breakeven + Trailing dinâmicos e automáticos</div>
+        <div class="diff-head gold"><div class="diff-head-dot"></div>SMITH · Dom Investitore</div>
+        <div class="diff-item s"><span class="diff-sym g">→</span>Metodologia modelada com contexto real</div>
+        <div class="diff-item s"><span class="diff-sym g">→</span>Leitura operacional contínua e contextualizada</div>
+        <div class="diff-item s"><span class="diff-sym g">→</span>Memória ativa em todos os ciclos</div>
+        <div class="diff-item s"><span class="diff-sym g">→</span>Calibração autónoma dentro dos parâmetros</div>
+        <div class="diff-item s"><span class="diff-sym g">→</span>Disciplina independente de condições emocionais</div>
+        <div class="diff-item s"><span class="diff-sym g">→</span>Breakeven + Trailing dinâmicos e automáticos</div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ══ CONDIÇÃO EXCLUSIVA ══════════════════════════════════ -->
-<section id="access">
+<!-- ════════════════════════════════════════════════════
+     S8 — CONDIÇÃO EXCLUSIVA
+════════════════════════════════════════════════════ -->
+<section id="s8" class="section">
   <div class="container">
-    <div class="rule-bronze" style="margin-bottom:clamp(52px,8vh,84px)"></div>
-    <p class="label reveal" style="color:rgba(196,160,106,.6)">Acesso Interno · Mentorados Dom Investitore</p>
-    <h2 class="access-h reveal">Licença operacional exclusiva.</h2>
-    <p class="access-sub reveal">SMITH não é vendido ao público. O acesso é reservado para mentorados com vínculo ativo Dom Investitore. Condição interna — não replicada externamente.</p>
-    <div class="access-cards">
-      <div class="access-card reveal">
-        <p class="access-card-label">Valor de Revenda</p>
-        <p class="access-card-price">€500</p>
-        <p class="access-card-ps">Licença pública de mercado</p>
-        <p style="font-size:12px;color:rgba(255,255,255,.25);margin-top:12px;line-height:1.6">Valor de referência institucional. Não disponível externamente.</p>
+    <div class="hr"></div>
+    <span class="eyebrow rv">Acesso Interno · Mentorados Dom Investitore</span>
+    <h2 class="t-display rv" style="font-size:clamp(2rem,4vw,3rem);color:#F4F4F2;margin-bottom:10px">
+      Licença operacional exclusiva.
+    </h2>
+    <p class="rv" style="font-size:clamp(.85rem,1.4vw,.95rem);color:#6A6A6A;max-width:500px;margin-bottom:clamp(28px,4.5vh,44px)">
+      SMITH não é vendido ao público. O acesso é reservado para mentorados com vínculo ativo Dom Investitore. Condição interna — não replicada externamente.
+    </p>
+    <div class="access-cards rv">
+      <div class="ac">
+        <div class="ac-lbl">Valor de Revenda</div>
+        <div class="ac-price">€500</div>
+        <div class="ac-sub">Licença pública de mercado</div>
+        <p style="font-size:12px;color:#3A3A3A;margin-top:10px;line-height:1.6">Valor de referência institucional. Não disponível externamente.</p>
       </div>
-      <div class="access-card featured reveal reveal-delay-2">
-        <p class="access-card-label">Condição Reservada · Mentorado</p>
-        <p class="access-card-price featured-price">€250</p>
-        <p class="access-card-ps">Licença operacional · Acesso anual</p>
-        <div class="access-card-inc">
-          <div class="access-inc-row">Expert Advisor SMITH MT5 licenciado</div>
-          <div class="access-inc-row">Suporte de configuração e ativação</div>
-          <div class="access-inc-row">Atualizações do motor cognitivo</div>
-          <div class="access-inc-row">Acesso ao grupo fechado operacional</div>
+      <div class="ac feat">
+        <div class="ac-lbl">Condição Reservada · Mentorado</div>
+        <div class="ac-price feat-p">€250</div>
+        <div class="ac-sub">Licença operacional · Acesso anual</div>
+        <div class="ac-inc">
+          <div class="ac-inc-row">Expert Advisor SMITH MT5 licenciado</div>
+          <div class="ac-inc-row">Suporte de configuração e ativação</div>
+          <div class="ac-inc-row">Atualizações do motor cognitivo</div>
+          <div class="ac-inc-row">Acesso ao grupo fechado operacional</div>
         </div>
       </div>
     </div>
-    <div class="access-badge reveal">
-      <div class="access-badge-dot"></div>
-      <span class="access-badge-txt">Grupo Fechado · Mentorados Dom Investitore Apenas</span>
+    <div class="ac-badge rv">
+      <div class="ac-badge-dot"></div>
+      <span class="ac-badge-txt">Grupo Fechado · Mentorados Dom Investitore Apenas</span>
     </div>
   </div>
 </section>
 
-<!-- ══ FECHAMENTO ══════════════════════════════════════════ -->
-<section id="closing">
-  <div class="container">
-    <div class="rule-bronze" style="margin-bottom:0"></div>
-    <div style="padding-top:clamp(80px,14vh,140px);text-align:center">
-      <h2 class="closing-smith reveal">SMITH</h2>
-      <p class="closing-ofi reveal">Operational Financial Intelligence</p>
-      <div class="closing-rule reveal"></div>
-      <div class="closing-lines reveal">
-        <p class="closing-line">A inteligência nasce da metodologia.</p>
-        <p class="closing-line">A execução pertence à máquina.</p>
-        <p class="closing-line">O acesso pertence aos mentorados.</p>
-      </div>
-      <p class="closing-acc reveal">ACESSO FECHADO AOS MENTORADOS DOM INVESTITORE</p>
+<!-- ════════════════════════════════════════════════════
+     S9 — FECHAMENTO
+════════════════════════════════════════════════════ -->
+<div id="s9-dark"></div>
+<section id="s9" class="section">
+  <div class="hr" style="max-width:1080px;margin:0 auto clamp(52px,8vh,80px)"></div>
+  <div style="max-width:600px;margin:0 auto;text-align:center;padding:0 clamp(20px,5vw,52px)">
+    <span class="close-smith rv" aria-label="SMITH">SMITH</span>
+    <span class="close-ofi rv">Operational Financial Intelligence</span>
+    <div class="close-rule rv"></div>
+    <div class="close-lines rv">
+      <span class="close-line">A inteligência nasce da metodologia.</span>
+      <span class="close-line">A execução pertence à máquina.</span>
+      <span class="close-line">O acesso pertence aos mentorados.</span>
     </div>
-    <footer>
-      <p class="footer-sig">Dom Investitore — Creating the Next Generation<br/>of Operational Financial Intelligence</p>
-      <p class="footer-hash">SMITH v2.0 · Dom Investitore © 2026</p>
-      <div class="footer-live">
-        <div class="footer-dot"></div>
-        Smith · Operational · Monitoring Active
-      </div>
-    </footer>
+    <span class="close-acc rv">ACESSO FECHADO AOS MENTORADOS DOM INVESTITORE</span>
   </div>
+  <footer>
+    <p class="f-sig">Dom Investitore — Creating the Next Generation<br>of Operational Financial Intelligence</p>
+    <p class="f-hash">SMITH v2.0 · Dom Investitore © 2026</p>
+    <div class="f-live"><div class="f-dot"></div>Smith · Operational · Monitoring Active</div>
+  </footer>
 </section>
 
-<!-- ══════════════════════════════════════════════════════
-     JAVASCRIPT
-══════════════════════════════════════════════════════ -->
+<!-- ════════════════════════════════════════════════════
+     JAVASCRIPT — sem frameworks externos
+════════════════════════════════════════════════════ -->
 <script>
-/* ── PARTÍCULAS HERO ──────────────────────────────── */
-(function(){
-  const cv = document.getElementById('hero-cv');
-  if(!cv) return;
-  const ctx = cv.getContext('2d');
-  let W, H, parts = [];
+/* ── §3 SCRAMBLE TEXT ──────────────────────────────────
+   Decodificação mecânica: caracteres aleatórios → texto final
+   Sem fade in. A máquina decodifica e revela.
+───────────────────────────────────────────────────── */
+var SCHARS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+function scramble(el, text, ms) {
+  if(!el || !text) return;
+  var n = text.length, frames = Math.ceil((ms || 220) / 16), f = 0;
+  (function step() {
+    f++;
+    var p = f / frames, out = '';
+    for(var i = 0; i < n; i++)
+      out += (i / n < p * 1.25) ? text[i] : (text[i] === ' ' ? ' ' : SCHARS[Math.floor(Math.random() * SCHARS.length)]);
+    el.textContent = out;
+    if(f < frames) requestAnimationFrame(step);
+    else el.textContent = text;
+  })();
+}
 
-  function resize(){ W=cv.width=innerWidth; H=cv.height=innerHeight; }
-  resize();
+/* ── §3 REVEAL: circOut ≤0.15s ───────────────────────── */
+function reveal(el, delay) {
+  delay = delay || 0;
+  setTimeout(function() {
+    el.style.transition = 'opacity .15s cubic-bezier(.5,0,.5,1), transform .15s cubic-bezier(.5,0,.5,1)';
+    el.style.opacity = '1';
+    el.style.transform = 'translateY(0)';
+  }, delay);
+}
 
-  function mkP(){
-    return {
-      x: Math.random()*W, y: Math.random()*H,
-      r: Math.random()*.8+.15,
-      vx: (Math.random()-.5)*.12, vy: (Math.random()-.5)*.1,
-      alpha: Math.random()*.18+.04,
-      life: Math.random()*260, maxLife: 200+Math.random()*300,
-      rgb: Math.random()>.6 ? '196,160,106' : '232,212,168'
-    };
+/* ── LOADER ─────────────────────────────────────────── */
+(function() {
+  var loader = document.getElementById('loader');
+  var ldlogo = document.getElementById('ld-logo');
+  var ldfill = document.getElementById('ld-fill');
+  var ldpct  = document.getElementById('ld-pct');
+  var ldmsg  = document.getElementById('ld-msg');
+  if(!loader) return;
+
+  var msgs = [
+    'Verificando integridade neural...',
+    'Carregando parâmetros operacionais...',
+    'Conectando MT5 Bridge...',
+    'Sincronizando cloud matrix soberana...',
+    'Calibrando assertividade histórica...',
+    'Sistema cognitivo inicializado.'
+  ];
+  var pct = 0, mi = 0;
+
+  /* logo aparece com scramble */
+  setTimeout(function() {
+    ldlogo.style.opacity = '1';
+    scramble(ldlogo, 'SMITH', 400);
+  }, 300);
+
+  var tmr = setInterval(function() {
+    pct = Math.min(pct + (Math.random() * 3.2 + 1.1), 100);
+    ldfill.style.width = pct + '%';
+    ldpct.textContent = Math.floor(pct) + '%';
+    if(pct > (mi + 1) * (100 / msgs.length)) {
+      ldmsg.textContent = msgs[Math.min(mi, msgs.length - 1)];
+      mi++;
+    }
+    if(pct >= 100) {
+      clearInterval(tmr);
+      ldpct.textContent = '100%';
+      ldmsg.textContent = msgs[msgs.length - 1];
+      setTimeout(bootReveal, 380);
+    }
+  }, 48);
+
+  function bootReveal() {
+    /* flash branco instantâneo */
+    var fl = document.createElement('div');
+    fl.style.cssText = 'position:fixed;inset:0;z-index:9998;background:#fff;pointer-events:none;opacity:0';
+    document.body.appendChild(fl);
+
+    /* cinemática mecânica: corte seco */
+    fl.style.transition = 'opacity .07s cubic-bezier(.5,0,.5,1)';
+    fl.style.opacity = '.12';
+    setTimeout(function() {
+      fl.style.transition = 'opacity .4s cubic-bezier(.5,0,.5,1)';
+      fl.style.opacity = '0';
+    }, 70);
+
+    loader.style.transition = 'opacity .35s cubic-bezier(.5,0,.5,1)';
+    loader.style.opacity = '0';
+    setTimeout(function() {
+      loader.style.display = 'none';
+      fl.remove();
+      heroReveal();
+    }, 350);
   }
-  for(let i=0;i<50;i++){ const p=mkP(); p.life=Math.random()*p.maxLife; parts.push(p); }
-
-  function draw(){
-    ctx.clearRect(0,0,W,H);
-    parts.forEach(p=>{
-      p.life++; if(p.life>p.maxLife){ Object.assign(p,mkP()); p.life=0; }
-      p.x+=p.vx; p.y+=p.vy;
-      if(p.x<0||p.x>W) p.vx*=-1;
-      if(p.y<0||p.y>H) p.vy*=-1;
-      const fade = Math.sin(p.life/p.maxLife*Math.PI);
-      if(p.r>0.6){
-        ctx.beginPath();ctx.arc(p.x,p.y,p.r*3.5,0,Math.PI*2);
-        ctx.fillStyle=`rgba(${p.rgb},${fade*p.alpha*.18})`;ctx.fill();
-      }
-      ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
-      ctx.fillStyle=`rgba(${p.rgb},${fade*p.alpha})`;ctx.fill();
-    });
-    requestAnimationFrame(draw);
-  }
-  draw();
-  addEventListener('resize', resize, {passive:true});
 })();
 
-/* ── TELEMETRIA AO VIVO ──────────────────────────── */
-function ticker(){
-  const x=document.getElementById('dxau');
-  const n=document.getElementById('dnas');
-  if(x) x.textContent=(2385+Math.random()*10-5).toFixed(2);
-  if(n) n.textContent=(18340+Math.random()*70-35).toFixed(0);
-  setTimeout(ticker, 2200+Math.random()*1400);
-}
-setTimeout(ticker, 800);
-
-/* ── NAV REVEAL ──────────────────────────────────── */
-window.addEventListener('scroll', ()=>{
-  document.getElementById('nav').classList.toggle('visible', scrollY>80);
-},{passive:true});
-setTimeout(()=>document.getElementById('nav').classList.add('visible'),400);
-
-/* ── PIPELINE ANIMADO ─────────────────────────────── */
-let pStep=-1, pRunning=false;
-function runPipeline(){
-  if(pRunning) return; pRunning=true;
-  const steps=document.querySelectorAll('.pipeline-step');
-  function adv(){
-    pStep=(pStep+1)%steps.length;
-    steps.forEach((s,i)=>s.classList.toggle('active',i<=pStep));
-    setTimeout(adv,920);
+/* ── HERO REVEAL ─────────────────────────────────────── */
+function heroReveal() {
+  /* SMITH — scramble mecânico */
+  var logo = document.getElementById('smith-logo');
+  if(logo) {
+    logo.style.opacity = '1';
+    logo.style.transform = 'translateY(0)';
+    scramble(logo, 'SMITH', 320);
   }
-  adv();
+
+  /* revelar elementos em cascata — circOut */
+  var els = document.querySelectorAll('#hero .rv');
+  els.forEach(function(el, i) {
+    setTimeout(function() { reveal(el); }, i * 80);
+  });
+
+  /* hero rule */
+  setTimeout(function() {
+    var rule = document.getElementById('hero-rule');
+    if(rule) { rule.style.transition = 'width .3s cubic-bezier(.5,0,.5,1)'; rule.style.width = '180px'; }
+  }, 380);
+
+  /* scroll hint */
+  setTimeout(function() {
+    var sh = document.getElementById('hero-scroll');
+    if(sh) { sh.style.transition = 'opacity .2s cubic-bezier(.5,0,.5,1)'; sh.style.opacity = '1'; }
+  }, 2800);
+
+  /* telemetria ao vivo */
+  startTelemetry();
 }
 
-/* ── CONTADORES ANIMADOS ─────────────────────────── */
-function animCount(el, to, dur){
-  let s=null;
-  (function step(ts){
-    if(!s) s=ts;
-    const p=Math.min((ts-s)/dur,1), ep=1-Math.pow(1-p,3);
-    el.textContent=Math.round(ep*to);
-    if(p<1) requestAnimationFrame(step);
+/* ── TELEMETRIA ─────────────────────────────────────── */
+function startTelemetry() {
+  function tick() {
+    var xau = (2385 + Math.random() * 10 - 5).toFixed(2);
+    var nas = (18340 + Math.random() * 70 - 35).toFixed(0);
+    var tx = document.getElementById('tel-xau'); if(tx) tx.textContent = 'XAUUSD ' + xau;
+    var tn = document.getElementById('tel-nas'); if(tn) tn.textContent = 'NASDAQ ' + nas;
+    var tc = document.getElementById('tel-cyc');
+    if(tc) {
+      var n = parseInt(tc.textContent.replace(/[^0-9]/g,'')) || 847;
+      tc.textContent = 'Ciclo ' + String(n + Math.round(Math.random())).padStart(4,'0');
+    }
+    setTimeout(tick, 1800 + Math.random() * 1400);
+  }
+  setTimeout(tick, 3200);
+}
+
+/* ── LOG TERMINAL ─────────────────────────────────────── */
+(function() {
+  var LOGS = [
+    {t:'00:00:01',m:'[BOOT] SMITH COGNITIVE ENGINE INITIALIZING...',c:'inf'},
+    {t:'00:00:02',m:'[SYS] OPERATIONAL PARAMETERS v2.0 LOADED',c:''},
+    {t:'00:00:04',m:'[CORE] NEURAL WEIGHTS VERIFIED — CHECKSUM OK',c:'ok'},
+    {t:'00:00:07',m:'[FEED] XAUUSD M1 CONNECTED // 0.3ms',c:'gd'},
+    {t:'00:00:09',m:'[FEED] NASDAQ M1 CONNECTED // 0.4ms',c:'gd'},
+    {t:'00:00:12',m:'[MEM] BACKTEST COMPRESSION ACTIVE',c:'inf'},
+    {t:'00:00:15',m:'[COMP] 847,293 HISTORICAL BARS PROCESSED',c:''},
+    {t:'00:00:19',m:'➔ SOVEREIGN CLOUD SYNC COMPLETE',c:'ok'},
+    {t:'00:00:23',m:'[RR] ASYMMETRIC RATIO RECALIBRATING 7:1',c:'inf'},
+    {t:'00:00:27',m:'[CTX] LIQUIDITY ZONES — 4,891 NODES',c:''},
+    {t:'00:00:32',m:'➔ CALIBRATION DEPLOYED TO PRODUCTION',c:'gd'},
+    {t:'00:00:37',m:'[EVO] SELF-AUDIT COMPLETE — 87.5%',c:'gd'},
+    {t:'00:00:41',m:'[ALL] MODULES OPERATIONAL // SMITH ONLINE',c:'ok'},
+    {t:'00:00:45',m:'[IDLE] MONITORING M1 — AWAITING CONFLUENCE...',c:''},
+  ];
+  var track = document.getElementById('log-track');
+  if(!track) return;
+  function mkLine(l) {
+    var d = document.createElement('div');
+    d.className = 'll' + (l.c ? ' ' + l.c : '');
+    d.innerHTML = '<span class="ll-ts">' + l.t + '</span><span class="ll-m">' + l.m + '</span>';
+    return d;
+  }
+  LOGS.forEach(function(l) { track.appendChild(mkLine(l)); });
+  LOGS.forEach(function(l) { track.appendChild(mkLine(l)); }); /* duplicar para loop */
+  setTimeout(function() { track.classList.add('run'); }, 1200);
+})();
+
+/* ── §3 PIPELINE ANIMADO ─────────────────────────────── */
+(function() {
+  var STEPS = [
+    {n:'01',name:'Leitura de Mercado',    log:'[MARKET_SCAN] Liquidez monitorada · Sessão ativa'},
+    {n:'02',name:'Validação de Liquidez', log:'[LIQUIDITY_LAYER] Profundidade de mercado verificada'},
+    {n:'03',name:'Prob. Operacional',     log:'[PROBABILITY_LAYER] Assimetria · Score 87.4%'},
+    {n:'04',name:'Contexto Institucional',log:'[CONTEXT_ENGINE] Sessão Londres/NY validada'},
+    {n:'05',name:'Execução Objetiva',     log:'[EXECUTION_OBJETIVA] Ordem autorizada · MT5 Bridge'},
+    {n:'06',name:'Gestão de Risco',       log:'[RISK_PROTOCOL] Breakeven T2 · Trailing ativo'},
+    {n:'07',name:'Memória Operacional',   log:'[MEMORY_LAYER] Ciclo registrado · Parâmetros atualizados'},
+  ];
+  var container = document.getElementById('pipeline-steps');
+  if(!container) return;
+  STEPS.forEach(function(s, i) {
+    var eline = document.createElement('div'); eline.className = 'p-eline'; container.appendChild(eline);
+    var row = document.createElement('div'); row.className = 'p-step'; row.id = 'ps-' + i;
+    row.innerHTML =
+      '<span class="p-num">' + s.n + '</span>' +
+      '<div class="p-dot"></div>' +
+      '<div style="flex:1">' +
+        '<div class="p-name">' + s.name + '</div>' +
+        '<div class="p-log">' + s.log + '</div>' +
+      '</div>' +
+      '<span class="p-status">ATIVO</span>';
+    container.appendChild(row);
+  });
+
+  var active = -1, running = false;
+  function advance() {
+    active = (active + 1) % STEPS.length;
+    STEPS.forEach(function(_, i) {
+      var el = document.getElementById('ps-' + i);
+      if(!el) return;
+      if(i <= active) el.classList.add('active');
+      else el.classList.remove('active');
+    });
+    setTimeout(advance, 920);
+  }
+
+  /* Iniciar quando a seção fica visível */
+  var obs = new IntersectionObserver(function(entries) {
+    entries.forEach(function(e) {
+      if(e.isIntersecting && !running) { running = true; setTimeout(advance, 400); obs.disconnect(); }
+    });
+  }, { threshold: .15 });
+  var s3 = document.getElementById('s3');
+  if(s3) obs.observe(s3);
+})();
+
+/* ── SCROLL REVEAL — circOut ≤0.15s ──────────────────── */
+(function() {
+  var obs = new IntersectionObserver(function(entries) {
+    entries.forEach(function(e) {
+      if(!e.isIntersecting) return;
+      var el = e.target;
+      el.style.transition = 'opacity .15s cubic-bezier(.5,0,.5,1), transform .15s cubic-bezier(.5,0,.5,1)';
+      el.style.opacity = '1';
+      el.style.transform = 'translateY(0)';
+      obs.unobserve(el);
+
+      /* counters e barras */
+      var sec = el.closest('section');
+      if(sec && sec.id === 's4') {
+        /* contadores */
+        animCount(document.getElementById('cnt-a'), 76, 1400);
+        setTimeout(function() { animCount(document.getElementById('cnt-t'), 4, 1100); }, 200);
+        /* barras de alvos */
+        setTimeout(function() { activateBars(); }, 600);
+      }
+    });
+  }, { threshold: .12, rootMargin: '0px 0px -40px 0px' });
+
+  document.querySelectorAll('.rv').forEach(function(el) {
+    if(!el.closest('#hero')) obs.observe(el);
+  });
+})();
+
+/* ── CONTADOR ANIMADO ────────────────────────────────── */
+function animCount(el, to, dur) {
+  if(!el) return;
+  var s = null;
+  (function step(ts) {
+    if(!s) s = ts;
+    var p = Math.min((ts - s) / dur, 1), ep = 1 - Math.pow(1-p, 3);
+    el.textContent = Math.round(ep * to);
+    if(p < 1) requestAnimationFrame(step);
   })(performance.now());
 }
 
-/* ── SIMULADOR ───────────────────────────────────── */
-function fmt(v){ return new Intl.NumberFormat('pt-PT',{style:'currency',currency:'EUR',maximumFractionDigits:0}).format(v); }
-function simRun(){
-  const cap=+document.getElementById('sl-cap').value;
-  const ops=+document.getElementById('sl-ops').value;
-  const ass=+document.getElementById('sl-ass').value/100;
-  const rk=+document.getElementById('sl-rk').value/100;
-  const mo=+document.getElementById('sl-mo').value;
-  document.getElementById('v-cap').textContent=fmt(cap);
-  document.getElementById('v-ops').textContent=ops+' / sem';
-  document.getElementById('v-ass').textContent=Math.round(ass*100)+'%';
-  document.getElementById('v-rk').textContent=(rk*100).toFixed(2)+'%';
-  document.getElementById('v-mo').textContent=mo+(mo===1?' mês':' meses');
-  const wks=mo*4.33,tot=ops*wks,w=tot*ass,l=tot*(1-ass);
-  const wkR=w/wks*(rk*3)-l/wks*rk, mR=wkR*4.33;
-  let cur=cap; const monthly=[cap];
-  for(let m=0;m<mo;m++){ cur*=(1+mR); monthly.push(Math.round(cur)); }
-  const fin=monthly[mo], profit=fin-cap, pct=(profit/cap*100).toFixed(1);
-  document.getElementById('r-cap').textContent=fmt(fin);
-  document.getElementById('r-luc').textContent=(profit>=0?'+':'')+fmt(profit);
-  document.getElementById('r-mult').textContent=(fin/cap).toFixed(2)+'x';
-  drawChart(monthly,cap);
+/* ── §4 BARRAS DE ALVOS MATEMÁTICOS ─────────────────── */
+function activateBars() {
+  /* XAUUSD: T1 reached, T2 be-lock, T3 trail */
+  var bx = document.querySelectorAll('#bar-xau .exec-seg');
+  if(bx[0]) bx[0].classList.add('t-reached');
+  if(bx[1]) bx[1].classList.add('t-be');
+  if(bx[2]) bx[2].classList.add('t-trail');
+  /* NASDAQ: T1 reached, T2 be-lock */
+  var bn = document.querySelectorAll('#bar-nas .exec-seg');
+  if(bn[0]) bn[0].classList.add('t-reached');
+  if(bn[1]) bn[1].classList.add('t-be');
 }
-function drawChart(data,base){
-  const cv=document.getElementById('cv-sim'); if(!cv)return;
-  const dpr=devicePixelRatio, ctx=cv.getContext('2d');
-  cv.width=cv.offsetWidth*dpr; cv.height=120*dpr; cv.style.height='120px';
-  ctx.scale(dpr,dpr);
-  const w=cv.offsetWidth, h=120; ctx.clearRect(0,0,w,h);
-  if(data.length<2)return;
-  const mn=Math.min(...data)*.97, mx=Math.max(...data)*1.03;
-  const px=i=>(i/(data.length-1))*w, py=v=>h-((v-mn)/(mx-mn))*(h*.84)-h*.08;
-  /* grid */
-  ctx.strokeStyle='rgba(255,255,255,.05)'; ctx.lineWidth=1;
-  [.33,.66].forEach(p=>{ctx.beginPath();ctx.moveTo(0,py(mn+(mx-mn)*p));ctx.lineTo(w,py(mn+(mx-mn)*p));ctx.stroke();});
-  /* fill */
-  const gr=ctx.createLinearGradient(0,0,0,h);
-  gr.addColorStop(0,'rgba(196,160,106,.2)');
-  gr.addColorStop(1,'rgba(155,123,74,0)');
-  ctx.beginPath();ctx.moveTo(px(0),py(data[0]));
-  data.forEach((v,i)=>ctx.lineTo(px(i),py(v)));
-  ctx.lineTo(px(data.length-1),h);ctx.lineTo(0,h);ctx.closePath();
-  ctx.fillStyle=gr; ctx.fill();
-  /* linha */
-  const lg=ctx.createLinearGradient(0,0,w,0);
-  lg.addColorStop(0,'rgba(155,123,74,.7)');
-  lg.addColorStop(.5,'rgba(196,160,106,.9)');
-  lg.addColorStop(1,'rgba(232,212,168,.8)');
-  ctx.beginPath();ctx.moveTo(px(0),py(data[0]));
-  data.forEach((v,i)=>ctx.lineTo(px(i),py(v)));
-  ctx.strokeStyle=lg; ctx.lineWidth=1.5; ctx.stroke();
-  /* base */
-  if(base>=mn&&base<=mx){
-    ctx.beginPath();ctx.moveTo(0,py(base));ctx.lineTo(w,py(base));
-    ctx.strokeStyle='rgba(255,255,255,.08)';ctx.lineWidth=1;ctx.setLineDash([3,4]);ctx.stroke();ctx.setLineDash([]);
+
+
+/* ── SIMULADOR ─────────────────────────────────────── */
+(function() {
+  function fmt(v) {
+    return new Intl.NumberFormat('pt-PT',{style:'currency',currency:'EUR',maximumFractionDigits:0}).format(v);
   }
-  /* dots */
-  data.forEach((v,i)=>{
-    ctx.beginPath();ctx.arc(px(i),py(v),2.5,0,Math.PI*2);
-    if(v>=base){ctx.shadowColor='rgba(196,160,106,.6)';ctx.shadowBlur=6;}
-    ctx.fillStyle=v>=base?'rgba(232,212,168,.9)':'rgba(160,156,150,.4)';
-    ctx.fill();ctx.shadowColor='transparent';ctx.shadowBlur=0;
-  });
-}
+  function run() {
+    var cap = +document.getElementById('sl-cap').value;
+    var ops = +document.getElementById('sl-ops').value;
+    var ass = +document.getElementById('sl-ass').value / 100;
+    var rk  = +document.getElementById('sl-rk').value  / 100;
+    var mo  = +document.getElementById('sl-mo').value;
 
-/* ── SCROLL REVEAL ──────────────────────────────── */
-const io = new IntersectionObserver((entries)=>{
-  entries.forEach(e=>{
-    if(!e.isIntersecting) return;
-    e.target.classList.add('visible');
-    /* ações específicas ao revelar */
-    const id=e.target.closest('section')?.id;
-    if(id==='pipeline' && !pRunning) runPipeline();
-    if(id==='perf'){
-      const el=e.target;
-      /* contadores */
-      const ca=document.getElementById('cnt-a');
-      const ct=document.getElementById('cnt-t');
-      if(ca && ca.textContent==='0') animCount(ca,76,1500);
-      if(ct && ct.textContent==='0') setTimeout(()=>animCount(ct,4,1200),200);
-      /* barras */
-      setTimeout(()=>{
-        const bg=document.getElementById('bar-g'); if(bg)bg.style.width='78%';
-        const bn=document.getElementById('bar-n'); if(bn)bn.style.width='74%';
-      },400);
+    document.getElementById('v-cap').textContent = fmt(cap);
+    document.getElementById('v-ops').textContent = ops + ' / sem';
+    document.getElementById('v-ass').textContent = Math.round(ass * 100) + '%';
+    document.getElementById('v-rk').textContent  = (rk * 100).toFixed(2) + '%';
+    document.getElementById('v-mo').textContent  = mo + (mo === 1 ? ' mês' : ' meses');
+
+    var wks = mo * 4.33, tot = ops * wks, w = tot * ass, l = tot * (1 - ass);
+    var wkR = w / wks * (rk * 3) - l / wks * rk, mR = wkR * 4.33;
+    var cur = cap; var monthly = [cap];
+    for(var m = 0; m < mo; m++) { cur *= (1 + mR); monthly.push(Math.round(cur)); }
+    var fin = monthly[mo], profit = fin - cap;
+
+    document.getElementById('r-cap').textContent  = fmt(fin);
+    document.getElementById('r-luc').textContent  = (profit >= 0 ? '+' : '') + fmt(profit);
+    document.getElementById('r-mult').textContent = (fin / cap).toFixed(2) + 'x';
+
+    drawChart(monthly, cap);
+  }
+
+  function drawChart(data, base) {
+    var cv = document.getElementById('cv-sim'); if(!cv) return;
+    var dpr = devicePixelRatio, ctx = cv.getContext('2d');
+    cv.width = cv.offsetWidth * dpr; cv.height = 120 * dpr; cv.style.height = '120px';
+    ctx.scale(dpr, dpr);
+    var w = cv.offsetWidth, h = 120; ctx.clearRect(0, 0, w, h);
+    if(data.length < 2) return;
+    var mn = Math.min.apply(null, data) * .97, mx = Math.max.apply(null, data) * 1.03;
+    var px = function(i) { return (i / (data.length - 1)) * w; };
+    var py = function(v) { return h - ((v - mn) / (mx - mn)) * (h * .84) - h * .08; };
+
+    /* grid linhas */
+    ctx.strokeStyle = 'rgba(255,255,255,.04)'; ctx.lineWidth = 1;
+    [.33, .66].forEach(function(p) {
+      ctx.beginPath();
+      ctx.moveTo(0, py(mn + (mx - mn) * p));
+      ctx.lineTo(w, py(mn + (mx - mn) * p));
+      ctx.stroke();
+    });
+
+    /* fill */
+    var gr = ctx.createLinearGradient(0, 0, 0, h);
+    gr.addColorStop(0, 'rgba(201,168,106,.18)');
+    gr.addColorStop(1, 'rgba(201,168,106,0)');
+    ctx.beginPath();
+    ctx.moveTo(px(0), py(data[0]));
+    data.forEach(function(v, i) { ctx.lineTo(px(i), py(v)); });
+    ctx.lineTo(px(data.length - 1), h);
+    ctx.lineTo(0, h);
+    ctx.closePath();
+    ctx.fillStyle = gr;
+    ctx.fill();
+
+    /* linha principal */
+    var lg = ctx.createLinearGradient(0, 0, w, 0);
+    lg.addColorStop(0, 'rgba(141,116,71,.7)');
+    lg.addColorStop(.5, 'rgba(201,168,106,.9)');
+    lg.addColorStop(1, 'rgba(240,226,189,.8)');
+    ctx.beginPath();
+    ctx.moveTo(px(0), py(data[0]));
+    data.forEach(function(v, i) { ctx.lineTo(px(i), py(v)); });
+    ctx.strokeStyle = lg; ctx.lineWidth = 1.5; ctx.stroke();
+
+    /* glow */
+    ctx.beginPath();
+    ctx.moveTo(px(0), py(data[0]));
+    data.forEach(function(v, i) { ctx.lineTo(px(i), py(v)); });
+    ctx.strokeStyle = 'rgba(201,168,106,.12)'; ctx.lineWidth = 5; ctx.stroke();
+
+    /* baseline */
+    if(base >= mn && base <= mx) {
+      ctx.beginPath(); ctx.moveTo(0, py(base)); ctx.lineTo(w, py(base));
+      ctx.strokeStyle = 'rgba(255,255,255,.07)'; ctx.lineWidth = 1;
+      ctx.setLineDash([3,4]); ctx.stroke(); ctx.setLineDash([]);
     }
-    if(id==='sim' && !simInited){ simInited=true; simRun(); }
+
+    /* pontos */
+    data.forEach(function(v, i) {
+      ctx.beginPath(); ctx.arc(px(i), py(v), 2.5, 0, Math.PI * 2);
+      if(v >= base) { ctx.shadowColor = 'rgba(201,168,106,.6)'; ctx.shadowBlur = 6; }
+      ctx.fillStyle = v >= base ? 'rgba(240,226,189,.9)' : 'rgba(60,58,55,.5)';
+      ctx.fill();
+      ctx.shadowColor = 'transparent'; ctx.shadowBlur = 0;
+    });
+  }
+
+  /* ligar sliders */
+  ['sl-cap','sl-ops','sl-ass','sl-rk','sl-mo'].forEach(function(id) {
+    var el = document.getElementById(id);
+    if(el) el.addEventListener('input', run);
   });
-},{threshold:.12, rootMargin:'0px 0px -40px 0px'});
 
-let simInited=false;
-document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+  /* iniciar quando visível */
+  var initiated = false;
+  var obs5 = new IntersectionObserver(function(entries) {
+    entries.forEach(function(e) {
+      if(e.isIntersecting && !initiated) {
+        initiated = true;
+        run();
+        obs5.disconnect();
+      }
+    });
+  }, { threshold: .1 });
+  var s5 = document.getElementById('s5');
+  if(s5) obs5.observe(s5);
+})();
 
-/* ── GSAP SCROLL CINEMATOGRÁFICO ─────────────────── */
-document.addEventListener('DOMContentLoaded',()=>{
-  if(typeof gsap==='undefined') return;
+/* ── FECHAMENTO: escurecer progressivamente ─────────── */
+(function() {
+  var dark = document.getElementById('s9-dark');
+  if(!dark) return;
+  var obs9 = new IntersectionObserver(function(entries) {
+    entries.forEach(function(e) {
+      if(!e.isIntersecting) return;
+      var op = 0;
+      (function inc() {
+        op = Math.min(op + .003, .8);
+        dark.style.opacity = op;
+        if(op < .8) requestAnimationFrame(inc);
+      })();
+      obs9.disconnect();
+    });
+  }, { threshold: .08 });
+  var s9 = document.getElementById('s9');
+  if(s9) obs9.observe(s9);
+})();
+
+/* ── RESPONSIVE GRID ─────────────────────────────────── */
+(function() {
+  var style = document.createElement('style');
+  style.textContent = [
+    '@media(max-width:768px){',
+    '.grid-2col{grid-template-columns:1fr!important}',
+    '.s2-grid{grid-template-columns:1fr!important}',
+    '.core-grid{grid-template-columns:1fr!important}',
+    '.sim-grid{grid-template-columns:1fr!important}',
+    '.perf-row{grid-template-columns:1fr!important}',
+    '.access-cards{grid-template-columns:1fr!important}',
+    '}',
+    '.hidden-sm{display:none}',
+    '@media(min-width:640px){.hidden-sm{display:flex}}',
+  ].join('');
+  document.head.appendChild(style);
+})();
+
+/* ── GSAP SCROLL PARALLAX (headings) ────────────────── */
+(function() {
+  if(typeof gsap === 'undefined' || typeof ScrollTrigger === 'undefined') return;
   gsap.registerPlugin(ScrollTrigger);
-  /* hero reveal */
-  const heroTl = gsap.timeline({delay:.3});
-  heroTl
-    .fromTo('.smith-hero',
-      {opacity:0, y:40, filter:'blur(12px)'},
-      {opacity:1, y:0, filter:'blur(0px)', duration:1.8, ease:'power4.out'})
-    .fromTo('.hero-phrase',
-      {opacity:0, y:20},
-      {opacity:1, y:0, duration:1.2, ease:'power3.out'},'-=.9')
-    .fromTo('.hero-divider',
-      {scaleX:0, transformOrigin:'left'},
-      {scaleX:1, duration:.9, ease:'power3.out'},'-=1.0');
-
-  /* seções — parallax sutil nos headings */
-  document.querySelectorAll('.what-h,.pipeline-h,.perf-h,.sim-h,.infra-h,.diff-h,.access-h').forEach(el=>{
-    gsap.fromTo(el,
-      {y:18},
-      {y:0, ease:'none',
-       scrollTrigger:{trigger:el,start:'top 88%',end:'top 40%',scrub:1.2}
-      });
-  });
+  /* nenhum parallax suave — §3: corte direto */
   ScrollTrigger.refresh();
-});
+})();
+
+
+
+
+/* ══════════════════════════════════════════════════════════
+   SmithCoreVisual — motor de vida do núcleo
+   Partículas + parallax 3D sutil + sincronização com layer-list
+══════════════════════════════════════════════════════════ */
+(function() {
+  var wrap = document.getElementById('core-visual');
+  if(!wrap) return;
+
+  /* ── PARTÍCULAS (frente + fundo) ─────────────────────── */
+  var cv = document.getElementById('core-particles');
+  var ctx = cv ? cv.getContext('2d') : null;
+  var particles = [];
+  var W, H, DPR = Math.min(devicePixelRatio, 2);
+
+  function resizeParticles() {
+    if(!cv) return;
+    W = wrap.offsetWidth; H = wrap.offsetHeight;
+    cv.width = W * DPR; cv.height = H * DPR;
+    cv.style.width = W + 'px'; cv.style.height = H + 'px';
+    ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+  }
+
+  function initParticles() {
+    particles = [];
+    var count = window.innerWidth < 768 ? 6 : 13;
+    for(var i = 0; i < count; i++) {
+      var depth = Math.random(); /* 0 = fundo, 1 = frente */
+      particles.push({
+        x: Math.random() * W,
+        y: Math.random() * H,
+        r: depth * 1.1 + .3,
+        vx: (Math.random() - .5) * .035,
+        vy: (Math.random() - .5) * .03,
+        depth: depth,
+        alpha: .08 + depth * .26,
+        phase: Math.random() * Math.PI * 2,
+      });
+    }
+  }
+
+  /* ── IMPULSOS SINÁPTICOS ──────────────────────────────
+     Pequenos sinais de luz nascem perto do centro (chip)
+     e percorrem trajetórias radiais ao longo das "linhas"
+     da rede neural da imagem — comunicação orgânica viva. */
+  var impulses = [];
+  function spawnImpulse() {
+    var cx2 = W * .5, cy2 = H * .5;
+    /* ângulo aleatório — percorre como se seguisse uma conexão da rede */
+    var ang = Math.random() * Math.PI * 2;
+    /* leve variação de curva para parecer orgânico, não retilíneo */
+    var wobble = (Math.random() - .5) * .5;
+    var dist = Math.min(W, H) * (.22 + Math.random() * .16); /* raio do núcleo visível */
+    impulses.push({
+      cx: cx2, cy: cy2,
+      ang: ang, wobble: wobble,
+      dist: dist,
+      t: 0,
+      dur: 900 + Math.random() * 700,
+      size: 1.3 + Math.random() * 1.4,
+    });
+  }
+  var impulseTimer = null;
+  function scheduleImpulses() {
+    spawnImpulse();
+    /* às vezes dois impulsos quase juntos — sinapse múltipla */
+    if(Math.random() > .6) setTimeout(spawnImpulse, 80 + Math.random() * 160);
+    impulseTimer = setTimeout(scheduleImpulses, 280 + Math.random() * 420);
+  }
+
+  function drawParticles(t) {
+    if(!ctx) return;
+    ctx.clearRect(0, 0, W, H);
+
+    /* partículas ambiente */
+    particles.forEach(function(p) {
+      p.x += p.vx; p.y += p.vy;
+      if(p.x < -10) p.x = W + 10; if(p.x > W + 10) p.x = -10;
+      if(p.y < -10) p.y = H + 10; if(p.y > H + 10) p.y = -10;
+      var pulse = .55 + .45 * Math.sin(p.phase + t * .0006);
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.r * pulse, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(190,160,255,' + (p.alpha * pulse) + ')';
+      ctx.fill();
+    });
+
+    /* impulsos sinápticos — disparos de energia ao longo da rede */
+    for(var i = impulses.length - 1; i >= 0; i--) {
+      var im = impulses[i];
+      im.t += 16;
+      var p = Math.min(im.t / im.dur, 1);
+      if(p >= 1) { impulses.splice(i, 1); continue; }
+
+      /* trajetória curva sutil — segue como se fosse uma linha da estrutura */
+      var ease = p < .5 ? 2*p*p : 1-Math.pow(-2*p+2,2)/2; /* easeInOutQuad */
+      var curAng = im.ang + im.wobble * Math.sin(p * Math.PI);
+      var curDist = im.dist * ease;
+      var x = im.cx + Math.cos(curAng) * curDist;
+      var y = im.cy + Math.sin(curAng) * curDist * .92; /* leve achatamento, como a imagem */
+
+      /* fade in rápido, fade out no final do trajeto */
+      var fade = p < .12 ? p / .12 : (p > .82 ? (1 - p) / .18 : 1);
+      var glow = im.size * (1.6 + fade * 1.2);
+
+      /* núcleo do impulso — branco-violeta intenso, como uma sinapse acendendo */
+      ctx.beginPath();
+      ctx.arc(x, y, glow, 0, Math.PI * 2);
+      var g = ctx.createRadialGradient(x, y, 0, x, y, glow * 3.2);
+      g.addColorStop(0,   'rgba(225,205,255,' + (fade * .95) + ')');
+      g.addColorStop(.35, 'rgba(180,130,255,' + (fade * .55) + ')');
+      g.addColorStop(1,   'rgba(150,95,255,0)');
+      ctx.fillStyle = g;
+      ctx.beginPath();
+      ctx.arc(x, y, glow * 3.2, 0, Math.PI * 2);
+      ctx.fill();
+
+      /* ponto central nítido */
+      ctx.beginPath();
+      ctx.arc(x, y, glow * .45, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(255,250,255,' + (fade * .9) + ')';
+      ctx.fill();
+
+      /* rastro curto — sensação de movimento ao longo da linha */
+      var trailAng = im.ang + im.wobble * Math.sin(Math.max(0, p - .06) * Math.PI);
+      var trailDist = im.dist * Math.max(0, ease - .09);
+      var tx = im.cx + Math.cos(trailAng) * trailDist;
+      var ty = im.cy + Math.sin(trailAng) * trailDist * .92;
+      ctx.beginPath();
+      ctx.moveTo(tx, ty);
+      ctx.lineTo(x, y);
+      ctx.strokeStyle = 'rgba(190,150,255,' + (fade * .4) + ')';
+      ctx.lineWidth = glow * .5;
+      ctx.lineCap = 'round';
+      ctx.stroke();
+    }
+
+    requestAnimationFrame(drawParticles);
+  }
+
+  /* ── PARALLAX 3D SUTIL (mouse) ───────────────────────── */
+  var stage = document.getElementById('core-img-stage');
+  var mx = 0, my = 0, cx = 0, cy = 0;
+  var parallaxEnabled = window.innerWidth > 768;
+
+  if(parallaxEnabled) {
+    wrap.addEventListener('mousemove', function(e) {
+      var rect = wrap.getBoundingClientRect();
+      mx = ((e.clientX - rect.left) / rect.width - .5) * 2;
+      my = ((e.clientY - rect.top) / rect.height - .5) * 2;
+    }, { passive: true });
+    wrap.addEventListener('mouseleave', function() { mx = 0; my = 0; }, { passive: true });
+  }
+
+  function parallaxTick() {
+    cx += (mx - cx) * .035;
+    cy += (my - cy) * .035;
+    if(stage) {
+      /* parallax mínimo — mantém translateZ de profundidade do CSS */
+      stage.style.transform =
+        'translateZ(-165px) translateX(5%) rotateY(' + (cx * 1.6) + 'deg) rotateX(' + (-cy * 1.6) + 'deg)';
+    }
+    var o1 = wrap.querySelector('.core-orbit-1');
+    var o2 = wrap.querySelector('.core-orbit-2');
+    if(o1) o1.style.marginLeft = (cx * 2) + 'px';
+    if(o2) o2.style.marginTop = (cy * 3) + 'px';
+    requestAnimationFrame(parallaxTick);
+  }
+
+  /* ── SINCRONIZAÇÃO COM A LISTA DE LAYERS ────────────── */
+  function buildSyncLines() {
+    var svgGroup = document.getElementById('sync-lines');
+    var layerRows = document.querySelectorAll('.layer-list .layer-row');
+    if(!svgGroup || !layerRows.length) return;
+
+    layerRows.forEach(function(row, i) {
+      var ns = 'http://www.w3.org/2000/svg';
+      var angle = (-70 + i * 26) * (Math.PI / 180); /* leque à esquerda */
+      var r1 = 248, r2 = 300;
+      var x1 = 300 + Math.cos(Math.PI - angle) * 4;
+      var y1 = 300 + Math.sin(angle) * r1 * .02;
+      var x2 = 300 - r2 * .92;
+      var y2 = 300 + (i - (layerRows.length - 1) / 2) * 34;
+
+      var line = document.createElementNS(ns, 'path');
+      var midX = 300 - r1 * .55;
+      var d = 'M ' + x2 + ' ' + y2 + ' Q ' + midX + ' ' + y2 + ' 300 300';
+      line.setAttribute('d', d);
+      line.setAttribute('class', 'sync-line');
+      line.dataset.idx = i;
+      svgGroup.appendChild(line);
+
+      var dot = document.createElementNS(ns, 'circle');
+      dot.setAttribute('cx', x2);
+      dot.setAttribute('cy', y2);
+      dot.setAttribute('r', 3);
+      dot.setAttribute('class', 'sync-dot');
+      dot.dataset.idx = i;
+      svgGroup.appendChild(dot);
+
+      /* hover na linha do layer acende a conexão */
+      row.addEventListener('mouseenter', function() { lightSync(i, true); }, { passive: true });
+      row.addEventListener('mouseleave', function() { lightSync(i, false); }, { passive: true });
+    });
+  }
+
+  function lightSync(i, on) {
+    var line = document.querySelector('.sync-line[data-idx="' + i + '"]');
+    var dot  = document.querySelector('.sync-dot[data-idx="' + i + '"]');
+    if(line) line.classList.toggle('lit', on);
+    if(dot)  dot.classList.toggle('lit', on);
+  }
+
+  /* ciclo automático de aceso/apagado — vida própria mesmo sem hover */
+  var autoIdx = 0, autoTimer = null;
+  function autoCycle() {
+    var rows = document.querySelectorAll('.layer-list .layer-row');
+    if(!rows.length) return;
+    lightSync((autoIdx - 1 + rows.length) % rows.length, false);
+    lightSync(autoIdx, true);
+    autoIdx = (autoIdx + 1) % rows.length;
+    autoTimer = setTimeout(autoCycle, 1400);
+  }
+
+  /* ── INIT — apenas quando a seção entra em viewport ──── */
+  var launched = false;
+  var io = new IntersectionObserver(function(entries) {
+    entries.forEach(function(e) {
+      if(e.isIntersecting && !launched) {
+        launched = true;
+        resizeParticles();
+        initParticles();
+        requestAnimationFrame(drawParticles);
+        if(parallaxEnabled) requestAnimationFrame(parallaxTick);
+        buildSyncLines();
+        setTimeout(autoCycle, 600);
+        scheduleImpulses();
+        io.disconnect();
+      }
+    });
+  }, { threshold: .15 });
+  var s6 = document.getElementById('s6');
+  if(s6) io.observe(s6);
+
+  var rt;
+  window.addEventListener('resize', function() {
+    clearTimeout(rt);
+    rt = setTimeout(function() {
+      if(launched) { resizeParticles(); initParticles(); }
+    }, 200);
+  }, { passive: true });
+})();
+
 </script>
 </body>
 </html>
